@@ -36,6 +36,15 @@
   }
 }
 
+@layer components {
+  .label-md {
+    @apply text-[0.75rem] font-bold uppercase tracking-widest;
+  }
+  .body-lg {
+    @apply text-lg leading-relaxed md:text-xl;
+  }
+}
+
 .glass-panel {
   background: rgba(53, 52, 54, 0.6);
   backdrop-filter: blur(24px);
@@ -83,4 +92,14 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #2a2a2b;
   border-radius: 10px;
+}
+
+/* Anchor / programmatic scroll when Lenis is disabled (reduced motion) */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

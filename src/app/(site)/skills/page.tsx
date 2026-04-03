@@ -40,7 +40,7 @@ export default async function SkillsPage() {
       <SiteNav active="/skills" />
       <main className="mx-auto max-w-[1440px] px-6 pb-20 pt-32 md:px-12">
         <header className="mb-24">
-          <h1 className="mb-6 text-[3.5rem] font-black leading-none tracking-tighter text-on-surface">
+          <h1 className="mb-6 text-4xl font-black leading-[1.05] tracking-tighter text-on-surface sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
             Expertise &amp; <br />
             <span className="text-primary-container">Capabilities</span>
           </h1>
@@ -65,6 +65,11 @@ export default async function SkillsPage() {
                 <MIcon name="devices" className="text-4xl text-primary/40" />
               </div>
               <div className="grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-2">
+                {presentation.length === 0 && (
+                  <p className="col-span-full text-sm text-on-surface-variant/70">
+                    No frontend or language skills yet — add them in the admin.
+                  </p>
+                )}
                 {presentation.map((s) => {
                   const pct = s.proficiency ?? 88;
                   return (
@@ -105,6 +110,9 @@ export default async function SkillsPage() {
                 Backend Core
               </h2>
               <div className="space-y-8">
+                {backend.length === 0 && (
+                  <p className="text-sm text-on-surface-variant/70">No backend skills listed.</p>
+                )}
                 {backend.map((s) => (
                   <div key={s.id} className="flex items-center gap-6">
                     <MIcon
@@ -130,6 +138,11 @@ export default async function SkillsPage() {
                 Database Systems
               </h2>
               <ul className="space-y-4">
+                {database.length === 0 && (
+                  <li className="rounded-lg bg-surface-container p-4 text-sm text-on-surface-variant/70">
+                    No database skills listed.
+                  </li>
+                )}
                 {database.map((s) => (
                   <li
                     key={s.id}
@@ -154,6 +167,9 @@ export default async function SkillsPage() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-4">
+                {tools.length === 0 && (
+                  <p className="w-full text-sm text-on-surface-variant/70">No tools listed.</p>
+                )}
                 {tools.map((s) => (
                   <div
                     key={s.id}

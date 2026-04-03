@@ -29,7 +29,7 @@ export function AdminLoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-surface font-body selection:bg-primary/30">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface font-sans selection:bg-primary/30">
       <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
         <div className="absolute left-[-10%] top-[-10%] h-[40%] w-[40%] rounded-full bg-primary/5 blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] rounded-full bg-primary/5 blur-[120px]" />
@@ -39,10 +39,10 @@ export function AdminLoginForm() {
           <div className="ghost-border mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-surface-container-high">
             <MIcon name="lock" className="text-3xl text-primary" />
           </div>
-          <h1 className="mb-2 font-headline text-3xl font-bold tracking-tighter text-on-surface">
+          <h1 className="mb-2 text-3xl font-bold tracking-tighter text-on-surface">
             Architect Portfolio
           </h1>
-          <p className="text-sm font-label uppercase tracking-wide text-on-surface-variant">
+          <p className="text-sm font-medium uppercase tracking-wide text-on-surface-variant">
             Administrative Access
           </p>
         </div>
@@ -61,13 +61,15 @@ export function AdminLoginForm() {
               <Input id="password" name="password" type="password" placeholder="••••••••••••" required />
             </div>
             <div className="flex items-center justify-between py-2">
-              <label className="group flex cursor-pointer items-center">
+              <label htmlFor="remember" className="group flex cursor-pointer items-center">
                 <Checkbox id="remember" />
                 <span className="ml-3 text-xs text-on-surface-variant transition-colors group-hover:text-on-surface">
                   Remember device
                 </span>
               </label>
-              <span className="text-xs font-medium text-primary">Forgot password?</span>
+              <span className="text-xs font-medium text-on-surface-variant/50" title="Contact your administrator">
+                Forgot password?
+              </span>
             </div>
             {err && <p className="text-sm text-error">Invalid email or password.</p>}
             <button

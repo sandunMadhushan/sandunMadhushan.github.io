@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import NextImage from "next/image";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
@@ -6,6 +7,49 @@ import { MIcon } from "@/components/m-icon";
 import { getAbout } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
+
+const headlineAccentClass =
+  "text-primary-container drop-shadow-[0_0_15px_rgba(79,70,229,0.3)]";
+
+/** Keeps indigo accent on “landscapes” + line break after “Crafting digital” when that pattern matches. */
+function formatAboutHeadline(headline: string): ReactNode {
+  const lower = headline.toLowerCase();
+  const key = "landscapes";
+  const idx = lower.indexOf(key);
+  if (idx === -1) {
+    return headline.includes("\n") ? (
+      <span className="whitespace-pre-line">{headline}</span>
+    ) : (
+      headline
+    );
+  }
+
+  const word = headline.slice(idx, idx + key.length);
+  const before = headline.slice(0, idx);
+  const after = headline.slice(idx + key.length);
+  const poeticPrefix = "crafting digital ";
+  const poetic = lower.startsWith(poeticPrefix) && idx === poeticPrefix.length;
+
+  if (poetic) {
+    const firstLine = headline.slice(0, poeticPrefix.length).trimEnd();
+    return (
+      <>
+        {firstLine}
+        <br />
+        <span className={headlineAccentClass}>{word}</span>
+        {after}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {before}
+      <span className={headlineAccentClass}>{word}</span>
+      {after}
+    </>
+  );
+}
 
 type TimelineItem = {
   period: string;
@@ -47,38 +91,35 @@ export default async function AboutPage() {
   return (
     <PageFade>
       <SiteNav active="/about" />
-      <main className="pb-20 pt-32">
-        <section className="mx-auto mb-32 max-w-[1440px] px-6 md:px-12">
-          <div className="flex flex-col items-start gap-20 md:flex-row">
-            <div className="md:w-1/2">
-              <span className="mb-6 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
+      <main className="pb-20 pt-0">
+        <section className="box-border mb-24 flex min-h-[100dvh] flex-col justify-center overflow-x-clip pt-14 pb-10 md:mb-32 md:pt-16 md:pb-12">
+          <div className="mx-auto grid w-full min-h-0 max-w-[1440px] grid-cols-1 items-center gap-10 px-6 md:grid-cols-2 md:gap-12 md:px-12 lg:gap-16">
+            <div className="min-h-0">
+              <span className="mb-4 block text-[0.75rem] font-bold uppercase tracking-widest text-primary md:mb-6">
                 The Visionary
               </span>
-              <h1 className="mb-12 text-[2.5rem] font-extrabold leading-[1.1] tracking-tighter md:text-[3.5rem]">
-                Crafting digital <br />
-                <span className="text-primary-container drop-shadow-[0_0_15px_rgba(79,70,229,0.3)]">
-                  landscapes
-                </span>{" "}
-                with surgical precision.
+              <h1 className="mb-6 max-w-3xl text-[2rem] font-extrabold leading-[1.12] tracking-tighter text-on-surface sm:text-[2.5rem] md:mb-8 md:text-[3rem] lg:text-[3.25rem]">
+                {formatAboutHeadline(headline)}
               </h1>
-              <div className="max-w-xl space-y-6 text-[1.125rem] leading-[1.8] text-on-surface-variant">
+              <div className="max-w-xl space-y-4 text-base leading-[1.75] text-on-surface-variant md:space-y-5 md:text-[1.0625rem] md:leading-[1.8]">
                 {intro.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
               </div>
             </div>
-            <div className="relative md:w-1/2">
-              <div className="glass-card relative z-10 aspect-square overflow-hidden rounded-xl p-4">
+            <div className="relative flex min-h-0 w-full justify-center md:justify-end">
+              <div className="glass-card relative z-10 aspect-square w-[min(100%,min(420px,min(85vw,min(46dvh,calc(100dvh-15rem)))))] max-w-full shrink-0 overflow-hidden rounded-xl p-3 shadow-lg md:ml-auto md:w-[min(420px,min(54dvh,calc(100dvh-10.5rem)))] md:p-4">
                 <NextImage
                   src={portrait}
                   alt="Portrait"
                   width={800}
                   height={800}
-                  className="h-full w-full rounded-lg object-cover grayscale transition-all duration-700 hover:grayscale-0"
+                  className="h-full w-full rounded-lg object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
+                  sizes="(max-width: 768px) 90vw, 420px"
                   unoptimized
                 />
               </div>
-              <div className="absolute -bottom-10 -right-10 -z-10 h-64 w-64 rounded-full bg-primary-container/20 blur-[100px]" />
+              <div className="pointer-events-none absolute -bottom-8 -right-4 -z-10 h-48 w-48 rounded-full bg-primary-container/20 blur-[80px] md:-bottom-10 md:-right-10 md:h-64 md:w-64 md:blur-[100px]" />
             </div>
           </div>
         </section>
@@ -124,6 +165,12 @@ export default async function AboutPage() {
               </div>
             </div>
             <div className="relative py-12">
+              {timeline.length === 0 ? (
+                <p className="pl-6 text-on-surface-variant/70 md:pl-0 md:text-center">
+                  Timeline entries can be added from the admin About section.
+                </p>
+              ) : (
+                <>
               <div className="absolute bottom-0 left-0 top-0 w-[2px] bg-surface-container-highest md:left-1/2 md:-translate-x-1/2" />
               {timeline.map((item, idx) => (
                 <div
@@ -192,6 +239,8 @@ export default async function AboutPage() {
                   <div className="absolute left-[-5px] top-0 h-3 w-3 rounded-full bg-primary-container shadow-[0_0_15px_rgba(79,70,229,0.5)] md:left-1/2 md:-translate-x-1/2" />
                 </div>
               ))}
+                </>
+              )}
             </div>
           </section>
         </ScrollReveal>

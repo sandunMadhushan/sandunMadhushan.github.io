@@ -175,15 +175,13 @@ export default async function AdminDashboardPage() {
           </p>
         </div>
       </section>
-      <footer className="mt-12 w-full bg-[#131314] px-12 py-20">
-        <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-8 md:flex-row">
-          <p className="text-[#e5e2e3]/40">
-            © {new Date().getFullYear()} The Digital Curator.
-          </p>
-          <div className="flex gap-12">
-            <span className="text-[#e5e2e3]/40">GitHub</span>
-            <span className="text-[#e5e2e3]/40">LinkedIn</span>
-            <span className="text-[#e5e2e3]/40">Twitter</span>
+      <footer className="mt-12 w-full border-t border-outline-variant/10 bg-surface px-6 py-12 md:px-12 md:py-16">
+        <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-6 text-sm text-on-surface-variant/50 md:flex-row">
+          <p>© {new Date().getFullYear()} The Digital Curator.</p>
+          <div className="flex flex-wrap justify-center gap-8">
+            <span className="cursor-default">GitHub</span>
+            <span className="cursor-default">LinkedIn</span>
+            <span className="cursor-default">Twitter</span>
           </div>
         </div>
       </footer>

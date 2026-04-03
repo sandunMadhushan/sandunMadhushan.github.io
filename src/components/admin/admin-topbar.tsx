@@ -1,20 +1,36 @@
 "use client";
 
 import { MIcon } from "@/components/m-icon";
+import { useAdminMobileNav } from "@/components/admin/admin-shell";
 
 export function AdminTopbar({ title }: { title?: string }) {
+  const nav = useAdminMobileNav();
+
   return (
-    <header className="sticky top-0 z-40 flex w-full items-center justify-between bg-[#131314] px-8 py-6">
-      <div className="flex items-center gap-4">
-        <MIcon name="menu" className="cursor-pointer text-[#e5e2e3] hover:text-primary" />
-        <h1 className="text-lg font-semibold text-[#e5e2e3]">{title ?? "System Overview"}</h1>
+    <header className="sticky top-0 z-30 flex w-full max-w-full min-w-0 items-center justify-between border-b border-outline-variant/10 bg-surface/95 px-4 py-4 backdrop-blur-md md:px-8 md:py-6">
+      <div className="flex min-w-0 items-center gap-3 md:gap-4">
+        <button
+          type="button"
+          aria-label="Open navigation menu"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-on-surface transition-colors hover:bg-surface-container-high hover:text-primary md:hidden"
+          onClick={() => nav?.openMobileNav()}
+        >
+          <MIcon name="menu" />
+        </button>
+        <h1 className="truncate text-base font-semibold text-on-surface md:text-lg">
+          {title ?? "System Overview"}
+        </h1>
       </div>
-      <div className="flex items-center gap-6">
-        <div className="relative">
-          <MIcon name="notifications" className="cursor-pointer text-[#e5e2e3]/60 hover:text-primary" />
-          <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-primary" />
+      <div className="flex shrink-0 items-center gap-4 md:gap-6">
+        <div className="relative hidden sm:block">
+          <span className="sr-only">Notifications (placeholder)</span>
+          <MIcon name="notifications" className="cursor-default text-on-surface/50" />
+          <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary" aria-hidden />
         </div>
-        <div className="h-10 w-10 overflow-hidden rounded-full bg-surface-container-high ring-2 ring-primary/20" />
+        <div
+          className="h-9 w-9 overflow-hidden rounded-full bg-gradient-to-br from-primary-container/40 to-surface-container-high ring-2 ring-primary/25 md:h-10 md:w-10"
+          aria-hidden
+        />
       </div>
     </header>
   );

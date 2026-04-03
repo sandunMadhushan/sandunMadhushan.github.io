@@ -39,7 +39,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                   Featured Project
                 </span>
                 <h2 className="mb-4 text-3xl font-bold text-on-surface lg:text-4xl">{featured.title}</h2>
-                <p className="mb-8 leading-relaxed text-[#e5e2e3]/70">{featured.description}</p>
+                <p className="mb-8 leading-relaxed text-on-surface-variant/80">{featured.description}</p>
                 <div className="mb-8 flex flex-wrap gap-2">
                   {featured.technologies.map((t) => (
                     <span
@@ -52,7 +52,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                 </div>
                 <Link
                   href={`/projects/${featured.slug}`}
-                  className="flex w-fit items-center gap-3 rounded-lg bg-primary-container px-8 py-4 font-bold text-on-primary transition-all hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] active:scale-95"
+                  className="flex w-fit items-center gap-3 rounded-lg bg-primary-container px-8 py-4 font-bold text-on-primary-container transition-all hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] active:scale-95"
                 >
                   View Project Details
                   <MIcon name="arrow_forward" />
@@ -72,18 +72,25 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
               onClick={() => setTab(t)}
               className={`rounded-lg px-6 py-2 text-sm font-bold shadow-lg transition-all ${
                 tab === t
-                  ? "bg-primary-container text-on-primary"
-                  : "text-[#e5e2e3]/50 hover:bg-surface-container-high hover:text-on-surface"
+                  ? "bg-primary-container text-on-primary-container"
+                  : "text-on-surface/45 hover:bg-surface-container-high hover:text-on-surface"
               }`}
             >
               {t}
             </button>
           ))}
         </div>
-        <div className="text-sm font-medium italic text-[#e5e2e3]/40">Showing {filtered.length} items</div>
+        <div className="text-sm font-medium text-on-surface-variant/50">
+          Showing {filtered.length} {filtered.length === 1 ? "project" : "projects"}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {rest.length === 0 && (
+          <p className="col-span-full rounded-xl border border-dashed border-outline-variant/25 bg-surface-container-low/50 py-16 text-center text-on-surface-variant">
+            No projects match this filter.
+          </p>
+        )}
         {rest.map((p) => (
           <article
             key={p.id}
@@ -105,7 +112,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                 <h3 className="text-xl font-bold text-on-surface">{p.title}</h3>
                 <MIcon name={p.cardIcon || "code"} className="text-xl text-primary" />
               </div>
-              <p className="mb-6 line-clamp-2 text-sm leading-relaxed text-[#e5e2e3]/60">{p.description}</p>
+              <p className="mb-6 line-clamp-2 text-sm leading-relaxed text-on-surface-variant/70">{p.description}</p>
               <div className="mb-8 mt-auto flex flex-wrap gap-2">
                 {p.technologies.slice(0, 4).map((t) => (
                   <span

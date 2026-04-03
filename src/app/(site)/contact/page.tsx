@@ -21,7 +21,7 @@ export default async function ContactPage() {
           <span className="mb-4 block text-[0.75rem] font-bold uppercase tracking-[0.2em] text-primary">
             Get in touch
           </span>
-          <h1 className="max-w-3xl text-[3.5rem] font-extrabold leading-[1.1] tracking-tight">
+          <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
             Let&apos;s build something{" "}
             <span className="text-primary">extraordinary</span> together.
           </h1>
@@ -96,11 +96,11 @@ export default async function ContactPage() {
                 <div className="h-8 w-8 overflow-hidden rounded-full bg-surface-container">
                   <NextImage
                     src={profile}
-                    alt=""
+                    alt="Sandun Madhushan"
                     width={32}
                     height={32}
                     className="h-full w-full object-cover"
-                    unoptimized
+                    unoptimized={profile.startsWith("http")}
                   />
                 </div>
                 <span className="text-[0.75rem] font-bold uppercase tracking-widest text-primary">

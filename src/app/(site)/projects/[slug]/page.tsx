@@ -205,7 +205,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             >
               <MIcon name="arrow_back" className="transition-transform group-hover:-translate-x-2" />
               <div>
-                <span className="block text-xs font-bold uppercase tracking-widest text-[#e5e2e3]/40">Previous</span>
+                <span className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant/45">
+                  Previous
+                </span>
                 <span className="text-xl font-bold">{prev.title}</span>
               </div>
             </Link>
@@ -224,7 +226,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               className="group flex items-center gap-4 text-right text-on-surface-variant transition-colors hover:text-on-surface"
             >
               <div>
-                <span className="block text-xs font-bold uppercase tracking-widest text-[#e5e2e3]/40">
+                <span className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant/45">
                   Next Project
                 </span>
                 <span className="text-xl font-bold">{next.title}</span>
@@ -237,9 +239,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </section>
 
         <div className="fixed bottom-8 left-8 z-40 hidden max-w-[280px] lg:block">
-          <div className="relative overflow-hidden rounded-lg bg-[#0e0e0f] p-4">
-            <div className="absolute left-0 top-0 h-full w-1 bg-[#c3c0ff]" />
-            <div className="mb-2 font-mono text-[10px] text-[#c3c0ff]/60">// deploy_status.sh</div>
+          <div className="relative overflow-hidden rounded-lg border border-outline-variant/15 bg-surface-container-lowest p-4 shadow-lg">
+            <div className="absolute left-0 top-0 h-full w-1 bg-primary" />
+            <div className="mb-2 font-mono text-[10px] text-primary/60">// deploy_status.sh</div>
             <div className="font-mono text-[11px] leading-tight text-on-surface-variant">
               system.status == &quot;optimized&quot;
               <br />

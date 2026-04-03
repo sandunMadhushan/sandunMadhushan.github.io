@@ -16,7 +16,7 @@ export default async function ProjectsPage() {
           <h1 className="mb-6 text-5xl font-extrabold tracking-tighter text-on-surface md:text-7xl">
             Selected Works
           </h1>
-          <p className="body-lg max-w-2xl leading-relaxed text-[#e5e2e3]/60">
+          <p className="body-lg max-w-2xl text-on-surface-variant/75">
             Exploring the intersection of human-centric design and scalable
             architecture. A collection of digital experiences built with
             precision and intent.
