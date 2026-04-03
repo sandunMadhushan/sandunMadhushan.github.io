@@ -7,6 +7,8 @@ import { MIcon } from "@/components/m-icon";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { toast } from "sonner";
 
 const CATS = ["Frontend", "Backend", "Languages", "Database", "Tools"];
 
@@ -16,22 +18,37 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
   const [category, setCategory] = useState("Frontend");
   const [description, setDescription] = useState("");
   const [proficiency, setProficiency] = useState(90);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   async function add(e: React.FormEvent) {
     e.preventDefault();
-    await fetch("/api/skills", {
+    const res = await fetch("/api/skills", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, category, description, proficiency }),
     });
+    if (!res.ok) {
+      toast.error("Could not add skill");
+      return;
+    }
+    toast.success("Skill added");
     setName("");
     setDescription("");
     router.refresh();
   }
 
-  async function remove(id: string) {
-    if (!confirm("Delete skill?")) return;
-    await fetch(`/api/skills/${id}`, { method: "DELETE" });
+  async function executeDelete() {
+    if (!deleteId) return;
+    setDeleteLoading(true);
+    const res = await fetch(`/api/skills/${deleteId}`, { method: "DELETE" });
+    setDeleteLoading(false);
+    if (!res.ok) {
+      toast.error("Could not delete skill");
+      return;
+    }
+    toast.success("Skill deleted");
+    setDeleteId(null);
     router.refresh();
   }
 
@@ -57,7 +74,7 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                 <MIcon name="architecture" className="text-3xl" />
               </div>
               <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                <button type="button" onClick={() => remove(s.id)} className="p-2 text-on-surface-variant hover:text-error">
+                <button type="button" onClick={() => setDeleteId(s.id)} className="p-2 text-on-surface-variant hover:text-error">
                   <MIcon name="delete" />
                 </button>
               </div>
@@ -127,6 +144,20 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteLoading) setDeleteId(null);
+        }}
+        title="Delete this skill?"
+        description="It will be removed from the public skills page."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+        loading={deleteLoading}
+        onConfirm={executeDelete}
+      />
     </>
   );
 }

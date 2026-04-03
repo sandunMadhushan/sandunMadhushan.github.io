@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { toast } from "sonner";
 
 const CATEGORIES = ["Web", "Mobile", "AI"];
 const ICONS = ["code", "smartphone", "psychology", "analytics", "restaurant", "calendar_month", "description"];
@@ -28,17 +30,24 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [images, setImages] = useState((project?.images ?? []).join("\n"));
   const [features, setFeatures] = useState((project?.features ?? []).join("\n"));
   const [saving, setSaving] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   async function uploadFile(file: File) {
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      toast.error(typeof data.error === "string" ? data.error : "Upload failed");
+      return;
+    }
     if (data.url) {
       const list = images.split("\n").filter(Boolean);
       list.push(data.url);
       setImages(list.join("\n"));
-    }
+      toast.success("Image uploaded");
+    } else toast.error("Upload failed");
   }
 
   async function save() {
@@ -73,12 +82,25 @@ export function ProjectForm({ project }: { project?: Project }) {
       body: JSON.stringify(payload),
     });
     setSaving(false);
-    if (res.ok) router.push("/admin/projects");
+    if (!res.ok) {
+      toast.error("Could not save project");
+      return;
+    }
+    toast.success(isEdit ? "Project saved" : "Project created");
+    router.push("/admin/projects");
   }
 
-  async function del() {
-    if (!project || !confirm("Delete project?")) return;
-    await fetch(`/api/projects/${project.id}`, { method: "DELETE" });
+  async function executeDelete() {
+    if (!project) return;
+    setDeleteLoading(true);
+    const res = await fetch(`/api/projects/${project.id}`, { method: "DELETE" });
+    setDeleteLoading(false);
+    if (!res.ok) {
+      toast.error("Could not delete project");
+      return;
+    }
+    toast.success("Project deleted");
+    setDeleteOpen(false);
     router.push("/admin/projects");
   }
 
@@ -93,7 +115,7 @@ export function ProjectForm({ project }: { project?: Project }) {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {isEdit && (
-            <Button type="button" variant="destructive" className="gap-2" onClick={del}>
+            <Button type="button" variant="destructive" className="gap-2" onClick={() => setDeleteOpen(true)}>
               <MIcon name="delete" className="text-[20px]" />
               Delete
             </Button>
@@ -249,6 +271,20 @@ export function ProjectForm({ project }: { project?: Project }) {
           </section>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          if (!open && !deleteLoading) setDeleteOpen(false);
+        }}
+        title="Delete this project?"
+        description="The project and its case study will be removed from the site."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+        loading={deleteLoading}
+        onConfirm={executeDelete}
+      />
     </div>
   );
 }

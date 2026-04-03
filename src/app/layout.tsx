@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AppToaster } from "@/components/app-toaster";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,14 +15,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.variable} min-h-screen font-sans`}>{children}</body>
+      <body className={`${inter.variable} min-h-screen font-sans`} suppressHydrationWarning>
+        {children}
+        <AppToaster />
+      </body>
     </html>
   );
 }

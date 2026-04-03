@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-export default auth((req) => {
+export const proxy = auth((req) => {
   const isAdmin = req.nextUrl.pathname.startsWith("/admin");
   const isLogin = req.nextUrl.pathname === "/admin/login";
   if (!isAdmin) return NextResponse.next();

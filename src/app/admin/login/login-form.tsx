@@ -8,11 +8,11 @@ import { MIcon } from "@/components/m-icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 export function AdminLoginForm() {
   const search = useSearchParams();
   const callbackUrl = search.get("callbackUrl") ?? "/admin/dashboard";
-  const [err, setErr] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -24,8 +24,11 @@ export function AdminLoginForm() {
     const password = fd.get("password") as string;
     const res = await signIn("credentials", { email, password, redirect: false, callbackUrl });
     setLoading(false);
-    if (res?.ok) window.location.href = callbackUrl;
-    else setErr(true);
+    if (res?.ok) {
+      window.location.href = callbackUrl;
+    } else {
+      toast.error("Invalid email or password");
+    }
   }
 
   return (
@@ -71,7 +74,6 @@ export function AdminLoginForm() {
                 Forgot password?
               </span>
             </div>
-            {err && <p className="text-sm text-error">Invalid email or password.</p>}
             <button
               type="submit"
               disabled={loading}

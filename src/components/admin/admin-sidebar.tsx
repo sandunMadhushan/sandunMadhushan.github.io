@@ -10,6 +10,7 @@ const items = [
   { href: "/admin/projects", label: "Projects", icon: "inventory_2" },
   { href: "/admin/skills", label: "Skills", icon: "psychology" },
   { href: "/admin/about", label: "About", icon: "person" },
+  { href: "/admin/social", label: "Social links", icon: "share" },
   { href: "/admin/messages", label: "Messages", icon: "mail" },
 ];
 

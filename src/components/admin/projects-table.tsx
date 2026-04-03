@@ -3,24 +3,42 @@
 import NextImage from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { toast } from "sonner";
 
 export function ProjectsTable({ projects }: { projects: Project[] }) {
   const router = useRouter();
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   async function toggleFeatured(p: Project) {
-    await fetch(`/api/projects/${p.id}`, {
+    const res = await fetch(`/api/projects/${p.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ featured: !p.featured }),
     });
+    if (!res.ok) {
+      toast.error("Could not update featured state");
+      return;
+    }
+    toast.success(p.featured ? "Removed from featured" : "Marked as featured");
     router.refresh();
   }
 
-  async function remove(id: string) {
-    if (!confirm("Delete this project?")) return;
-    await fetch(`/api/projects/${id}`, { method: "DELETE" });
+  async function executeDelete() {
+    if (!deleteId) return;
+    setDeleteLoading(true);
+    const res = await fetch(`/api/projects/${deleteId}`, { method: "DELETE" });
+    setDeleteLoading(false);
+    if (!res.ok) {
+      toast.error("Could not delete project");
+      return;
+    }
+    toast.success("Project deleted");
+    setDeleteId(null);
     router.refresh();
   }
 
@@ -112,7 +130,7 @@ export function ProjectsTable({ projects }: { projects: Project[] }) {
                   <Link href={`/admin/projects/edit/${p.id}`} className="text-on-surface-variant hover:text-primary">
                     <MIcon name="edit" />
                   </Link>
-                  <button type="button" onClick={() => remove(p.id)} className="text-on-surface-variant hover:text-error">
+                  <button type="button" onClick={() => setDeleteId(p.id)} className="text-on-surface-variant hover:text-error">
                     <MIcon name="delete" />
                   </button>
                 </div>
@@ -126,6 +144,20 @@ export function ProjectsTable({ projects }: { projects: Project[] }) {
           Showing {projects.length} projects
         </span>
       </div>
+
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteLoading) setDeleteId(null);
+        }}
+        title="Delete this project?"
+        description="The project and its case study will be removed from the site."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+        loading={deleteLoading}
+        onConfirm={executeDelete}
+      />
     </div>
   );
 }

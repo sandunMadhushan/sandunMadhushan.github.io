@@ -37,6 +37,7 @@ async function main() {
   await prisma.project.deleteMany();
   await prisma.skill.deleteMany();
   await prisma.about.deleteMany();
+  await prisma.socialLink.deleteMany();
 
   await prisma.user.create({
     data: { email: adminEmail, password: hash },
@@ -193,6 +194,15 @@ async function main() {
 
   for (const s of skills) {
     await prisma.skill.create({ data: s });
+  }
+
+  const socialLinks = [
+    { platform: "github", url: "https://github.com/", sortOrder: 0 },
+    { platform: "linkedin", url: "https://www.linkedin.com/", sortOrder: 1 },
+    { platform: "facebook", url: "https://www.facebook.com/", sortOrder: 2 },
+  ];
+  for (const sl of socialLinks) {
+    await prisma.socialLink.create({ data: sl });
   }
 
   const projects = [

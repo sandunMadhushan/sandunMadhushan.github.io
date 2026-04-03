@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { MIcon } from "@/components/m-icon";
+import { toast } from "sonner";
 
 export function ContactForm() {
-  const [status, setStatus] = useState<"idle" | "loading" | "ok" | "err">("idle");
+  const [status, setStatus] = useState<"idle" | "loading">("idle");
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,10 +24,12 @@ export function ContactForm() {
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error();
-      setStatus("ok");
       e.currentTarget.reset();
+      toast.success("Message sent — I’ll get back to you soon.");
     } catch {
-      setStatus("err");
+      toast.error("Could not send message. Please try again.");
+    } finally {
+      setStatus("idle");
     }
   }
 
@@ -105,8 +108,6 @@ export function ContactForm() {
         Send Message
         <MIcon name="arrow_forward" />
       </button>
-      {status === "ok" && <p className="text-sm text-primary">Message sent. I&apos;ll get back to you soon.</p>}
-      {status === "err" && <p className="text-sm text-error">Something went wrong. Please try again.</p>}
     </form>
   );
 }

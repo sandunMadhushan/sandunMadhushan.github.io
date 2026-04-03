@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { IconFacebook, IconGithub, IconLinkedin } from "@/components/icons/social-brand-icons";
+import { SiteFooterSocialSection } from "@/components/public/public-social-blocks";
+import { getSocialLinks } from "@/lib/queries";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -9,14 +10,10 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ] as const;
 
-const social = [
-  { href: "https://github.com", label: "GitHub", Icon: IconGithub },
-  { href: "https://linkedin.com", label: "LinkedIn", Icon: IconLinkedin },
-  { href: "https://facebook.com", label: "Facebook", Icon: IconFacebook },
-] as const;
-
-export function SiteFooter() {
+export async function SiteFooter() {
   const year = new Date().getFullYear();
+  const socialLinks = await getSocialLinks();
+  const hasSocial = socialLinks.length > 0;
 
   return (
     <footer className="relative w-full overflow-hidden border-t border-outline-variant/10 bg-surface-container-low">
@@ -29,7 +26,9 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-[1440px] px-6 py-14 md:px-12 md:py-16">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10 lg:gap-y-14">
           {/* Brand */}
-          <div className="space-y-5 sm:col-span-2 lg:col-span-5">
+          <div
+            className={`space-y-5 sm:col-span-2 ${hasSocial ? "lg:col-span-5" : "lg:col-span-6"}`}
+          >
             <Link
               href="/"
               className="inline-flex text-2xl font-black tracking-tighter text-on-surface transition-opacity hover:opacity-90"
@@ -46,7 +45,7 @@ export function SiteFooter() {
           </div>
 
           {/* Site map */}
-          <div className="lg:col-span-3">
+          <div className={hasSocial ? "lg:col-span-3" : "lg:col-span-6"}>
             <h2 className="mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/50">
               Explore
             </h2>
@@ -65,29 +64,7 @@ export function SiteFooter() {
             </ul>
           </div>
 
-          {/* Social */}
-          <div className="lg:col-span-4">
-            <h2 className="mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/50">
-              Connect
-            </h2>
-            <ul className="flex max-w-xs flex-col gap-2">
-              {social.map(({ href, label, Icon }) => (
-                <li key={label}>
-                  <Link
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high/40 py-2 pl-2 pr-4 text-sm font-medium text-on-surface transition-all hover:border-primary-container/35 hover:bg-surface-container-high hover:text-primary-container"
-                  >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-surface-container-low text-primary">
-                      <Icon className="h-[18px] w-[18px]" />
-                    </span>
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <SiteFooterSocialSection links={socialLinks} />
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-outline-variant/10 pt-8 md:flex-row md:items-center md:justify-between md:pt-10">

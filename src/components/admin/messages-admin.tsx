@@ -4,15 +4,27 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Message } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
+import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { toast } from "sonner";
 
 export function MessagesAdmin({ messages }: { messages: Message[] }) {
   const router = useRouter();
   const [selected, setSelected] = useState<Message | null>(messages[0] ?? null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
-  async function remove(id: string) {
-    if (!confirm("Delete message?")) return;
-    await fetch(`/api/messages/${id}`, { method: "DELETE" });
-    if (selected?.id === id) setSelected(null);
+  async function executeDelete() {
+    if (!deleteId) return;
+    setDeleteLoading(true);
+    const res = await fetch(`/api/messages/${deleteId}`, { method: "DELETE" });
+    setDeleteLoading(false);
+    if (!res.ok) {
+      toast.error("Could not delete message");
+      return;
+    }
+    toast.success("Message deleted");
+    if (selected?.id === deleteId) setSelected(null);
+    setDeleteId(null);
     router.refresh();
   }
 
@@ -71,7 +83,7 @@ export function MessagesAdmin({ messages }: { messages: Message[] }) {
               </div>
               <button
                 type="button"
-                onClick={() => remove(selected.id)}
+                onClick={() => setDeleteId(selected.id)}
                 className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-error transition-all hover:bg-error-container/20"
               >
                 <MIcon name="delete" className="text-sm" />
@@ -113,6 +125,20 @@ export function MessagesAdmin({ messages }: { messages: Message[] }) {
           <div className="flex flex-1 items-center justify-center text-on-surface-variant">Select a message</div>
         )}
       </section>
+
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleteLoading) setDeleteId(null);
+        }}
+        title="Delete this message?"
+        description="This cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        destructive
+        loading={deleteLoading}
+        onConfirm={executeDelete}
+      />
     </div>
   );
 }

@@ -2,16 +2,15 @@ import NextImage from "next/image";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ContactForm } from "@/components/contact/contact-form";
-import { IconFacebook, IconGithub, IconLinkedin } from "@/components/icons/social-brand-icons";
 import { MIcon } from "@/components/m-icon";
-import Link from "next/link";
 import { resolvePortraitSrc } from "@/lib/site-constants";
-import { getAbout } from "@/lib/queries";
+import { getAbout, getSocialLinks } from "@/lib/queries";
+import { ContactSocialRow } from "@/components/public/public-social-blocks";
 
 export const revalidate = 30;
 
 export default async function ContactPage() {
-  const about = await getAbout();
+  const [about, socialLinks] = await Promise.all([getAbout(), getSocialLinks()]);
   const stats = (about?.stats as Record<string, unknown>) ?? {};
   const profile = resolvePortraitSrc(stats.profileImage as string | undefined);
 
@@ -65,38 +64,7 @@ export default async function ContactPage() {
                 </div>
               </div>
             </div>
-            <div>
-              <h3 className="mb-6 text-lg font-semibold">Follow Me</h3>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="https://github.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="GitHub"
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
-                >
-                  <IconGithub className="h-[18px] w-[18px]" />
-                </Link>
-                <Link
-                  href="https://linkedin.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn"
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
-                >
-                  <IconLinkedin className="h-[18px] w-[18px]" />
-                </Link>
-                <Link
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
-                >
-                  <IconFacebook className="h-[18px] w-[18px]" />
-                </Link>
-              </div>
-            </div>
+            <ContactSocialRow links={socialLinks} />
             <div className="rounded-xl border-l-2 border-primary-container bg-surface-container-lowest p-6">
               <p className="text-sm italic leading-relaxed text-on-surface-variant/80">
                 &quot;Design is not just what it looks like and feels like.
