@@ -15,7 +15,9 @@ export default async function AdminSkillsPage() {
       </section>
       <footer className="mt-24 w-full border-t border-[#e5e2e3]/10 bg-[#131314] px-12 py-20">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-8 md:flex-row">
-          <p className="text-lg leading-relaxed text-[#e5e2e3]/40">© {new Date().getFullYear()} The Digital Curator.</p>
+          <p className="text-lg leading-relaxed text-[#e5e2e3]/40">
+            © {new Date().getFullYear()} The Digital Curator.
+          </p>
           <div className="flex gap-12 text-[#e5e2e3]/40">
             <span>GitHub</span>
             <span>LinkedIn</span>

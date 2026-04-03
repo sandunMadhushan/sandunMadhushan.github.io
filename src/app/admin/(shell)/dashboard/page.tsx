@@ -6,7 +6,10 @@ import { getMessageCount, getProjects } from "@/lib/queries";
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
-  const [projects, msgCount] = await Promise.all([getProjects(), getMessageCount()]);
+  const [projects, msgCount] = await Promise.all([
+    getProjects(),
+    getMessageCount(),
+  ]);
 
   return (
     <>
@@ -20,8 +23,12 @@ export default async function AdminDashboardPage() {
               </span>
               <MIcon name="architecture" className="text-primary-fixed-dim" />
             </div>
-            <div className="text-3xl font-extrabold tracking-tighter text-on-surface">{projects.length}</div>
-            <div className="mt-2 text-[12px] font-medium text-primary">Portfolio entries</div>
+            <div className="text-3xl font-extrabold tracking-tighter text-on-surface">
+              {projects.length}
+            </div>
+            <div className="mt-2 text-[12px] font-medium text-primary">
+              Portfolio entries
+            </div>
           </div>
           <div className="group rounded-lg bg-surface-container-low p-6 transition-all duration-300 hover:bg-surface-container">
             <div className="mb-4 flex items-start justify-between">
@@ -30,8 +37,12 @@ export default async function AdminDashboardPage() {
               </span>
               <MIcon name="chat_bubble" className="text-primary-fixed-dim" />
             </div>
-            <div className="text-3xl font-extrabold tracking-tighter text-on-surface">{msgCount}</div>
-            <div className="mt-2 text-[12px] font-medium text-on-surface-variant/40">Inbox</div>
+            <div className="text-3xl font-extrabold tracking-tighter text-on-surface">
+              {msgCount}
+            </div>
+            <div className="mt-2 text-[12px] font-medium text-on-surface-variant/40">
+              Inbox
+            </div>
           </div>
           <div className="group rounded-lg bg-surface-container-low p-6 transition-all duration-300 hover:bg-surface-container">
             <div className="mb-4 flex items-start justify-between">
@@ -40,8 +51,12 @@ export default async function AdminDashboardPage() {
               </span>
               <MIcon name="check_circle" className="text-tertiary" />
             </div>
-            <div className="text-3xl font-extrabold tracking-tighter text-on-surface">Live</div>
-            <div className="mt-2 text-[12px] font-medium text-on-surface-variant/40">Dynamic content</div>
+            <div className="text-3xl font-extrabold tracking-tighter text-on-surface">
+              Live
+            </div>
+            <div className="mt-2 text-[12px] font-medium text-on-surface-variant/40">
+              Dynamic content
+            </div>
           </div>
           <div className="group rounded-lg bg-surface-container-low p-6 transition-all duration-300 hover:bg-surface-container">
             <div className="mb-4 flex items-start justify-between">
@@ -53,7 +68,9 @@ export default async function AdminDashboardPage() {
             <div className="text-3xl font-extrabold tracking-tighter text-on-surface">
               {projects.filter((p) => p.featured).length}
             </div>
-            <div className="mt-2 text-[12px] font-medium text-primary">Spotlight projects</div>
+            <div className="mt-2 text-[12px] font-medium text-primary">
+              Spotlight projects
+            </div>
           </div>
         </div>
 
@@ -61,7 +78,9 @@ export default async function AdminDashboardPage() {
           <div className="space-y-6 lg:col-span-1">
             <div className="group relative overflow-hidden rounded-xl bg-surface-container p-8">
               <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary-container/20 blur-[80px] transition-all group-hover:bg-primary-container/30" />
-              <h2 className="mb-6 text-xl font-bold tracking-tight">Quick Actions</h2>
+              <h2 className="mb-6 text-xl font-bold tracking-tight">
+                Quick Actions
+              </h2>
               <div className="space-y-3">
                 <Link
                   href="/admin/projects/new"
@@ -98,14 +117,20 @@ export default async function AdminDashboardPage() {
                 <div className="h-full w-[94%] bg-primary-container" />
               </div>
               <p className="mt-4 text-[13px] leading-relaxed text-on-surface-variant">
-                Portfolio content is database-driven and ready to scale with your traffic.
+                Portfolio content is database-driven and ready to scale with
+                your traffic.
               </p>
             </div>
           </div>
           <div className="rounded-xl bg-surface-container p-8 lg:col-span-2">
             <div className="mb-10 flex items-center justify-between">
-              <h2 className="text-xl font-bold tracking-tight">Recent Projects</h2>
-              <Link href="/admin/projects" className="text-[12px] font-bold uppercase tracking-widest text-primary hover:underline">
+              <h2 className="text-xl font-bold tracking-tight">
+                Recent Projects
+              </h2>
+              <Link
+                href="/admin/projects"
+                className="text-[12px] font-bold uppercase tracking-widest text-primary hover:underline"
+              >
                 View all
               </Link>
             </div>
@@ -127,7 +152,9 @@ export default async function AdminDashboardPage() {
                         {p.featured ? "Featured" : "Standard"}
                       </span>
                     </div>
-                    <p className="mt-1 line-clamp-1 text-sm text-on-surface-variant">{p.description}</p>
+                    <p className="mt-1 line-clamp-1 text-sm text-on-surface-variant">
+                      {p.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -139,16 +166,20 @@ export default async function AdminDashboardPage() {
           <span className="mb-4 block text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
             Editorial Insight
           </span>
-          <h2 className="mb-4 text-3xl font-extrabold tracking-tighter">The Curator&apos;s Perspective</h2>
+          <h2 className="mb-4 text-3xl font-extrabold tracking-tighter">
+            The Curator&apos;s Perspective
+          </h2>
           <p className="max-w-2xl text-lg font-light leading-relaxed text-on-surface-variant/80">
-            Keep project descriptions sharp, refresh featured work seasonally, and route contact messages from the inbox
-            into your workflow.
+            Keep project descriptions sharp, refresh featured work seasonally,
+            and route contact messages from the inbox into your workflow.
           </p>
         </div>
       </section>
       <footer className="mt-12 w-full bg-[#131314] px-12 py-20">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-8 md:flex-row">
-          <p className="text-[#e5e2e3]/40">© {new Date().getFullYear()} The Digital Curator.</p>
+          <p className="text-[#e5e2e3]/40">
+            © {new Date().getFullYear()} The Digital Curator.
+          </p>
           <div className="flex gap-12">
             <span className="text-[#e5e2e3]/40">GitHub</span>
             <span className="text-[#e5e2e3]/40">LinkedIn</span>

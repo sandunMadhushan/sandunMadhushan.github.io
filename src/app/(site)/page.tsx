@@ -21,7 +21,8 @@ export default async function HomePage() {
     (stats.heroTagline as string) ??
     "Full-Stack Developer building modern, scalable web applications with editorial precision.";
   const profileImage = (stats.profileImage as string) || "/vercel.svg";
-  const homeAboutHeadline = (stats.homeAboutHeadline as string) ?? "Crafting code like architecture.";
+  const homeAboutHeadline =
+    (stats.homeAboutHeadline as string) ?? "Crafting code like architecture.";
   const homeAboutBody =
     (stats.homeAboutBody as string) ??
     "I am a Full-Stack Developer based in Colombo, obsessed with the intersection of clean code and editorial design.";
@@ -33,22 +34,31 @@ export default async function HomePage() {
 
   let showcase = featured;
   if (showcase.length < 3) {
-    const rest = allProjects.filter((p) => !showcase.find((f) => f.id === p.id));
+    const rest = allProjects.filter(
+      (p) => !showcase.find((f) => f.id === p.id),
+    );
     showcase = [...showcase, ...rest].slice(0, 3);
   }
 
   return (
     <PageFade>
       <SiteNav active="/" />
-      <main className="pt-24">
-        <section className="mx-auto flex min-h-[819px] max-w-[1440px] flex-col items-center gap-16 overflow-hidden px-6 py-20 md:grid md:grid-cols-2 md:px-12">
-          <div className="z-10 space-y-8">
+      <main className="pt-0">
+        <section className="relative isolate box-border flex min-h-[100dvh] w-full flex-col justify-center overflow-x-clip pt-14 pb-8 md:pt-16 md:pb-10">
+          {/* Full-bleed indigo ambient — not clipped by max-width container */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-1/2 w-screen max-w-[100vw] -translate-x-1/2 bg-[radial-gradient(ellipse_75%_90%_at_72%_45%,rgba(79,70,229,0.32),rgba(79,70,229,0.09)_42%,transparent_68%)]"
+          />
+          <div className="relative z-10 mx-auto grid w-full max-w-[1440px] grid-cols-1 items-center gap-12 px-6 md:grid-cols-2 md:gap-16 md:px-12">
+          <div className="z-10 space-y-6">
             <div className="label-md inline-flex items-center gap-2 rounded-full bg-surface-container-high px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
               <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
               Available for New Projects
             </div>
             <h1 className="text-6xl font-extrabold leading-[1.1] tracking-tighter text-on-surface md:text-7xl">
-              Sandun <br /> <span className="text-primary-container">Madhushan</span>
+              Sandun <br />{" "}
+              <span className="text-primary-container">Madhushan</span>
             </h1>
             <p className="max-w-lg text-xl font-medium leading-relaxed text-on-surface-variant md:text-2xl">
               {tagline}
@@ -68,36 +78,51 @@ export default async function HomePage() {
               </LinkNext>
             </div>
           </div>
-          <div className="relative flex items-center justify-center">
-            <div className="absolute inset-0 scale-150 rounded-full bg-primary-container/20 blur-[120px]" />
+          <div className="relative flex w-full items-center justify-center md:justify-end md:-translate-x-5 lg:-translate-x-8">
+            {/* Soft indigo bloom behind the portrait (matches reference glow) */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[min(92vw,520px)] w-[min(78vw,420px)] -translate-x-1/2 -translate-y-1/2 scale-110 rounded-full bg-primary-container/25 blur-[118px] md:scale-125"
+            />
             <HeroFloat>
-              <div className="relative group">
-                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primary-container via-secondary to-primary-container opacity-30 blur transition duration-1000 group-hover:opacity-60" />
-                <div className="relative overflow-hidden rounded-3xl bg-surface-container-low p-2">
+              <div className="group relative z-10 w-full max-w-[400px] shrink-0">
+                {/* Gradient halo ring */}
+                <div className="absolute -inset-[3px] rounded-[1.35rem] bg-gradient-to-r from-primary-container via-secondary to-primary-container opacity-40 blur-[2px] transition duration-1000 group-hover:opacity-65" />
+                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primary-container via-secondary to-primary-container opacity-25 blur-md transition duration-1000 group-hover:opacity-45" />
+                {/* Dark frame + lifted indigo shadow */}
+                <div className="relative overflow-hidden rounded-3xl bg-surface-container-low p-2 shadow-[0_0_58px_-12px_rgba(79,70,229,0.5),0_28px_60px_-18px_rgba(0,0,0,0.55)] ring-1 ring-white/[0.07]">
                   <NextImage
                     src={profileImage}
                     alt="Sandun Madhushan"
                     width={400}
                     height={500}
-                    className="h-[400px] w-[min(100%,400px)] rounded-2xl object-cover grayscale transition-all duration-700 hover:scale-[1.02] hover:grayscale-0 md:h-[500px]"
+                    className="h-[min(400px,88vw)] w-full max-w-[400px] rounded-2xl object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0 md:h-[500px]"
                     priority
                     unoptimized={profileImage.startsWith("http")}
                   />
                 </div>
-                <div className="glass-panel absolute -right-6 -top-6 flex items-center gap-3 rounded-xl border border-outline-variant/20 p-4 shadow-2xl">
-                  <MIcon name="javascript" className="text-3xl text-primary" />
-                  <span className="text-sm font-bold tracking-tight">React.js</span>
+                {/* Floating skill chips — overlap corners like the mock */}
+                <div className="hero-badge absolute -right-3 -top-3 z-20 flex items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5 shadow-2xl md:-right-5 md:-top-5 md:gap-3 md:px-4 md:py-3.5">
+                  <MIcon name="javascript" className="text-2xl text-primary md:text-3xl" />
+                  <span className="text-xs font-bold tracking-tight text-on-surface md:text-sm">
+                    React.js
+                  </span>
                 </div>
-                <div className="glass-panel absolute top-1/2 -left-12 flex items-center gap-3 rounded-xl border border-outline-variant/20 p-4 shadow-2xl max-md:hidden">
-                  <MIcon name="terminal" className="text-3xl text-tertiary" />
-                  <span className="text-sm font-bold tracking-tight">TypeScript</span>
+                <div className="hero-badge absolute left-0 top-1/2 z-20 flex -translate-x-[12%] -translate-y-1/2 items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5 shadow-2xl sm:-translate-x-[18%] md:-left-12 md:translate-x-0 md:px-4 md:py-3.5">
+                  <MIcon name="terminal" className="text-2xl text-tertiary md:text-3xl" />
+                  <span className="text-xs font-bold tracking-tight text-on-surface md:text-sm">
+                    TypeScript
+                  </span>
                 </div>
-                <div className="glass-panel absolute -bottom-8 right-12 flex items-center gap-3 rounded-xl border border-outline-variant/20 p-4 shadow-2xl max-md:hidden">
-                  <MIcon name="layers" className="text-3xl text-secondary" />
-                  <span className="text-sm font-bold tracking-tight">Full Stack</span>
+                <div className="hero-badge absolute -bottom-5 right-6 z-20 flex items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5 shadow-2xl md:-bottom-7 md:right-10 md:gap-3 md:px-4 md:py-3.5">
+                  <MIcon name="layers" className="text-2xl text-primary md:text-3xl" />
+                  <span className="text-xs font-bold tracking-tight text-on-surface md:text-sm">
+                    Full Stack
+                  </span>
                 </div>
               </div>
             </HeroFloat>
+          </div>
           </div>
         </section>
 
@@ -106,8 +131,12 @@ export default async function HomePage() {
             <div className="mx-auto max-w-[1440px] px-6 md:px-12">
               <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
                 <div className="space-y-4">
-                  <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Portfolio Selection</h2>
-                  <h3 className="text-4xl font-bold tracking-tight">Featured Projects</h3>
+                  <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">
+                    Portfolio Selection
+                  </h2>
+                  <h3 className="text-4xl font-bold tracking-tight">
+                    Featured Projects
+                  </h3>
                 </div>
                 <LinkNext
                   href="/projects"
@@ -138,7 +167,9 @@ export default async function HomePage() {
                         {p.category}
                       </span>
                       <h4 className="text-2xl font-bold">{p.title}</h4>
-                      <p className="text-sm leading-relaxed text-on-surface-variant">{p.description}</p>
+                      <p className="text-sm leading-relaxed text-on-surface-variant">
+                        {p.description}
+                      </p>
                     </div>
                   </LinkNext>
                 ))}
@@ -151,13 +182,21 @@ export default async function HomePage() {
           <section className="mx-auto max-w-[1440px] px-6 py-32 md:px-12">
             <div className="grid grid-cols-1 items-center gap-20 lg:grid-cols-2">
               <div className="space-y-8">
-                <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">About the Developer</h2>
-                <h3 className="text-4xl font-extrabold tracking-tight">{homeAboutHeadline}</h3>
-                <p className="text-lg leading-relaxed text-on-surface-variant">{homeAboutBody}</p>
+                <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">
+                  About the Developer
+                </h2>
+                <h3 className="text-4xl font-extrabold tracking-tight">
+                  {homeAboutHeadline}
+                </h3>
+                <p className="text-lg leading-relaxed text-on-surface-variant">
+                  {homeAboutBody}
+                </p>
                 <div className="grid grid-cols-3 gap-8 pt-6">
                   {homeStats.map((s) => (
                     <div key={s.label}>
-                      <div className="mb-1 text-4xl font-bold text-primary">{s.value}</div>
+                      <div className="mb-1 text-4xl font-bold text-primary">
+                        {s.value}
+                      </div>
                       <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface/50">
                         {s.label}
                       </div>
@@ -171,9 +210,21 @@ export default async function HomePage() {
                 </div>
                 <div className="space-y-6">
                   {[
-                    { icon: "bolt", t: "Performance First", d: "Optimized Core Web Vitals for every build." },
-                    { icon: "shield", t: "Scalable Architecture", d: "Clean, maintainable, and modular codebase." },
-                    { icon: "palette", t: "Design-Led Development", d: "Pixel-perfect translation from design to code." },
+                    {
+                      icon: "bolt",
+                      t: "Performance First",
+                      d: "Optimized Core Web Vitals for every build.",
+                    },
+                    {
+                      icon: "shield",
+                      t: "Scalable Architecture",
+                      d: "Clean, maintainable, and modular codebase.",
+                    },
+                    {
+                      icon: "palette",
+                      t: "Design-Led Development",
+                      d: "Pixel-perfect translation from design to code.",
+                    },
                   ].map((x) => (
                     <div
                       key={x.t}
@@ -200,7 +251,8 @@ export default async function HomePage() {
                 Ready to start a project?
               </h2>
               <p className="mx-auto max-w-2xl text-xl opacity-80 text-on-primary-container">
-                Let&apos;s collaborate to build something exceptional — SaaS, e-commerce, or custom web apps.
+                Let&apos;s collaborate to build something exceptional — SaaS,
+                e-commerce, or custom web apps.
               </p>
               <LinkNext
                 href="/contact"

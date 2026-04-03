@@ -60,7 +60,9 @@ export default async function AdminProjectsPage() {
       </section>
       <footer className="w-full border-t border-[#e5e2e3]/10 bg-[#131314] px-12 py-20">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-8 md:flex-row">
-          <div className="text-sm text-on-surface-variant/40">© {new Date().getFullYear()} The Digital Curator.</div>
+          <div className="text-sm text-on-surface-variant/40">
+            © {new Date().getFullYear()} The Digital Curator.
+          </div>
           <div className="flex gap-8 text-sm text-[#e5e2e3]/40">
             <span>GitHub</span>
             <span>LinkedIn</span>

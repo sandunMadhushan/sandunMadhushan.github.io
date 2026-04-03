@@ -41,6 +41,13 @@
   backdrop-filter: blur(24px);
 }
 
+/* Hero portrait floating skill chips — darker glass, stronger blur */
+.hero-badge {
+  background: rgba(22, 22, 24, 0.72);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
 .glass-card {
   background: rgba(53, 52, 54, 0.4);
   -webkit-backdrop-filter: blur(24px);
@@ -48,7 +55,11 @@
 }
 
 .material-symbols-outlined {
-  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
 }
 
 .ghost-border {

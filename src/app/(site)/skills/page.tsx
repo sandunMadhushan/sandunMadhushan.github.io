@@ -24,9 +24,13 @@ const iconFor = (name: string) => {
 export default async function SkillsPage() {
   const [skills, about] = await Promise.all([getSkills(), getAbout()]);
   const stats = (about?.stats as Record<string, unknown>) ?? {};
-  const cta = (stats.ctaSpecialization as string) ?? "AI integration and modern full-stack delivery.";
+  const cta =
+    (stats.ctaSpecialization as string) ??
+    "AI integration and modern full-stack delivery.";
 
-  const presentation = skills.filter((s) => s.category === "Frontend" || s.category === "Languages");
+  const presentation = skills.filter(
+    (s) => s.category === "Frontend" || s.category === "Languages",
+  );
   const backend = skills.filter((s) => s.category === "Backend");
   const database = skills.filter((s) => s.category === "Database");
   const tools = skills.filter((s) => s.category === "Tools");
@@ -41,7 +45,8 @@ export default async function SkillsPage() {
             <span className="text-primary-container">Capabilities</span>
           </h1>
           <p className="max-w-2xl text-lg leading-[1.6] text-on-surface-variant">
-            A curated assembly of technical proficiencies developed through architecting high-performance digital systems.
+            A curated assembly of technical proficiencies developed through
+            architecting high-performance digital systems.
           </p>
         </header>
 
@@ -53,7 +58,9 @@ export default async function SkillsPage() {
                   <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
                     01 / Presentation Layer
                   </span>
-                  <h2 className="text-2xl font-bold tracking-tight">Frontend &amp; Languages</h2>
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    Frontend &amp; Languages
+                  </h2>
                 </div>
                 <MIcon name="devices" className="text-4xl text-primary/40" />
               </div>
@@ -65,11 +72,18 @@ export default async function SkillsPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-container-highest">
-                            <MIcon name={s.icon || iconFor(s.name)} className="text-primary" />
+                            <MIcon
+                              name={s.icon || iconFor(s.name)}
+                              className="text-primary"
+                            />
                           </div>
-                          <span className="text-lg font-semibold">{s.name}</span>
+                          <span className="text-lg font-semibold">
+                            {s.name}
+                          </span>
                         </div>
-                        <span className="font-mono text-sm text-primary">{pct}%</span>
+                        <span className="font-mono text-sm text-primary">
+                          {pct}%
+                        </span>
                       </div>
                       <div className="h-[2px] w-full overflow-hidden rounded-full bg-surface-container-highest">
                         <div
@@ -87,7 +101,9 @@ export default async function SkillsPage() {
               <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
                 02 / Logic
               </span>
-              <h2 className="mb-8 text-2xl font-bold tracking-tight">Backend Core</h2>
+              <h2 className="mb-8 text-2xl font-bold tracking-tight">
+                Backend Core
+              </h2>
               <div className="space-y-8">
                 {backend.map((s) => (
                   <div key={s.id} className="flex items-center gap-6">
@@ -97,7 +113,9 @@ export default async function SkillsPage() {
                     />
                     <div>
                       <p className="font-semibold">{s.name}</p>
-                      <p className="text-sm text-on-surface-variant">{s.description ?? "Production APIs"}</p>
+                      <p className="text-sm text-on-surface-variant">
+                        {s.description ?? "Production APIs"}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -108,14 +126,18 @@ export default async function SkillsPage() {
               <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
                 03 / Persistence
               </span>
-              <h2 className="mb-6 text-xl font-bold tracking-tight">Database Systems</h2>
+              <h2 className="mb-6 text-xl font-bold tracking-tight">
+                Database Systems
+              </h2>
               <ul className="space-y-4">
                 {database.map((s) => (
                   <li
                     key={s.id}
                     className="flex items-center justify-between rounded-lg bg-surface-container p-4"
                   >
-                    <span className="font-medium text-on-surface">{s.name}</span>
+                    <span className="font-medium text-on-surface">
+                      {s.name}
+                    </span>
                     <MIcon name="database" className="text-primary" />
                   </li>
                 ))}
@@ -124,8 +146,12 @@ export default async function SkillsPage() {
 
             <section className="glass-card rounded-xl p-8 md:col-span-8">
               <div className="mb-8 flex items-center justify-between">
-                <h2 className="text-xl font-bold tracking-tight">The Digital Workbench</h2>
-                <span className="font-mono text-sm text-on-surface-variant">Infrastructure &amp; Workflow</span>
+                <h2 className="text-xl font-bold tracking-tight">
+                  The Digital Workbench
+                </h2>
+                <span className="font-mono text-sm text-on-surface-variant">
+                  Infrastructure &amp; Workflow
+                </span>
               </div>
               <div className="flex flex-wrap gap-4">
                 {tools.map((s) => (
@@ -133,7 +159,10 @@ export default async function SkillsPage() {
                     key={s.id}
                     className="flex cursor-default items-center gap-3 rounded-lg border border-outline-variant/10 bg-surface-container-highest px-6 py-3 transition-colors hover:border-primary-container/50"
                   >
-                    <MIcon name={s.icon || iconFor(s.name)} className="text-primary" />
+                    <MIcon
+                      name={s.icon || iconFor(s.name)}
+                      className="text-primary"
+                    />
                     <span className="text-sm font-medium">{s.name}</span>
                   </div>
                 ))}
@@ -145,7 +174,9 @@ export default async function SkillsPage() {
         <ScrollReveal>
           <div className="relative mt-24 flex flex-col items-center justify-between overflow-hidden rounded-xl bg-gradient-to-r from-primary-container to-[#3323cc] p-12 md:flex-row">
             <div className="relative z-10 mb-8 text-center md:mb-0 md:text-left">
-              <h3 className="mb-4 text-3xl font-black tracking-tighter text-on-primary">Current Specialization</h3>
+              <h3 className="mb-4 text-3xl font-black tracking-tighter text-on-primary">
+                Current Specialization
+              </h3>
               <p className="max-w-lg text-on-primary/80">{cta}</p>
             </div>
             <div className="relative z-10">

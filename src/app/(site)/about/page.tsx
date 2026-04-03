@@ -19,25 +19,30 @@ export default async function AboutPage() {
   const about = await getAbout();
   const stats = (about?.stats as Record<string, unknown>) ?? {};
   const headline =
-    (stats.aboutHeadline as string) ?? "Crafting digital landscapes with surgical precision.";
+    (stats.aboutHeadline as string) ??
+    "Crafting digital landscapes with surgical precision.";
   const intro = (stats.aboutIntro as string[]) ?? [about?.content ?? ""];
   const portrait =
     (stats.aboutPortrait as string) ??
     "https://lh3.googleusercontent.com/aida-public/AB6AXuClJpvBYdqCFJ9Vz9cQWM928ui3MwViPKGfXbmdMGtXDZ_vteOLztuE9HOR-UMqcIEP3x4PGnyAGsR0rCV41AX-vKedlumb2Bho3KdoPH3Xc9eD5RXDyLkI0nfdw26N2dpN9Ufa5J7M5NWazDiJF_ohA-O3QOfT8ch9mQvD_QkDz7w8nRB5eJJRrMrbytdelKx_Mv5K0byqKh_i494Vx-im4a8sXBt3AgBO5J67jQhUhnVA-yBy4GVpI-ahvYBQZ0yE7ixzfjwQqw";
-  const statCards =
-    (stats.statCards as { value: string; label: string; icon: string }[]) ?? [
-      { value: "6+", label: "Projects Orchestrated", icon: "terminal" },
-      { value: "10", label: "Technologies Mastered", icon: "verified" },
-      { value: "2+", label: "Years of Experience", icon: "history_edu" },
-    ];
+  const statCards = (stats.statCards as {
+    value: string;
+    label: string;
+    icon: string;
+  }[]) ?? [
+    { value: "6+", label: "Projects Orchestrated", icon: "terminal" },
+    { value: "10", label: "Technologies Mastered", icon: "verified" },
+    { value: "2+", label: "Years of Experience", icon: "history_edu" },
+  ];
   const timeline = (stats.timeline as TimelineItem[]) ?? [];
-  const skillArtifacts =
-    (stats.skillArtifacts as { name: string; icon: string }[]) ??
-    [
-      { name: "TypeScript", icon: "code" },
-      { name: "Tailwind", icon: "layers" },
-      { name: "PostgreSQL", icon: "database" },
-    ];
+  const skillArtifacts = (stats.skillArtifacts as {
+    name: string;
+    icon: string;
+  }[]) ?? [
+    { name: "TypeScript", icon: "code" },
+    { name: "Tailwind", icon: "layers" },
+    { name: "PostgreSQL", icon: "database" },
+  ];
 
   return (
     <PageFade>
@@ -86,10 +91,18 @@ export default async function AboutPage() {
                   key={s.label}
                   className="group flex h-64 flex-col justify-between rounded-xl bg-surface-container-low p-10 transition-colors duration-500 hover:bg-surface-container"
                 >
-                  <MIcon name={s.icon} className="text-4xl text-primary" filled />
+                  <MIcon
+                    name={s.icon}
+                    className="text-4xl text-primary"
+                    filled
+                  />
                   <div>
-                    <h3 className="mb-2 text-5xl font-black tracking-tighter">{s.value}</h3>
-                    <p className="font-medium tracking-tight text-on-surface-variant">{s.label}</p>
+                    <h3 className="mb-2 text-5xl font-black tracking-tighter">
+                      {s.value}
+                    </h3>
+                    <p className="font-medium tracking-tight text-on-surface-variant">
+                      {s.label}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -137,8 +150,12 @@ export default async function AboutPage() {
                         <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
                           {item.period}
                         </span>
-                        <h4 className="mb-4 text-2xl font-bold">{item.title}</h4>
-                        <p className="max-w-md leading-relaxed text-on-surface-variant">{item.body}</p>
+                        <h4 className="mb-4 text-2xl font-bold">
+                          {item.title}
+                        </h4>
+                        <p className="max-w-md leading-relaxed text-on-surface-variant">
+                          {item.body}
+                        </p>
                       </div>
                     </>
                   ) : (
@@ -147,7 +164,9 @@ export default async function AboutPage() {
                         <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
                           {item.period}
                         </span>
-                        <h4 className="mb-4 text-2xl font-bold">{item.title}</h4>
+                        <h4 className="mb-4 text-2xl font-bold">
+                          {item.title}
+                        </h4>
                         <p
                           className={`max-w-md leading-relaxed text-on-surface-variant ${item.image ? "md:ml-auto" : ""}`}
                         >
@@ -188,7 +207,9 @@ export default async function AboutPage() {
                   <div className="flex h-16 w-16 items-center justify-center rounded-lg glass-card">
                     <MIcon name={s.icon} className="text-3xl" />
                   </div>
-                  <span className="text-[0.75rem] font-bold uppercase tracking-widest">{s.name}</span>
+                  <span className="text-[0.75rem] font-bold uppercase tracking-widest">
+                    {s.name}
+                  </span>
                 </div>
               ))}
             </div>
