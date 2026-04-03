@@ -18,7 +18,6 @@ export function AdminLoginForm() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    setErr(false);
     const fd = new FormData(e.currentTarget);
     const email = fd.get("email") as string;
     const password = fd.get("password") as string;

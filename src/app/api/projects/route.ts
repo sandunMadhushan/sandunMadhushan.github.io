@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { optionalJson } from "@/lib/prisma-json";
 import { requireAdmin } from "@/lib/api-auth";
 import { validateProjectBody } from "@/lib/project-validation";
 
@@ -18,8 +19,8 @@ export async function POST(req: Request) {
   const project = await prisma.project.create({
     data: {
       ...v.data,
-      ...(challenges !== undefined ? { challenges } : {}),
-      ...(results !== undefined ? { results } : {}),
+      ...(challenges !== undefined ? { challenges: optionalJson(challenges) } : {}),
+      ...(results !== undefined ? { results: optionalJson(results) } : {}),
     },
   });
   return NextResponse.json(project);
