@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/api-auth";
+import { validateProjectBody } from "@/lib/project-validation";
 
 export async function GET() {
   const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } });
@@ -11,38 +12,14 @@ export async function POST(req: Request) {
   const admin = await requireAdmin();
   if ("error" in admin) return admin.error;
   const body = await req.json();
-  const {
-    title,
-    slug,
-    description,
-    content,
-    technologies,
-    images,
-    githubLink,
-    liveLink,
-    featured,
-    category,
-    cardIcon,
-    features,
-    challenges,
-    results,
-  } = body;
+  const v = validateProjectBody(body);
+  if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
+  const { challenges, results } = body as { challenges?: unknown; results?: unknown };
   const project = await prisma.project.create({
     data: {
-      title,
-      slug,
-      description,
-      content: content ?? "",
-      technologies: technologies ?? [],
-      images: images ?? [],
-      githubLink: githubLink || null,
-      liveLink: liveLink || null,
-      featured: Boolean(featured),
-      category: category ?? "Web",
-      cardIcon: cardIcon ?? "code",
-      features: features ?? [],
-      challenges: challenges ?? undefined,
-      results: results ?? undefined,
+      ...v.data,
+      ...(challenges !== undefined ? { challenges } : {}),
+      ...(results !== undefined ? { results } : {}),
     },
   });
   return NextResponse.json(project);

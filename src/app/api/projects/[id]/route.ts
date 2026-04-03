@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/api-auth";
+import { validateProjectBody } from "@/lib/project-validation";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -16,38 +17,14 @@ export async function PATCH(req: Request, ctx: Ctx) {
   if ("error" in admin) return admin.error;
   const { id } = await ctx.params;
   const body = await req.json();
-  const {
-    title,
-    slug,
-    description,
-    content,
-    technologies,
-    images,
-    githubLink,
-    liveLink,
-    featured,
-    category,
-    cardIcon,
-    features,
-    challenges,
-    results,
-  } = body;
+  const v = validateProjectBody(body);
+  if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
+  const { challenges, results } = body as { challenges?: unknown; results?: unknown };
   try {
     const project = await prisma.project.update({
       where: { id },
       data: {
-        ...(title !== undefined && { title }),
-        ...(slug !== undefined && { slug }),
-        ...(description !== undefined && { description }),
-        ...(content !== undefined && { content }),
-        ...(technologies !== undefined && { technologies }),
-        ...(images !== undefined && { images }),
-        ...(githubLink !== undefined && { githubLink: githubLink || null }),
-        ...(liveLink !== undefined && { liveLink: liveLink || null }),
-        ...(featured !== undefined && { featured: Boolean(featured) }),
-        ...(category !== undefined && { category }),
-        ...(cardIcon !== undefined && { cardIcon }),
-        ...(features !== undefined && { features }),
+        ...v.data,
         ...(challenges !== undefined && { challenges }),
         ...(results !== undefined && { results }),
       },

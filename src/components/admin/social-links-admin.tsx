@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { SOCIAL_PLATFORM_OPTIONS } from "@/lib/social-platforms";
 import { SocialBrandGlyph } from "@/components/public/social-brand-glyph";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { AdminFieldLabel } from "@/components/admin/field-label";
 import { toast } from "sonner";
 
 export function SocialLinksAdmin({ links }: { links: SocialLink[] }) {
@@ -92,12 +93,12 @@ export function SocialLinksAdmin({ links }: { links: SocialLink[] }) {
         <h3 className="mb-4 text-lg font-semibold text-on-surface">Add link</h3>
         <form onSubmit={add} className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="sm:w-44">
-            <label
+            <AdminFieldLabel
               htmlFor="social-add-platform"
               className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
             >
               Platform
-            </label>
+            </AdminFieldLabel>
             <select
               id="social-add-platform"
               value={platform}
@@ -112,10 +113,21 @@ export function SocialLinksAdmin({ links }: { links: SocialLink[] }) {
             </select>
           </div>
           <div className="min-w-0 flex-1">
-            <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <AdminFieldLabel
+              htmlFor="social-add-url"
+              required
+              className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            >
               URL
-            </label>
-            <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" required />
+            </AdminFieldLabel>
+            <Input
+              id="social-add-url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              placeholder="https://…"
+              required
+              aria-required
+            />
           </div>
           <Button type="submit">Add</Button>
         </form>

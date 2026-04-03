@@ -9,13 +9,32 @@ export async function PATCH(req: Request, ctx: Ctx) {
   if ("error" in admin) return admin.error;
   const { id } = await ctx.params;
   const body = await req.json();
+
+  let nameTrimmed: string | undefined;
+  if (body.name !== undefined) {
+    nameTrimmed = typeof body.name === "string" ? body.name.trim() : "";
+    if (!nameTrimmed) return NextResponse.json({ error: "Skill name is required." }, { status: 400 });
+  }
+  let descriptionTrimmed: string | undefined;
+  if (body.description !== undefined) {
+    descriptionTrimmed = typeof body.description === "string" ? body.description.trim() : "";
+    if (!descriptionTrimmed) return NextResponse.json({ error: "Description is required." }, { status: 400 });
+  }
+
+  const proficiency =
+    body.proficiency === undefined
+      ? undefined
+      : typeof body.proficiency === "number" && Number.isFinite(body.proficiency)
+        ? body.proficiency
+        : null;
+
   const skill = await prisma.skill.update({
     where: { id },
     data: {
-      ...(body.name !== undefined && { name: body.name }),
+      ...(nameTrimmed !== undefined && { name: nameTrimmed }),
       ...(body.category !== undefined && { category: body.category }),
-      ...(body.description !== undefined && { description: body.description }),
-      ...(body.proficiency !== undefined && { proficiency: body.proficiency }),
+      ...(descriptionTrimmed !== undefined && { description: descriptionTrimmed }),
+      ...(body.proficiency !== undefined && { proficiency }),
       ...(body.icon !== undefined && { icon: body.icon }),
     },
   });

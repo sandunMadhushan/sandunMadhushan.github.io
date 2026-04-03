@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { AdminFieldLabel } from "@/components/admin/field-label";
 import { toast } from "sonner";
 
 const CATS = ["Frontend", "Backend", "Languages", "Database", "Tools"];
@@ -23,6 +24,14 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
 
   async function add(e: React.FormEvent) {
     e.preventDefault();
+    if (!name.trim()) {
+      toast.error("Skill name is required.");
+      return;
+    }
+    if (!description.trim()) {
+      toast.error("Description is required.");
+      return;
+    }
     const res = await fetch("/api/skills", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -95,16 +104,27 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
             <form onSubmit={add} className="grid grid-cols-1 gap-10 md:grid-cols-2">
               <div className="space-y-8">
                 <div>
-                  <label className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">
+                  <AdminFieldLabel
+                    htmlFor="skill-name"
+                    required
+                    className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary"
+                  >
                     Skill Name
-                  </label>
-                  <Input value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. GraphQL" />
+                  </AdminFieldLabel>
+                  <Input
+                    id="skill-name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="e.g. GraphQL"
+                    aria-required
+                  />
                 </div>
                 <div>
-                  <label className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">
+                  <label htmlFor="skill-category" className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">
                     Category
                   </label>
                   <select
+                    id="skill-category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-4 text-on-surface"
@@ -117,10 +137,20 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">
+                  <AdminFieldLabel
+                    htmlFor="skill-description"
+                    required
+                    className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary"
+                  >
                     Description
-                  </label>
-                  <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
+                  </AdminFieldLabel>
+                  <Textarea
+                    id="skill-description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                    aria-required
+                  />
                 </div>
                 <div>
                   <label className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">

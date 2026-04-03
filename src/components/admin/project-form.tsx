@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
+import { AdminFieldLabel } from "@/components/admin/field-label";
+import { validateProjectBody } from "@/lib/project-validation";
 import { toast } from "sonner";
 
 const CATEGORIES = ["Web", "Mobile", "AI"];
@@ -51,7 +53,6 @@ export function ProjectForm({ project }: { project?: Project }) {
   }
 
   async function save() {
-    setSaving(true);
     const payload = {
       title,
       slug: slug.trim(),
@@ -75,11 +76,17 @@ export function ProjectForm({ project }: { project?: Project }) {
         .map((t) => t.trim())
         .filter(Boolean),
     };
+    const v = validateProjectBody(payload);
+    if (!v.ok) {
+      toast.error(v.error);
+      return;
+    }
+    setSaving(true);
     const url = isEdit ? `/api/projects/${project!.id}` : "/api/projects";
     const res = await fetch(url, {
       method: isEdit ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(v.data),
     });
     setSaving(false);
     if (!res.ok) {
@@ -134,26 +141,58 @@ export function ProjectForm({ project }: { project?: Project }) {
           <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
             <div className="grid grid-cols-2 gap-6">
               <div className="col-span-2 space-y-2 sm:col-span-1">
-                <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+                <AdminFieldLabel
+                  htmlFor="project-title"
+                  required
+                  className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+                >
                   Project Title
-                </label>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
+                </AdminFieldLabel>
+                <Input
+                  id="project-title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Title"
+                  autoComplete="off"
+                  aria-required
+                />
               </div>
               <div className="col-span-2 space-y-2 sm:col-span-1">
-                <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+                <AdminFieldLabel
+                  htmlFor="project-slug"
+                  required
+                  className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+                >
                   URL Slug
-                </label>
+                </AdminFieldLabel>
                 <div className="flex items-center text-sm text-on-surface-variant/40">
                   <span className="mr-2">/projects/</span>
-                  <Input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="slug" />
+                  <Input
+                    id="project-slug"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                    placeholder="my-project"
+                    autoComplete="off"
+                    aria-required
+                  />
                 </div>
               </div>
             </div>
             <div className="space-y-2">
-              <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+              <AdminFieldLabel
+                htmlFor="project-description"
+                required
+                className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+              >
                 Short Description
-              </label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
+              </AdminFieldLabel>
+              <Textarea
+                id="project-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                aria-required
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -192,10 +231,21 @@ export function ProjectForm({ project }: { project?: Project }) {
           </section>
 
           <section className="rounded-xl bg-surface-container-low p-8">
-            <label className="mb-6 block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <AdminFieldLabel
+              htmlFor="project-content"
+              required
+              className="mb-6 block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+            >
               Full Case Study Content
-            </label>
-            <Textarea value={content} onChange={(e) => setContent(e.target.value)} rows={14} className="min-h-[320px]" />
+            </AdminFieldLabel>
+            <Textarea
+              id="project-content"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              rows={14}
+              className="min-h-[320px]"
+              aria-required
+            />
           </section>
 
           <section className="grid grid-cols-2 gap-6 rounded-xl bg-surface-container-low p-8">
@@ -222,9 +272,13 @@ export function ProjectForm({ project }: { project?: Project }) {
 
         <div className="space-y-8">
           <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
-            <label className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <AdminFieldLabel
+              htmlFor="project-images"
+              required
+              className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+            >
               Cover &amp; Gallery URLs
-            </label>
+            </AdminFieldLabel>
             <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-outline-variant/20 bg-surface-container-highest py-8 hover:border-primary/50">
               <MIcon name="cloud_upload" className="mb-2 text-4xl text-on-surface-variant" />
               <span className="text-sm text-on-surface-variant">Upload image</span>
@@ -239,18 +293,30 @@ export function ProjectForm({ project }: { project?: Project }) {
               />
             </label>
             <Textarea
+              id="project-images"
               value={images}
               onChange={(e) => setImages(e.target.value)}
               rows={6}
               placeholder={"One image URL per line"}
+              aria-required
             />
           </section>
 
           <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
-            <label className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <AdminFieldLabel
+              htmlFor="project-technologies"
+              required
+              className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+            >
               Technologies (comma separated)
-            </label>
-            <Input value={technologies} onChange={(e) => setTechnologies(e.target.value)} />
+            </AdminFieldLabel>
+            <Input
+              id="project-technologies"
+              value={technologies}
+              onChange={(e) => setTechnologies(e.target.value)}
+              placeholder="React, TypeScript, Node.js"
+              aria-required
+            />
           </section>
 
           <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
