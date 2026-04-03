@@ -1,0 +1,132 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import NextImage from "next/image";
+import Link from "next/link";
+import type { Project } from "@prisma/client";
+import { MIcon } from "@/components/m-icon";
+
+const TABS = ["All", "Web", "Mobile", "AI"] as const;
+
+export function ProjectsGrid({ projects }: { projects: Project[] }) {
+  const [tab, setTab] = useState<(typeof TABS)[number]>("All");
+  const filtered = useMemo(() => {
+    if (tab === "All") return projects;
+    return projects.filter((p) => p.category === tab);
+  }, [projects, tab]);
+
+  const featured = projects.find((p) => p.featured) ?? projects[0];
+  const rest = filtered.filter((p) => p.id !== featured?.id);
+
+  return (
+    <>
+      {featured && (tab === "All" || featured.category === tab) && (
+        <section className="mb-20">
+          <div className="group relative overflow-hidden rounded-xl bg-surface-container-low transition-all duration-500 hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]">
+            <div className="flex flex-col lg:flex-row">
+              <div className="overflow-hidden lg:w-3/5">
+                <NextImage
+                  src={featured.images[0] ?? "/vercel.svg"}
+                  alt={featured.title}
+                  width={1200}
+                  height={800}
+                  className="aspect-video min-h-[400px] w-full object-cover grayscale-[20%] transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 lg:aspect-auto"
+                  unoptimized={(featured.images[0] ?? "").startsWith("http")}
+                />
+              </div>
+              <div className="flex flex-col justify-center p-8 lg:w-2/5 lg:p-12">
+                <span className="label-md mb-4 font-bold uppercase tracking-widest text-primary">
+                  Featured Project
+                </span>
+                <h2 className="mb-4 text-3xl font-bold text-on-surface lg:text-4xl">{featured.title}</h2>
+                <p className="mb-8 leading-relaxed text-[#e5e2e3]/70">{featured.description}</p>
+                <div className="mb-8 flex flex-wrap gap-2">
+                  {featured.technologies.map((t) => (
+                    <span
+                      key={t}
+                      className="rounded bg-surface-container-high px-3 py-1 text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+                <Link
+                  href={`/projects/${featured.slug}`}
+                  className="flex w-fit items-center gap-3 rounded-lg bg-primary-container px-8 py-4 font-bold text-on-primary transition-all hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] active:scale-95"
+                >
+                  View Project Details
+                  <MIcon name="arrow_forward" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-center">
+        <div className="flex w-fit gap-2 rounded-xl bg-surface-container-lowest p-1.5">
+          {TABS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              className={`rounded-lg px-6 py-2 text-sm font-bold shadow-lg transition-all ${
+                tab === t
+                  ? "bg-primary-container text-on-primary"
+                  : "text-[#e5e2e3]/50 hover:bg-surface-container-high hover:text-on-surface"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+        <div className="text-sm font-medium italic text-[#e5e2e3]/40">Showing {filtered.length} items</div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {rest.map((p) => (
+          <article
+            key={p.id}
+            className="group flex flex-col overflow-hidden rounded-xl bg-surface-container-low transition-all duration-300 hover:translate-y-[-8px]"
+          >
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <NextImage
+                src={p.images[0] ?? "/vercel.svg"}
+                alt={p.title}
+                width={800}
+                height={600}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                unoptimized={(p.images[0] ?? "").startsWith("http")}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60" />
+            </div>
+            <div className="flex flex-grow flex-col p-8">
+              <div className="mb-4 flex items-start justify-between">
+                <h3 className="text-xl font-bold text-on-surface">{p.title}</h3>
+                <MIcon name={p.cardIcon || "code"} className="text-xl text-primary" />
+              </div>
+              <p className="mb-6 line-clamp-2 text-sm leading-relaxed text-[#e5e2e3]/60">{p.description}</p>
+              <div className="mb-8 mt-auto flex flex-wrap gap-2">
+                {p.technologies.slice(0, 4).map((t) => (
+                  <span
+                    key={t}
+                    className="rounded bg-surface-container-highest px-2.5 py-0.5 text-[10px] font-black uppercase tracking-tighter text-on-surface-variant"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <Link
+                href={`/projects/${p.slug}`}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-outline-variant/20 py-3 text-sm font-bold transition-all hover:border-primary/50 hover:bg-surface-bright"
+              >
+                View Details
+                <MIcon name="open_in_new" className="text-sm" />
+              </Link>
+            </div>
+          </article>
+        ))}
+      </div>
+    </>
+  );
+}

@@ -1,2 +1,33 @@
+# dependencies
 node_modules
-ui_screen_of_pages
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# next.js
+.next/
+out/
+
+# production
+build
+dist
+
+# misc
+.DS_Store
+*.pem
+.env
+.env*.local
+
+# debug
+npm-debug.log*
+
+# prisma
+# keep schema; ignore local db dumps if any
+
+# uploads (keep folder)
+public/uploads/*
+!public/uploads/.gitkeep
+
+ui_screen_of_pages/*
