@@ -107,16 +107,18 @@ export default async function AboutPage() {
               </div>
             </div>
             <div className="relative flex min-h-0 w-full justify-center md:justify-end">
-              <div className="glass-card relative z-10 aspect-square w-[min(100%,min(420px,min(85vw,min(46dvh,calc(100dvh-15rem)))))] max-w-full shrink-0 overflow-hidden rounded-xl p-3 shadow-lg md:ml-auto md:w-[min(420px,min(54dvh,calc(100dvh-10.5rem)))] md:p-4">
-                <NextImage
-                  src={portrait}
-                  alt="Portrait"
-                  width={800}
-                  height={800}
-                  className="h-full w-full origin-[center_22%] scale-[1.12] rounded-lg object-cover object-[center_22%] grayscale transition-all duration-700 hover:scale-[1.15] hover:grayscale-0"
-                  sizes="(max-width: 768px) 90vw, 420px"
-                  unoptimized
-                />
+              <div className="glass-card relative z-10 aspect-square w-[min(100%,min(420px,min(85vw,min(46dvh,calc(100dvh-15rem)))))] max-w-full shrink-0 overflow-hidden rounded-xl shadow-lg md:ml-auto md:w-[min(420px,min(54dvh,calc(100dvh-10.5rem)))]">
+                <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
+                  <NextImage
+                    src={portrait}
+                    alt="Portrait"
+                    fill
+                    sizes="(max-width: 768px) 90vw, 420px"
+                    unoptimized
+                    className="object-cover object-[center_24%] scale-105 grayscale transition-transform duration-700 hover:scale-110 hover:grayscale-0"
+                    priority
+                  />
+                </div>
               </div>
               <div className="pointer-events-none absolute -bottom-8 -right-4 -z-10 h-48 w-48 rounded-full bg-primary-container/20 blur-[80px] md:-bottom-10 md:-right-10 md:h-64 md:w-64 md:blur-[100px]" />
             </div>
