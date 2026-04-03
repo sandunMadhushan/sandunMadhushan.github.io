@@ -2,16 +2,18 @@ import NextImage from "next/image";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ContactForm } from "@/components/contact/contact-form";
+import { IconFacebook, IconGithub, IconLinkedin } from "@/components/icons/social-brand-icons";
 import { MIcon } from "@/components/m-icon";
 import Link from "next/link";
+import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 export default async function ContactPage() {
   const about = await getAbout();
   const stats = (about?.stats as Record<string, unknown>) ?? {};
-  const profile = (stats.profileImage as string) || "/vercel.svg";
+  const profile = resolvePortraitSrc(stats.profileImage as string | undefined);
 
   return (
     <PageFade>
@@ -65,24 +67,33 @@ export default async function ContactPage() {
             </div>
             <div>
               <h3 className="mb-6 text-lg font-semibold">Follow Me</h3>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-3">
                 <Link
                   href="https://github.com"
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
                 >
-                  <MIcon name="code" />
+                  <IconGithub className="h-[18px] w-[18px]" />
                 </Link>
                 <Link
                   href="https://linkedin.com"
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
                 >
-                  <MIcon name="work" />
+                  <IconLinkedin className="h-[18px] w-[18px]" />
                 </Link>
                 <Link
-                  href="https://twitter.com"
-                  className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Facebook"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface-container-high text-on-surface-variant transition-all hover:bg-primary-container hover:text-on-primary-container"
                 >
-                  <MIcon name="tag" />
+                  <IconFacebook className="h-[18px] w-[18px]" />
                 </Link>
               </div>
             </div>

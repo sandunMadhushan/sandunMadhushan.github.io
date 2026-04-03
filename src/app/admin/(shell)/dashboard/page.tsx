@@ -181,7 +181,7 @@ export default async function AdminDashboardPage() {
           <div className="flex flex-wrap justify-center gap-8">
             <span className="cursor-default">GitHub</span>
             <span className="cursor-default">LinkedIn</span>
-            <span className="cursor-default">Twitter</span>
+            <span className="cursor-default">Facebook</span>
           </div>
         </div>
       </footer>

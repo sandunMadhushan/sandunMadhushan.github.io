@@ -5,9 +5,11 @@ import { PageFade } from "@/components/motion/page-fade";
 import { HeroFloat } from "@/components/motion/hero-float";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
+import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+/** Cache page shell so prefetched routes feel instant; refresh every 30s. */
+export const revalidate = 30;
 
 export default async function HomePage() {
   const [about, featured, allProjects] = await Promise.all([
@@ -20,7 +22,7 @@ export default async function HomePage() {
   const tagline =
     (stats.heroTagline as string) ??
     "Full-Stack Developer building modern, scalable web applications with editorial precision.";
-  const profileImage = (stats.profileImage as string) || "/vercel.svg";
+  const profileImage = resolvePortraitSrc(stats.profileImage as string | undefined);
   const homeAboutHeadline =
     (stats.homeAboutHeadline as string) ?? "Crafting code like architecture.";
   const homeAboutBody =
@@ -96,7 +98,7 @@ export default async function HomePage() {
                     alt="Sandun Madhushan"
                     width={400}
                     height={500}
-                    className="h-[min(400px,88vw)] w-full max-w-[400px] rounded-2xl object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0 md:h-[500px]"
+                    className="h-[min(400px,88vw)] w-full max-w-[400px] origin-[center_22%] scale-[1.14] rounded-2xl object-cover object-[center_22%] grayscale transition-all duration-700 group-hover:scale-[1.18] group-hover:grayscale-0 md:h-[500px]"
                     priority
                     unoptimized={profileImage.startsWith("http")}
                   />

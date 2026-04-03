@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MIcon } from "@/components/m-icon";
 
@@ -13,7 +14,30 @@ const links = [
 ];
 
 export function SiteNav({ active }: { active?: string }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const prefetchAll = () => {
+      if (cancelled) return;
+      links.forEach((l) => router.prefetch(l.href));
+    };
+    let idleId = 0;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(prefetchAll, { timeout: 2000 });
+    } else {
+      timeoutId = setTimeout(prefetchAll, 200);
+    }
+    return () => {
+      cancelled = true;
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      else if (typeof window !== "undefined" && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
+    };
+  }, [router]);
 
   useEffect(() => {
     if (!open) return;
@@ -35,7 +59,7 @@ export function SiteNav({ active }: { active?: string }) {
           className="shrink-0 text-xl font-bold tracking-tighter text-on-surface"
           onClick={() => setOpen(false)}
         >
-          Architect Portfolio
+          S<span className="text-primary-container">M</span>
         </Link>
         <div className="hidden items-center gap-8 text-[15px] font-medium tracking-tight md:flex">
           {links.map((l) => {

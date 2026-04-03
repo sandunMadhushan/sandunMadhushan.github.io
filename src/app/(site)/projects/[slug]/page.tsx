@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { MIcon } from "@/components/m-icon";
+import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import { getProjectBySlug, getProjects } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 type Challenge = { title: string; description: string };
 type Result = { label: string; value: string };
@@ -23,7 +24,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   const challenges = (project.challenges as Challenge[] | null) ?? [];
   const results = (project.results as Result[] | null) ?? [];
-  const gallery = project.images.length ? project.images : ["/vercel.svg"];
+  const gallery = project.images.length ? project.images : [DEFAULT_PORTRAIT_SRC];
 
   return (
     <PageFade>

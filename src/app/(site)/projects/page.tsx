@@ -3,7 +3,7 @@ import { PageFade } from "@/components/motion/page-fade";
 import { ProjectsGrid } from "@/components/projects/projects-grid";
 import { getProjects } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 export default async function ProjectsPage() {
   const projects = await getProjects();

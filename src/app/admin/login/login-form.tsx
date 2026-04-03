@@ -98,7 +98,7 @@ export function AdminLoginForm() {
           <div className="flex gap-8 text-xs">
             <span className="hover:text-primary">GitHub</span>
             <span className="hover:text-primary">LinkedIn</span>
-            <span className="hover:text-primary">Twitter</span>
+            <span className="hover:text-primary">Facebook</span>
           </div>
         </div>
       </footer>

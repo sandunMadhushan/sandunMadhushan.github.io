@@ -5,6 +5,7 @@ import NextImage from "next/image";
 import Link from "next/link";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
+import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 
 const TABS = ["All", "Web", "Mobile", "AI"] as const;
 
@@ -26,7 +27,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             <div className="flex flex-col lg:flex-row">
               <div className="overflow-hidden lg:w-3/5">
                 <NextImage
-                  src={featured.images[0] ?? "/vercel.svg"}
+                  src={featured.images[0] ?? DEFAULT_PORTRAIT_SRC}
                   alt={featured.title}
                   width={1200}
                   height={800}
@@ -98,7 +99,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
           >
             <div className="relative aspect-[4/3] overflow-hidden">
               <NextImage
-                src={p.images[0] ?? "/vercel.svg"}
+                src={p.images[0] ?? DEFAULT_PORTRAIT_SRC}
                 alt={p.title}
                 width={800}
                 height={600}

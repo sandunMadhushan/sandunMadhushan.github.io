@@ -66,7 +66,7 @@ export default async function AdminProjectsPage() {
           <div className="flex gap-8 text-sm text-[#e5e2e3]/40">
             <span>GitHub</span>
             <span>LinkedIn</span>
-            <span>Twitter</span>
+            <span>Facebook</span>
           </div>
         </div>
       </footer>

@@ -3,8 +3,11 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+/** Local hero / about portrait — `public/Sandun Madhushan.png` */
+const LOCAL_PORTRAIT = "/sandun-madhushan.png";
+
 const IMG = {
-  hero: "https://lh3.googleusercontent.com/aida-public/AB6AXuDYQmjtsKDcB5W0BZLdlCXVsxnPe3Kq-Y8VFljmy-cq_QEERHnZu6Qa39mmpJqj3KxoAMTWhwaN7hucihl8d5kJANEQVBFNhznv9RK-wDbT9T6u_K-TYsz-js5RdARgBfWwcpoGYXlONGqW1yWNibQ_lw5iaGhHL3qBAD4grFnWOj3KVay7AbHGXmyUwhU7c0eaZDLty1u1OXc5C-u4kGvnYjS1CyjReB_3I0B6ZxIs14QZ-P9PcQnAOHf5LHQ9Heoeq9sSCwTSQA",
+  hero: LOCAL_PORTRAIT,
   mealbridge:
     "https://lh3.googleusercontent.com/aida-public/AB6AXuAQEOCl1ZgIWhki0Y7mXXJa-p2WKKeV6y2aNlqgMOSZdrdZ_Ahyje4gwJQLcYSyFipJ6WGSebgoUv2jUwF2MV43NinnhENMf7sVSNDKe1zOxt03O4ividPUf-WMgi2w_PkVViPpoLEobay8401Xui19Yfyx0I7uWpD6--ca7gC5ZFZ5cQwovQkAHZmSkYl0-qPOwAUSEpo-MjaUv66jv-A6GrtXcq33zX2L_QkKQne582spd4JfWlna9HvO_DrK13CoHdNYqvduLQ",
   edoc: "https://lh3.googleusercontent.com/aida-public/AB6AXuDEqnT1FxKu3BrmGXFfaLItwJoQhmTDd4uZTv9cVKLLZZlsRDiL3kv19zynTYB53ENkCT9qoDqb-GggYr8lGDJDbK26Ee1bZmlzminEdPbZK88G3IxORvBvkQR83qf3DURmwI34Vz5ByqY-CmBQ5AiVAl57N3qjYivxwqExaHvNPF7tNvuapyMjfC2vWhlRU5vOrcu_Bxgs3GOWdWfj8K-CqEvOJt1ncQTKZxdBbh8HaXuBmAxvwY8wNeIeHSCfzL_9lylOLpoCmA",
@@ -55,8 +58,7 @@ async function main() {
           "I am a digital architect specializing in the intersection of high-performance engineering and editorial aesthetics. My work is driven by the philosophy that code is an artifact—a functional gallery piece that should be as robust as it is beautiful.",
           "With a foundation in Computer Science and a passion for minimalist design systems, I help brands bridge the gap between technical complexity and intuitive user experiences. I don't just build websites; I curate digital environments.",
         ],
-        aboutPortrait:
-          "https://lh3.googleusercontent.com/aida-public/AB6AXuClJpvBYdqCFJ9Vz9cQWM928ui3MwViPKGfXbmdMGtXDZ_vteOLztuE9HOR-UMqcIEP3x4PGnyAGsR0rCV41AX-vKedlumb2Bho3KdoPH3Xc9eD5RXDyLkI0nfdw26N2dpN9Ufa5J7M5NWazDiJF_ohA-O3QOfT8ch9mQvD_QkDz7w8nRB5eJJRrMrbytdelKx_Mv5K0byqKh_i494Vx-im4a8sXBt3AgBO5J67jQhUhnVA-yBy4GVpI-ahvYBQZ0yE7ixzfjwQqw",
+        aboutPortrait: LOCAL_PORTRAIT,
         statCards: [
           { value: "6+", label: "Projects Orchestrated", icon: "terminal" },
           { value: "10", label: "Technologies Mastered", icon: "verified" },
@@ -110,17 +112,83 @@ async function main() {
   });
 
   const skills = [
-    { name: "React", category: "Frontend", proficiency: 95, icon: "javascript", description: "Component-driven UI engineering." },
-    { name: "Next.js", category: "Frontend", proficiency: 92, icon: "layers", description: "App Router, SSR, and edge-ready deployments." },
-    { name: "Tailwind CSS", category: "Frontend", proficiency: 98, icon: "palette", description: "Utility-first styling at scale." },
-    { name: "TypeScript", category: "Languages", proficiency: 90, icon: "variable", description: "Typed JavaScript for safer systems." },
-    { name: "JavaScript", category: "Languages", proficiency: 92, icon: "javascript", description: "Modern ES modules and async flows." },
-    { name: "Node.js", category: "Backend", proficiency: 88, icon: "api", description: "High-concurrency APIs and services." },
-    { name: "Express", category: "Backend", proficiency: 85, icon: "terminal", description: "Lean HTTP layers and middleware." },
-    { name: "MongoDB", category: "Database", proficiency: 82, icon: "data_object", description: "Document modeling and indexing." },
-    { name: "PostgreSQL", category: "Database", proficiency: 88, icon: "database", description: "Relational data with strong integrity." },
-    { name: "Git", category: "Tools", proficiency: 95, icon: "commit", description: "Branching, reviews, and release hygiene." },
-    { name: "GitHub", category: "Tools", proficiency: 93, icon: "deployed_code", description: "CI/CD and collaboration workflows." },
+    {
+      name: "React",
+      category: "Frontend",
+      proficiency: 95,
+      icon: "javascript",
+      description: "Component-driven UI engineering.",
+    },
+    {
+      name: "Next.js",
+      category: "Frontend",
+      proficiency: 92,
+      icon: "layers",
+      description: "App Router, SSR, and edge-ready deployments.",
+    },
+    {
+      name: "Tailwind CSS",
+      category: "Frontend",
+      proficiency: 98,
+      icon: "palette",
+      description: "Utility-first styling at scale.",
+    },
+    {
+      name: "TypeScript",
+      category: "Languages",
+      proficiency: 90,
+      icon: "variable",
+      description: "Typed JavaScript for safer systems.",
+    },
+    {
+      name: "JavaScript",
+      category: "Languages",
+      proficiency: 92,
+      icon: "javascript",
+      description: "Modern ES modules and async flows.",
+    },
+    {
+      name: "Node.js",
+      category: "Backend",
+      proficiency: 88,
+      icon: "api",
+      description: "High-concurrency APIs and services.",
+    },
+    {
+      name: "Express",
+      category: "Backend",
+      proficiency: 85,
+      icon: "terminal",
+      description: "Lean HTTP layers and middleware.",
+    },
+    {
+      name: "MongoDB",
+      category: "Database",
+      proficiency: 82,
+      icon: "data_object",
+      description: "Document modeling and indexing.",
+    },
+    {
+      name: "PostgreSQL",
+      category: "Database",
+      proficiency: 88,
+      icon: "database",
+      description: "Relational data with strong integrity.",
+    },
+    {
+      name: "Git",
+      category: "Tools",
+      proficiency: 95,
+      icon: "commit",
+      description: "Branching, reviews, and release hygiene.",
+    },
+    {
+      name: "GitHub",
+      category: "Tools",
+      proficiency: 93,
+      icon: "deployed_code",
+      description: "CI/CD and collaboration workflows.",
+    },
   ];
 
   for (const s of skills) {
@@ -146,11 +214,13 @@ async function main() {
       challenges: [
         {
           title: "Logistics coordination",
-          description: "Matching donors to recipients across regions without delays required careful state modeling.",
+          description:
+            "Matching donors to recipients across regions without delays required careful state modeling.",
         },
         {
           title: "Trust & safety",
-          description: "Verifying listings and preventing abuse while keeping onboarding friction low.",
+          description:
+            "Verifying listings and preventing abuse while keeping onboarding friction low.",
         },
       ],
       results: [
@@ -162,7 +232,8 @@ async function main() {
     {
       title: "E-Doc Medical App",
       slug: "e-doc",
-      description: "A digital medical platform for managing patient interactions.",
+      description:
+        "A digital medical platform for managing patient interactions.",
       content:
         "E-Doc streamlines appointments, records, and remote consultations with a clinician-first workflow and patient-friendly interfaces.",
       technologies: ["React", "Node.js"],
@@ -174,7 +245,11 @@ async function main() {
       cardIcon: "smartphone",
       features: ["Appointment system", "Patient records"],
       challenges: [
-        { title: "Compliance", description: "Balancing rapid iteration with data handling requirements." },
+        {
+          title: "Compliance",
+          description:
+            "Balancing rapid iteration with data handling requirements.",
+        },
       ],
       results: [
         { label: "Clinics onboarded", value: "12" },
@@ -184,7 +259,8 @@ async function main() {
     {
       title: "Personal Organizer System",
       slug: "organizer",
-      description: "A productivity system to manage tasks and daily activities.",
+      description:
+        "A productivity system to manage tasks and daily activities.",
       content:
         "A structured organizer for tasks, habits, and daily planning with reminders and lightweight analytics.",
       technologies: ["JavaScript", "PHP", "MySQL"],
@@ -196,7 +272,10 @@ async function main() {
       cardIcon: "calendar_month",
       features: ["Task boards", "Daily planner", "Habit tracking"],
       challenges: [
-        { title: "Cross-device sync", description: "Keeping tasks consistent across browsers and sessions." },
+        {
+          title: "Cross-device sync",
+          description: "Keeping tasks consistent across browsers and sessions.",
+        },
       ],
       results: [{ label: "Tasks tracked", value: "50k+" }],
     },
@@ -215,7 +294,11 @@ async function main() {
       cardIcon: "analytics",
       features: ["Engagement metrics", "Course analytics", "Exports"],
       challenges: [
-        { title: "Signal quality", description: "Separating meaningful activity from noise in large cohorts." },
+        {
+          title: "Signal quality",
+          description:
+            "Separating meaningful activity from noise in large cohorts.",
+        },
       ],
       results: [{ label: "Events / day", value: "1M+" }],
     },
@@ -234,7 +317,11 @@ async function main() {
       cardIcon: "psychology",
       features: ["Skill extraction", "Scoring", "Rewrite hints"],
       challenges: [
-        { title: "Latency vs. quality", description: "Streaming partial results while preserving evaluation consistency." },
+        {
+          title: "Latency vs. quality",
+          description:
+            "Streaming partial results while preserving evaluation consistency.",
+        },
       ],
       results: [{ label: "Resumes reviewed", value: "8k+" }],
     },
@@ -253,7 +340,10 @@ async function main() {
       cardIcon: "description",
       features: ["Themes", "PDF export", "Live preview"],
       challenges: [
-        { title: "Print fidelity", description: "Matching web preview to exported PDF layouts." },
+        {
+          title: "Print fidelity",
+          description: "Matching web preview to exported PDF layouts.",
+        },
       ],
       results: [{ label: "CVs generated", value: "15k+" }],
     },
@@ -280,7 +370,11 @@ async function main() {
     });
   }
 
-  console.log("Seed complete. Admin:", adminEmail, "| password from ADMIN_PASSWORD or default changeme123");
+  console.log(
+    "Seed complete. Admin:",
+    adminEmail,
+    "| password from ADMIN_PASSWORD or default changeme123",
+  );
 }
 
 main()

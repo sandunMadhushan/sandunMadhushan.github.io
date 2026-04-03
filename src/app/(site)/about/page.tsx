@@ -4,9 +4,10 @@ import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
+import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 const headlineAccentClass =
   "text-primary-container drop-shadow-[0_0_15px_rgba(79,70,229,0.3)]";
@@ -66,9 +67,7 @@ export default async function AboutPage() {
     (stats.aboutHeadline as string) ??
     "Crafting digital landscapes with surgical precision.";
   const intro = (stats.aboutIntro as string[]) ?? [about?.content ?? ""];
-  const portrait =
-    (stats.aboutPortrait as string) ??
-    "https://lh3.googleusercontent.com/aida-public/AB6AXuClJpvBYdqCFJ9Vz9cQWM928ui3MwViPKGfXbmdMGtXDZ_vteOLztuE9HOR-UMqcIEP3x4PGnyAGsR0rCV41AX-vKedlumb2Bho3KdoPH3Xc9eD5RXDyLkI0nfdw26N2dpN9Ufa5J7M5NWazDiJF_ohA-O3QOfT8ch9mQvD_QkDz7w8nRB5eJJRrMrbytdelKx_Mv5K0byqKh_i494Vx-im4a8sXBt3AgBO5J67jQhUhnVA-yBy4GVpI-ahvYBQZ0yE7ixzfjwQqw";
+  const portrait = resolvePortraitSrc(stats.aboutPortrait as string | undefined);
   const statCards = (stats.statCards as {
     value: string;
     label: string;
@@ -114,7 +113,7 @@ export default async function AboutPage() {
                   alt="Portrait"
                   width={800}
                   height={800}
-                  className="h-full w-full rounded-lg object-cover object-top grayscale transition-all duration-700 hover:grayscale-0"
+                  className="h-full w-full origin-[center_22%] scale-[1.12] rounded-lg object-cover object-[center_22%] grayscale transition-all duration-700 hover:scale-[1.15] hover:grayscale-0"
                   sizes="(max-width: 768px) 90vw, 420px"
                   unoptimized
                 />

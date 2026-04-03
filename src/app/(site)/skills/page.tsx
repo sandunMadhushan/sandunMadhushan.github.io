@@ -5,7 +5,7 @@ import { MIcon } from "@/components/m-icon";
 import Link from "next/link";
 import { getAbout, getSkills } from "@/lib/queries";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 30;
 
 const iconFor = (name: string) => {
   const n = name.toLowerCase();

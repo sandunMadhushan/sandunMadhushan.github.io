@@ -21,7 +21,7 @@ export default async function AdminSkillsPage() {
           <div className="flex gap-12 text-[#e5e2e3]/40">
             <span>GitHub</span>
             <span>LinkedIn</span>
-            <span>Twitter</span>
+            <span>Facebook</span>
           </div>
         </div>
       </footer>
