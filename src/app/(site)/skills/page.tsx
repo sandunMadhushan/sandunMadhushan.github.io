@@ -173,22 +173,29 @@ export default async function SkillsPage() {
         </ScrollReveal>
 
         <ScrollReveal>
-          <div className="relative mt-24 flex flex-col items-center justify-between overflow-hidden rounded-xl bg-gradient-to-r from-primary-container to-[#3323cc] p-12 md:flex-row">
-            <div className="relative z-10 mb-8 text-center md:mb-0 md:text-left">
-              <h3 className="mb-4 text-3xl font-black tracking-tighter text-on-primary">
+          <div className="relative mt-24 flex flex-col items-stretch justify-between gap-8 overflow-hidden rounded-2xl bg-primary-container p-10 shadow-[0_40px_80px_rgba(79,70,229,0.28)] md:flex-row md:items-center md:gap-12 md:p-12">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_60%_at_90%_-10%,rgba(255,255,255,0.2),transparent_55%)]"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 to-black/25"
+            />
+            <div className="relative z-10 text-center md:min-w-0 md:flex-1 md:text-left">
+              <h3 className="mb-4 text-2xl font-black tracking-tighter text-white drop-shadow-sm md:text-3xl">
                 Current Specialization
               </h3>
-              <p className="max-w-lg text-on-primary/80">{cta}</p>
+              <p className="max-w-lg text-base leading-relaxed text-white/90 md:text-lg">{cta}</p>
             </div>
-            <div className="relative z-10">
+            <div className="relative z-10 flex w-full shrink-0 justify-center md:w-auto md:justify-end">
               <Link
                 href="/projects"
-                className="rounded-lg bg-on-primary px-8 py-4 font-bold text-primary-container transition-colors hover:bg-surface-bright"
+                className="inline-flex w-full min-w-[200px] items-center justify-center rounded-full bg-white px-8 py-4 text-base font-bold text-primary-container shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all hover:-translate-y-0.5 hover:bg-zinc-100 hover:text-[#4338ca] hover:shadow-[0_12px_40px_rgba(0,0,0,0.25)] active:translate-y-0 active:scale-[0.98] md:w-auto"
               >
                 View Case Studies
               </Link>
             </div>
-            <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-on-primary/10 blur-3xl" />
           </div>
         </ScrollReveal>
       </main>
