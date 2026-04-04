@@ -75,7 +75,7 @@ export function ContactForm() {
             required
             autoComplete="email"
             className={fieldClass}
-            placeholder="you@university.edu or work email"
+            placeholder="Work email"
           />
         </div>
       </div>

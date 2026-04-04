@@ -56,7 +56,7 @@ export default async function ContactPage() {
                     <p className="mb-1 text-sm text-on-surface-variant">
                       Email
                     </p>
-                    <p className="text-lg font-medium">hello@sandun.me</p>
+                    <p className="text-lg font-medium">hello@madhushan.me</p>
                   </div>
                 </div>
                 <div className="group flex items-start gap-4">
@@ -86,7 +86,7 @@ export default async function ContactPage() {
                     alt="Sandun Madhushan"
                     width={32}
                     height={32}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover object-[center_22%]"
                     unoptimized={profile.startsWith("http")}
                   />
                 </div>
