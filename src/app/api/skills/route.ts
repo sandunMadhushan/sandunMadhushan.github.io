@@ -14,9 +14,10 @@ export async function POST(req: Request) {
   if ("error" in admin) return admin.error;
   const body = await req.json();
   const name = typeof body.name === "string" ? body.name.trim() : "";
-  const description = typeof body.description === "string" ? body.description.trim() : "";
+  const descRaw = body.description;
+  const description =
+    typeof descRaw === "string" && descRaw.trim() ? descRaw.trim() : null;
   if (!name) return NextResponse.json({ error: "Skill name is required." }, { status: 400 });
-  if (!description) return NextResponse.json({ error: "Description is required." }, { status: 400 });
   const iconRaw = body.icon;
   const icon =
     typeof iconRaw === "string" && iconRaw.trim() ? iconRaw.trim() : null;

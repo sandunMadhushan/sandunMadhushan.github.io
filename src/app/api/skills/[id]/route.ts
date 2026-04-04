@@ -15,10 +15,10 @@ export async function PATCH(req: Request, ctx: Ctx) {
     nameTrimmed = typeof body.name === "string" ? body.name.trim() : "";
     if (!nameTrimmed) return NextResponse.json({ error: "Skill name is required." }, { status: 400 });
   }
-  let descriptionTrimmed: string | undefined;
+  let descriptionUpdate: string | null | undefined;
   if (body.description !== undefined) {
-    descriptionTrimmed = typeof body.description === "string" ? body.description.trim() : "";
-    if (!descriptionTrimmed) return NextResponse.json({ error: "Description is required." }, { status: 400 });
+    const raw = typeof body.description === "string" ? body.description.trim() : "";
+    descriptionUpdate = raw === "" ? null : raw;
   }
 
   const proficiency =
@@ -33,7 +33,7 @@ export async function PATCH(req: Request, ctx: Ctx) {
     data: {
       ...(nameTrimmed !== undefined && { name: nameTrimmed }),
       ...(body.category !== undefined && { category: body.category }),
-      ...(descriptionTrimmed !== undefined && { description: descriptionTrimmed }),
+      ...(descriptionUpdate !== undefined && { description: descriptionUpdate }),
       ...(body.proficiency !== undefined && { proficiency }),
       ...(body.icon !== undefined && {
         icon: typeof body.icon === "string" && body.icon.trim() ? body.icon.trim() : null,

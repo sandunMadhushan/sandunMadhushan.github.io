@@ -4,6 +4,7 @@ import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
 import { SkillTechIcon } from "@/components/skill-tech-icon";
 import Link from "next/link";
+import { resolveSkillDescription } from "@/lib/skill-auto";
 import { getAbout, getSkills } from "@/lib/queries";
 
 export const revalidate = 30;
@@ -67,7 +68,7 @@ export default async function SkillsPage() {
                     <div>
                       <p className="font-semibold">{s.name}</p>
                       <p className="text-sm text-on-surface-variant">
-                        {s.description ?? "—"}
+                        {resolveSkillDescription(s.description, s.name, s.icon)}
                       </p>
                     </div>
                   </div>
@@ -94,7 +95,7 @@ export default async function SkillsPage() {
                     <div>
                       <p className="font-semibold">{s.name}</p>
                       <p className="text-sm text-on-surface-variant">
-                        {s.description ?? "Production APIs"}
+                        {resolveSkillDescription(s.description, s.name, s.icon)}
                       </p>
                     </div>
                   </div>
@@ -128,7 +129,7 @@ export default async function SkillsPage() {
                     <div>
                       <p className="font-semibold">{s.name}</p>
                       <p className="text-sm text-on-surface-variant">
-                        {s.description ?? "—"}
+                        {resolveSkillDescription(s.description, s.name, s.icon)}
                       </p>
                     </div>
                   </div>

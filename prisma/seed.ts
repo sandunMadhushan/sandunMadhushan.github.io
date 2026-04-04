@@ -215,6 +215,13 @@ async function main() {
       description: "Native-adjacent workflows, SDKs, and device constraints.",
     },
     {
+      name: "React Native",
+      category: "Mobile",
+      proficiency: 86,
+      icon: "reactnative",
+      description: null,
+    },
+    {
       name: "Git",
       category: "Tools",
       proficiency: 95,

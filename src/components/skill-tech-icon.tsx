@@ -1,5 +1,6 @@
 import type { IconType } from "react-icons";
 import { FaJava } from "react-icons/fa6";
+import { TbBrandReactNative } from "react-icons/tb";
 import { VscVscode } from "react-icons/vsc";
 import { cn } from "@/lib/utils";
 import {
@@ -103,6 +104,8 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   prisma: SiPrisma,
   postman: SiPostman,
   python: SiPython,
+  /** Tabler — Simple Icons has no React Native mark. */
+  reactnative: TbBrandReactNative,
   react: SiReact,
   redis: SiRedis,
   rust: SiRust,
@@ -127,6 +130,8 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
 const STORED_ICON_ALIASES: Record<string, string> = {
   reactjs: "react",
   "react.js": "react",
+  react_native: "reactnative",
+  "react-native": "reactnative",
   vsc: "vscode",
   visualstudiocode: "vscode",
   "vs code": "vscode",
@@ -135,6 +140,7 @@ const STORED_ICON_ALIASES: Record<string, string> = {
 /** Optional brand tint so marks stay recognizable on muted surfaces (e.g. skills grid). */
 const SKILL_ICON_BRAND_CLASS: Record<string, string> = {
   react: "text-[#61DAFB] transition-colors group-hover:text-primary",
+  reactnative: "text-[#61DAFB] transition-colors group-hover:text-primary",
 };
 
 /** Admin dropdown: label + registry key (sorted by label). */
@@ -177,6 +183,7 @@ export const SKILL_ICON_CHOICES: { value: string; label: string }[] = [
   { value: "postman", label: "Postman" },
   { value: "prisma", label: "Prisma" },
   { value: "python", label: "Python" },
+  { value: "reactnative", label: "React Native" },
   { value: "react", label: "React" },
   { value: "redis", label: "Redis" },
   { value: "rust", label: "Rust" },
@@ -209,6 +216,7 @@ const LEGACY_MATERIAL_TO_KEY: Record<string, string> = {
 };
 
 const NAME_RULES: { re: RegExp; key: string }[] = [
+  { re: /\breact native\b/i, key: "reactnative" },
   { re: /\bnext\.?js\b/i, key: "nextjs" },
   { re: /\bvs code\b|\bvisual studio code\b|\bvscode\b/i, key: "vscode" },
   { re: /\bpostman\b/i, key: "postman" },

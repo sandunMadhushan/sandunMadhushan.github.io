@@ -1,7 +1,7 @@
 "use client";
 
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
 import type { Skill } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { AdminFieldLabel } from "@/components/admin/field-label";
 import { SKILL_ICON_CHOICES, SkillTechIcon } from "@/components/skill-tech-icon";
+import { resolveSkillDescription, sortSkillsLikeWebsite } from "@/lib/skill-auto";
 import { toast } from "sonner";
 
 const CATS = [
@@ -21,6 +22,19 @@ const CATS = [
   "Tools",
 ];
 
+/** Mirrors the public skills page groupings and order. */
+const DASHBOARD_SECTIONS: { title: string; subtitle: string; categories: string[] }[] = [
+  {
+    title: "01 · Frontend & Languages",
+    subtitle: "Presentation layer",
+    categories: ["Frontend", "Languages"],
+  },
+  { title: "02 · Backend Core", subtitle: "Logic", categories: ["Backend"] },
+  { title: "03 · Native & Mobile", subtitle: "Platforms & devices", categories: ["Mobile"] },
+  { title: "04 · Database Systems", subtitle: "Persistence", categories: ["Database"] },
+  { title: "05 · Digital Workbench", subtitle: "Infrastructure & workflow", categories: ["Tools"] },
+];
+
 function emptyForm() {
   return {
     name: "",
@@ -29,6 +43,57 @@ function emptyForm() {
     icon: "",
     proficiency: 90,
   };
+}
+
+function SkillCard({
+  s,
+  editingId,
+  onEdit,
+  onDelete,
+}: {
+  s: Skill;
+  editingId: string | null;
+  onEdit: (s: Skill) => void;
+  onDelete: (id: string) => void;
+}) {
+  const blurb = resolveSkillDescription(s.description, s.name, s.icon);
+
+  return (
+    <div
+      className={`group relative overflow-hidden rounded-xl border border-outline-variant/15 bg-surface-container-low p-6 transition-all hover:border-primary-container/30 hover:bg-surface-container-high ${
+        editingId === s.id ? "ring-2 ring-primary-container ring-offset-2 ring-offset-surface" : ""
+      }`}
+    >
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-surface-container-high text-primary">
+          <SkillTechIcon name={s.name} iconKey={s.icon} size={28} />
+        </div>
+        <div className="flex gap-0.5">
+          <button
+            type="button"
+            onClick={() => onEdit(s)}
+            className="p-2 text-on-surface-variant hover:text-primary"
+            title="Edit skill"
+          >
+            <MIcon name="edit" />
+          </button>
+          <button
+            type="button"
+            onClick={() => onDelete(s.id)}
+            className="p-2 text-on-surface-variant hover:text-error"
+            title="Delete skill"
+          >
+            <MIcon name="delete" />
+          </button>
+        </div>
+      </div>
+      <span className="mb-1 block text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+        {s.category}
+      </span>
+      <h3 className="mb-2 text-lg font-bold leading-tight text-on-surface">{s.name}</h3>
+      <p className="text-sm leading-relaxed text-on-surface-variant">{blurb}</p>
+    </div>
+  );
 }
 
 export function SkillsAdmin({ skills }: { skills: Skill[] }) {
@@ -43,6 +108,18 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
   const [saving, setSaving] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const sortedSkills = useMemo(() => sortSkillsLikeWebsite(skills), [skills]);
+
+  const autoPreview = useMemo(
+    () =>
+      resolveSkillDescription(
+        description.trim() ? description : null,
+        name.trim() || "Skill name",
+        icon || null,
+      ),
+    [description, name, icon],
+  );
 
   function resetForm() {
     const e = emptyForm();
@@ -72,14 +149,10 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
       toast.error("Skill name is required.");
       return;
     }
-    if (!description.trim()) {
-      toast.error("Description is required.");
-      return;
-    }
     const payload = {
       name,
       category,
-      description,
+      description: description.trim() || null,
       proficiency,
       icon: icon.trim() || null,
     };
@@ -122,7 +195,8 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
         <div className="max-w-xl">
           <h2 className="mb-4 text-4xl font-extrabold tracking-tighter text-[#e5e2e3]">The Skills Gallery</h2>
           <p className="text-lg leading-relaxed text-on-surface-variant">
-            Curate categories and proficiency. Changes reflect immediately on the public skills page.
+            Curate categories and proficiency. Layout matches the public skills page. Leave the description empty
+            to use auto-generated text from the skill name and icon (like auto icons).
           </p>
         </div>
       </div>
@@ -154,7 +228,7 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                     id="skill-name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. GraphQL"
+                    placeholder="e.g. React Native"
                     aria-required
                   />
                 </div>
@@ -204,18 +278,23 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                 <div>
                   <AdminFieldLabel
                     htmlFor="skill-description"
-                    required
                     className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary"
                   >
                     Description
                   </AdminFieldLabel>
+                  <p className="mb-2 text-xs text-on-surface-variant/80">
+                    Optional. If left blank, a short line is generated from the name and icon (see preview below).
+                  </p>
                   <Textarea
                     id="skill-description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
-                    aria-required
+                    placeholder="Custom copy, or leave empty for auto-generated text"
                   />
+                  <p className="mt-2 rounded-lg bg-surface-container-highest/80 px-3 py-2 text-xs leading-relaxed text-on-surface-variant">
+                    <span className="font-semibold text-primary">Preview:</span> {autoPreview}
+                  </p>
                 </div>
                 <div>
                   <label className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">
@@ -240,44 +319,33 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {skills.map((s) => (
-          <div
-            key={s.id}
-            className={`group relative overflow-hidden rounded-xl bg-surface-container-low p-8 transition-all hover:bg-surface-container-high ${
-              editingId === s.id ? "ring-2 ring-primary-container ring-offset-2 ring-offset-surface" : ""
-            }`}
-          >
-            <div className="mb-6 flex items-start justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-surface-container-high text-primary">
-                <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
+      <div className="space-y-12">
+        {DASHBOARD_SECTIONS.map((section) => {
+          const inSection = sortedSkills.filter((s) => section.categories.includes(s.category));
+          return (
+            <section key={section.title} className="rounded-2xl border border-outline-variant/20 bg-surface-container-low/50 p-6 md:p-8">
+              <div className="mb-6 border-b border-outline-variant/15 pb-4">
+                <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.25em] text-primary">{section.subtitle}</p>
+                <h3 className="text-xl font-bold tracking-tight text-[#e5e2e3] md:text-2xl">{section.title}</h3>
               </div>
-              <div className="flex gap-1">
-                <button
-                  type="button"
-                  onClick={() => startEdit(s)}
-                  className="p-2 text-on-surface-variant hover:text-primary"
-                  title="Edit skill"
-                >
-                  <MIcon name="edit" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDeleteId(s.id)}
-                  className="p-2 text-on-surface-variant hover:text-error"
-                  title="Delete skill"
-                >
-                  <MIcon name="delete" />
-                </button>
-              </div>
-            </div>
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-              {s.category}
-            </span>
-            <h3 className="mb-2 text-2xl font-bold text-on-surface">{s.name}</h3>
-            <p className="text-sm leading-relaxed text-on-surface-variant">{s.description ?? "—"}</p>
-          </div>
-        ))}
+              {inSection.length === 0 ? (
+                <p className="text-sm text-on-surface-variant/70">No skills in this section yet.</p>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {inSection.map((s) => (
+                    <SkillCard
+                      key={s.id}
+                      s={s}
+                      editingId={editingId}
+                      onEdit={startEdit}
+                      onDelete={setDeleteId}
+                    />
+                  ))}
+                </div>
+              )}
+            </section>
+          );
+        })}
       </div>
 
       <ConfirmDialog
