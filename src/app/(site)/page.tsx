@@ -101,7 +101,7 @@ export default async function HomePage() {
                     alt="Sandun Madhushan"
                     width={400}
                     height={500}
-                    className="h-[min(400px,88vw)] w-full max-w-[400px] origin-[center_22%] scale-[1.14] rounded-2xl object-cover object-[center_22%] grayscale transition-all duration-700 group-hover:scale-[1.18] group-hover:grayscale-0 md:h-[500px]"
+                    className="h-[min(400px,88vw)] w-full max-w-[400px] origin-[center_22%] scale-[1.14] rounded-2xl object-cover object-[center_22%] grayscale transition-all duration-700 [@media(hover:none)]:grayscale-0 [@media(hover:hover)]:group-hover:scale-[1.18] [@media(hover:hover)]:group-hover:grayscale-0 md:h-[500px]"
                     priority
                     unoptimized={profileImage.startsWith("http")}
                   />
