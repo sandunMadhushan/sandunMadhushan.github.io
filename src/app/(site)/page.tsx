@@ -7,7 +7,7 @@ import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
 import { HeroTechBadges } from "@/components/public/hero-tech-badges";
 import { normalizeHeroTechChips } from "@/lib/hero-tech-chips";
-import { resolveHeroTagline } from "@/lib/about-content";
+import { resolveHeroTagline, resolveHomeAboutBody } from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
 
@@ -26,9 +26,7 @@ export default async function HomePage() {
   const profileImage = resolvePortraitSrc(stats.profileImage as string | undefined);
   const homeAboutHeadline =
     (stats.homeAboutHeadline as string) ?? "Learning by shipping real software.";
-  const homeAboutBody =
-    (stats.homeAboutBody as string) ??
-    "I'm a Software Engineering student, working toward a career as a software engineer. I care about clean structure, solid fundamentals, and interfaces that feel as good as they perform.";
+  const homeAboutBody = resolveHomeAboutBody(stats.homeAboutBody);
   const homeStats = (stats.homeStats as { value: string; label: string }[]) ?? [
     { value: String(stats.projects ?? "6"), label: "Projects & coursework" },
     { value: String(stats.technologies ?? "10"), label: "Technologies in play" },

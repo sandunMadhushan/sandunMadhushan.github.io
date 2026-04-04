@@ -4,6 +4,7 @@ import {
   DEFAULT_ABOUT_HEADLINE,
   DEFAULT_ABOUT_INTRO,
   DEFAULT_HERO_TAGLINE,
+  DEFAULT_HOME_ABOUT_BODY,
   getDefaultAboutContent,
 } from "../src/lib/about-content";
 import { DEFAULT_HERO_TECH_CHIPS } from "../src/lib/hero-tech-chips";
@@ -102,8 +103,7 @@ async function main() {
           { name: "Figma", icon: "figma" },
         ],
         homeAboutHeadline: "Learning by shipping real software.",
-        homeAboutBody:
-          "I'm a Software Engineering student in Colombo, working toward a career as a software engineer. I care about clean structure, solid fundamentals, and interfaces that feel as good as they perform.",
+        homeAboutBody: DEFAULT_HOME_ABOUT_BODY,
         homeStats: [
           { value: "6+", label: "Projects & coursework" },
           { value: "10+", label: "Technologies in play" },

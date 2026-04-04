@@ -9,6 +9,7 @@ import {
   ABOUT_HEADLINE_ACCENT,
   DEFAULT_ABOUT_HEADLINE,
   DEFAULT_ABOUT_INTRO,
+  stripColomboFromCopy,
 } from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout } from "@/lib/queries";
@@ -58,9 +59,9 @@ export default async function AboutPage() {
   const introFromStats = stats.aboutIntro as string[] | undefined;
   const intro =
     introFromStats && introFromStats.length > 0
-      ? introFromStats
+      ? introFromStats.map((p) => stripColomboFromCopy(p))
       : about?.content
-        ? [about.content]
+        ? [stripColomboFromCopy(about.content)]
         : [...DEFAULT_ABOUT_INTRO];
   const portrait = resolvePortraitSrc(
     stats.aboutPortrait as string | undefined,

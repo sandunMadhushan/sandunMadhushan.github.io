@@ -12,7 +12,8 @@
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "about:sync": "tsx scripts/sync-about-defaults.ts"
+    "about:sync": "tsx scripts/sync-about-defaults.ts",
+    "about:strip-colombo": "tsx scripts/strip-colombo-about.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
