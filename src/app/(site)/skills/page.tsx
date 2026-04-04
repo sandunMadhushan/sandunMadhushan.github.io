@@ -2,30 +2,11 @@ import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
+import { SkillTechIcon } from "@/components/skill-tech-icon";
 import Link from "next/link";
 import { getAbout, getSkills } from "@/lib/queries";
 
 export const revalidate = 30;
-
-const iconFor = (name: string) => {
-  const n = name.toLowerCase();
-  if (n.includes("react") || n.includes("next")) return "javascript";
-  if (n.includes("tailwind")) return "palette";
-  if (n.includes("typescript") || n.includes("javascript")) return "javascript";
-  if (n.includes("framer")) return "animation";
-  if (n.includes("node")) return "api";
-  if (n.includes("express")) return "terminal";
-  if (n.includes("mongo")) return "data_object";
-  if (n.includes("postgres")) return "database";
-  if (n.includes("git")) return "commit";
-  return "code";
-};
-
-/** `variable` is not a reliable Material Symbols ligature and renders as literal text. */
-function resolveSkillIcon(stored: string | null | undefined, name: string) {
-  if (!stored || stored === "variable") return iconFor(name);
-  return stored;
-}
 
 export default async function SkillsPage() {
   const [skills, about] = await Promise.all([getSkills(), getAbout()]);
@@ -83,11 +64,8 @@ export default async function SkillsPage() {
                     <div key={s.id} className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-container-highest">
-                            <MIcon
-                              name={resolveSkillIcon(s.icon, s.name)}
-                              className="text-primary"
-                            />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-container-highest text-primary">
+                            <SkillTechIcon name={s.name} iconKey={s.icon} size={26} />
                           </div>
                           <span className="text-lg font-semibold">
                             {s.name}
@@ -122,10 +100,9 @@ export default async function SkillsPage() {
                 )}
                 {backend.map((s) => (
                   <div key={s.id} className="flex items-center gap-6">
-                    <MIcon
-                      name={resolveSkillIcon(s.icon, s.name)}
-                      className="text-3xl text-on-surface-variant transition-colors group-hover:text-primary"
-                    />
+                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
+                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
+                    </span>
                     <div>
                       <p className="font-semibold">{s.name}</p>
                       <p className="text-sm text-on-surface-variant">
@@ -158,7 +135,9 @@ export default async function SkillsPage() {
                     <span className="font-medium text-on-surface">
                       {s.name}
                     </span>
-                    <MIcon name="database" className="text-primary" />
+                    <span className="text-primary">
+                      <SkillTechIcon name={s.name} iconKey={s.icon} size={24} />
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -182,10 +161,9 @@ export default async function SkillsPage() {
                     key={s.id}
                     className="flex cursor-default items-center gap-3 rounded-lg border border-outline-variant/10 bg-surface-container-highest px-6 py-3 transition-colors hover:border-primary-container/50"
                   >
-                    <MIcon
-                      name={resolveSkillIcon(s.icon, s.name)}
-                      className="text-primary"
-                    />
+                    <span className="text-primary">
+                      <SkillTechIcon name={s.name} iconKey={s.icon} size={22} />
+                    </span>
                     <span className="text-sm font-medium">{s.name}</span>
                   </div>
                 ))}

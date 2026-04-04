@@ -17,6 +17,10 @@ export async function POST(req: Request) {
   const description = typeof body.description === "string" ? body.description.trim() : "";
   if (!name) return NextResponse.json({ error: "Skill name is required." }, { status: 400 });
   if (!description) return NextResponse.json({ error: "Description is required." }, { status: 400 });
+  const iconRaw = body.icon;
+  const icon =
+    typeof iconRaw === "string" && iconRaw.trim() ? iconRaw.trim() : null;
+
   const skill = await prisma.skill.create({
     data: {
       name,
@@ -24,7 +28,7 @@ export async function POST(req: Request) {
       description,
       proficiency:
         typeof body.proficiency === "number" && Number.isFinite(body.proficiency) ? body.proficiency : null,
-      icon: body.icon ?? null,
+      icon,
     },
   });
   return NextResponse.json(skill);

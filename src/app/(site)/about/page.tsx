@@ -4,6 +4,7 @@ import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
+import { SkillTechIcon } from "@/components/skill-tech-icon";
 import {
   ABOUT_HEADLINE_ACCENT,
   DEFAULT_ABOUT_HEADLINE,
@@ -78,9 +79,9 @@ export default async function AboutPage() {
     name: string;
     icon: string;
   }[]) ?? [
-    { name: "TypeScript", icon: "code" },
-    { name: "Tailwind", icon: "layers" },
-    { name: "PostgreSQL", icon: "database" },
+    { name: "TypeScript", icon: "typescript" },
+    { name: "Tailwind", icon: "tailwindcss" },
+    { name: "PostgreSQL", icon: "postgresql" },
   ];
 
   return (
@@ -250,8 +251,8 @@ export default async function AboutPage() {
             <div className="flex flex-wrap justify-center gap-12 opacity-70">
               {skillArtifacts.map((s) => (
                 <div key={s.name} className="flex flex-col items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-lg glass-card">
-                    <MIcon name={s.icon} className="text-3xl" />
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg glass-card text-primary">
+                    <SkillTechIcon name={s.name} iconKey={s.icon} size={36} />
                   </div>
                   <span className="text-[0.75rem] font-bold uppercase tracking-widest">
                     {s.name}

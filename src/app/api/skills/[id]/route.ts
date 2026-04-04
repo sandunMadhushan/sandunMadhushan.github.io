@@ -35,7 +35,9 @@ export async function PATCH(req: Request, ctx: Ctx) {
       ...(body.category !== undefined && { category: body.category }),
       ...(descriptionTrimmed !== undefined && { description: descriptionTrimmed }),
       ...(body.proficiency !== undefined && { proficiency }),
-      ...(body.icon !== undefined && { icon: body.icon }),
+      ...(body.icon !== undefined && {
+        icon: typeof body.icon === "string" && body.icon.trim() ? body.icon.trim() : null,
+      }),
     },
   });
   return NextResponse.json(skill);
