@@ -90,6 +90,13 @@ export default async function AdminDashboardPage() {
                   Add New Project
                 </Link>
                 <Link
+                  href="/admin/projects/import"
+                  className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/20 bg-surface-container-low py-4 font-semibold text-on-surface transition-all hover:bg-surface-bright"
+                >
+                  <MIcon name="download" />
+                  Import from GitHub
+                </Link>
+                <Link
                   href="/admin/about"
                   className="flex w-full items-center justify-center gap-3 rounded-lg bg-surface-container-high py-4 font-semibold text-on-surface transition-all hover:bg-surface-bright"
                 >

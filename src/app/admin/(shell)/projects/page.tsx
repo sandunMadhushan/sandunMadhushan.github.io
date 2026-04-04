@@ -22,13 +22,22 @@ export default async function AdminProjectsPage() {
               Project Portfolio
             </h2>
           </div>
-          <Link
-            href="/admin/projects/new"
-            className="flex items-center gap-2 rounded-lg bg-primary-container px-6 py-3 font-semibold text-on-primary-container shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all hover:brightness-110 active:scale-95"
-          >
-            <MIcon name="add" />
-            Add New Project
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/admin/projects/import"
+              className="flex items-center gap-2 rounded-lg border border-outline-variant/25 bg-surface-container-high px-6 py-3 font-semibold text-on-surface transition-all hover:bg-surface-bright active:scale-95"
+            >
+              <MIcon name="download" />
+              Import from GitHub
+            </Link>
+            <Link
+              href="/admin/projects/new"
+              className="flex items-center gap-2 rounded-lg bg-primary-container px-6 py-3 font-semibold text-on-primary-container shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all hover:brightness-110 active:scale-95"
+            >
+              <MIcon name="add" />
+              Add New Project
+            </Link>
+          </div>
         </div>
         <div className="mb-8 flex flex-col gap-4 rounded-xl bg-surface-container-low p-6 md:flex-row md:items-center">
           <div className="relative w-full md:w-96">
