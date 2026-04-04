@@ -4,6 +4,11 @@ import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
+import {
+  ABOUT_HEADLINE_ACCENT,
+  DEFAULT_ABOUT_HEADLINE,
+  DEFAULT_ABOUT_INTRO,
+} from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout } from "@/lib/queries";
 
@@ -12,10 +17,10 @@ export const revalidate = 30;
 const headlineAccentClass =
   "text-primary-container drop-shadow-[0_0_15px_rgba(79,70,229,0.3)]";
 
-/** Keeps indigo accent on “landscapes” + line break after “Crafting digital” when that pattern matches. */
+/** Highlights `ABOUT_HEADLINE_ACCENT` in the headline when present (case-insensitive match). */
 function formatAboutHeadline(headline: string): ReactNode {
   const lower = headline.toLowerCase();
-  const key = "landscapes";
+  const key = ABOUT_HEADLINE_ACCENT.toLowerCase();
   const idx = lower.indexOf(key);
   if (idx === -1) {
     return headline.includes("\n") ? (
@@ -28,21 +33,6 @@ function formatAboutHeadline(headline: string): ReactNode {
   const word = headline.slice(idx, idx + key.length);
   const before = headline.slice(0, idx);
   const after = headline.slice(idx + key.length);
-  const poeticPrefix = "crafting digital ";
-  const poetic = lower.startsWith(poeticPrefix) && idx === poeticPrefix.length;
-
-  if (poetic) {
-    const firstLine = headline.slice(0, poeticPrefix.length).trimEnd();
-    return (
-      <>
-        {firstLine}
-        <br />
-        <span className={headlineAccentClass}>{word}</span>
-        {after}
-      </>
-    );
-  }
-
   return (
     <>
       {before}
@@ -63,19 +53,25 @@ type TimelineItem = {
 export default async function AboutPage() {
   const about = await getAbout();
   const stats = (about?.stats as Record<string, unknown>) ?? {};
-  const headline =
-    (stats.aboutHeadline as string) ??
-    "Crafting digital landscapes with surgical precision.";
-  const intro = (stats.aboutIntro as string[]) ?? [about?.content ?? ""];
-  const portrait = resolvePortraitSrc(stats.aboutPortrait as string | undefined);
+  const headline = (stats.aboutHeadline as string) ?? DEFAULT_ABOUT_HEADLINE;
+  const introFromStats = stats.aboutIntro as string[] | undefined;
+  const intro =
+    introFromStats && introFromStats.length > 0
+      ? introFromStats
+      : about?.content
+        ? [about.content]
+        : [...DEFAULT_ABOUT_INTRO];
+  const portrait = resolvePortraitSrc(
+    stats.aboutPortrait as string | undefined,
+  );
   const statCards = (stats.statCards as {
     value: string;
     label: string;
     icon: string;
   }[]) ?? [
-    { value: "6+", label: "Projects Orchestrated", icon: "terminal" },
-    { value: "10", label: "Technologies Mastered", icon: "verified" },
-    { value: "2+", label: "Years of Experience", icon: "history_edu" },
+    { value: "6+", label: "Projects & builds", icon: "terminal" },
+    { value: "10", label: "Technologies", icon: "verified" },
+    { value: "2+", label: "Years learning & shipping", icon: "history_edu" },
   ];
   const timeline = (stats.timeline as TimelineItem[]) ?? [];
   const skillArtifacts = (stats.skillArtifacts as {
@@ -91,11 +87,11 @@ export default async function AboutPage() {
     <PageFade>
       <SiteNav active="/about" />
       <main className="pb-20 pt-0">
-        <section className="box-border mb-24 flex min-h-[100dvh] flex-col justify-center overflow-x-clip pt-14 pb-10 md:mb-32 md:pt-16 md:pb-12">
+        <section className="box-border mb-24 flex min-h-[100dvh] flex-col justify-center overflow-x-clip pt-[4.25rem] pb-10 md:mb-32 md:pt-20 md:pb-12">
           <div className="mx-auto grid w-full min-h-0 max-w-[1440px] grid-cols-1 items-center gap-10 px-6 md:grid-cols-2 md:gap-12 md:px-12 lg:gap-16">
             <div className="min-h-0">
-              <span className="mb-4 block text-[0.75rem] font-bold uppercase tracking-widest text-primary md:mb-6">
-                The Visionary
+              <span className="mb-4 block max-w-xl text-[0.8125rem] font-semibold leading-snug tracking-wide text-primary md:mb-6">
+                Aspiring Software Engineer
               </span>
               <h1 className="mb-6 max-w-3xl text-[2rem] font-extrabold leading-[1.12] tracking-tighter text-on-surface sm:text-[2.5rem] md:mb-8 md:text-[3rem] lg:text-[3.25rem]">
                 {formatAboutHeadline(headline)}
@@ -172,74 +168,74 @@ export default async function AboutPage() {
                 </p>
               ) : (
                 <>
-              <div className="absolute bottom-0 left-0 top-0 w-[2px] bg-surface-container-highest md:left-1/2 md:-translate-x-1/2" />
-              {timeline.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="relative mb-32 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
-                >
-                  {item.align === "right" ? (
-                    <>
-                      <div className="hidden md:block">
-                        {item.image && (
-                          <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
-                            <NextImage
-                              src={item.image}
-                              alt=""
-                              width={640}
-                              height={360}
-                              className="h-full w-full rounded object-cover shadow-lg"
-                              unoptimized
-                            />
+                  <div className="absolute bottom-0 left-0 top-0 w-[2px] bg-surface-container-highest md:left-1/2 md:-translate-x-1/2" />
+                  {timeline.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="relative mb-32 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
+                    >
+                      {item.align === "right" ? (
+                        <>
+                          <div className="hidden md:block">
+                            {item.image && (
+                              <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
+                                <NextImage
+                                  src={item.image}
+                                  alt=""
+                                  width={640}
+                                  height={360}
+                                  className="h-full w-full rounded object-cover shadow-lg"
+                                  unoptimized
+                                />
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div>
-                        <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                          {item.period}
-                        </span>
-                        <h4 className="mb-4 text-2xl font-bold">
-                          {item.title}
-                        </h4>
-                        <p className="max-w-md leading-relaxed text-on-surface-variant">
-                          {item.body}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className={item.image ? "md:text-right" : ""}>
-                        <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                          {item.period}
-                        </span>
-                        <h4 className="mb-4 text-2xl font-bold">
-                          {item.title}
-                        </h4>
-                        <p
-                          className={`max-w-md leading-relaxed text-on-surface-variant ${item.image ? "md:ml-auto" : ""}`}
-                        >
-                          {item.body}
-                        </p>
-                      </div>
-                      <div className="hidden md:block">
-                        {item.image && (
-                          <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
-                            <NextImage
-                              src={item.image}
-                              alt=""
-                              width={640}
-                              height={360}
-                              className="h-full w-full rounded object-cover shadow-lg"
-                              unoptimized
-                            />
+                          <div>
+                            <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
+                              {item.period}
+                            </span>
+                            <h4 className="mb-4 text-2xl font-bold">
+                              {item.title}
+                            </h4>
+                            <p className="max-w-md leading-relaxed text-on-surface-variant">
+                              {item.body}
+                            </p>
                           </div>
-                        )}
-                      </div>
-                    </>
-                  )}
-                  <div className="absolute left-[-5px] top-0 h-3 w-3 rounded-full bg-primary-container shadow-[0_0_15px_rgba(79,70,229,0.5)] md:left-1/2 md:-translate-x-1/2" />
-                </div>
-              ))}
+                        </>
+                      ) : (
+                        <>
+                          <div className={item.image ? "md:text-right" : ""}>
+                            <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
+                              {item.period}
+                            </span>
+                            <h4 className="mb-4 text-2xl font-bold">
+                              {item.title}
+                            </h4>
+                            <p
+                              className={`max-w-md leading-relaxed text-on-surface-variant ${item.image ? "md:ml-auto" : ""}`}
+                            >
+                              {item.body}
+                            </p>
+                          </div>
+                          <div className="hidden md:block">
+                            {item.image && (
+                              <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
+                                <NextImage
+                                  src={item.image}
+                                  alt=""
+                                  width={640}
+                                  height={360}
+                                  className="h-full w-full rounded object-cover shadow-lg"
+                                  unoptimized
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </>
+                      )}
+                      <div className="absolute left-[-5px] top-0 h-3 w-3 rounded-full bg-primary-container shadow-[0_0_15px_rgba(79,70,229,0.5)] md:left-1/2 md:-translate-x-1/2" />
+                    </div>
+                  ))}
                 </>
               )}
             </div>

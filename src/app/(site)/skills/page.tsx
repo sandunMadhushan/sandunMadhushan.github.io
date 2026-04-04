@@ -11,7 +11,7 @@ const iconFor = (name: string) => {
   const n = name.toLowerCase();
   if (n.includes("react") || n.includes("next")) return "javascript";
   if (n.includes("tailwind")) return "palette";
-  if (n.includes("typescript") || n.includes("javascript")) return "variable";
+  if (n.includes("typescript") || n.includes("javascript")) return "javascript";
   if (n.includes("framer")) return "animation";
   if (n.includes("node")) return "api";
   if (n.includes("express")) return "terminal";
@@ -21,12 +21,18 @@ const iconFor = (name: string) => {
   return "code";
 };
 
+/** `variable` is not a reliable Material Symbols ligature and renders as literal text. */
+function resolveSkillIcon(stored: string | null | undefined, name: string) {
+  if (!stored || stored === "variable") return iconFor(name);
+  return stored;
+}
+
 export default async function SkillsPage() {
   const [skills, about] = await Promise.all([getSkills(), getAbout()]);
   const stats = (about?.stats as Record<string, unknown>) ?? {};
   const cta =
     (stats.ctaSpecialization as string) ??
-    "AI integration and modern full-stack delivery.";
+    "Full-stack web apps, TypeScript/React, and APIs—always learning deeper.";
 
   const presentation = skills.filter(
     (s) => s.category === "Frontend" || s.category === "Languages",
@@ -45,8 +51,9 @@ export default async function SkillsPage() {
             <span className="text-primary-container">Capabilities</span>
           </h1>
           <p className="max-w-2xl text-lg leading-[1.6] text-on-surface-variant">
-            A curated assembly of technical proficiencies developed through
-            architecting high-performance digital systems.
+            Tools and languages I use in coursework and personal projects as I grow
+            toward a career in software engineering—frontend, backend, and everything
+            in between.
           </p>
         </header>
 
@@ -78,7 +85,7 @@ export default async function SkillsPage() {
                         <div className="flex items-center gap-4">
                           <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-container-highest">
                             <MIcon
-                              name={s.icon || iconFor(s.name)}
+                              name={resolveSkillIcon(s.icon, s.name)}
                               className="text-primary"
                             />
                           </div>
@@ -116,7 +123,7 @@ export default async function SkillsPage() {
                 {backend.map((s) => (
                   <div key={s.id} className="flex items-center gap-6">
                     <MIcon
-                      name={s.icon || iconFor(s.name)}
+                      name={resolveSkillIcon(s.icon, s.name)}
                       className="text-3xl text-on-surface-variant transition-colors group-hover:text-primary"
                     />
                     <div>
@@ -176,7 +183,7 @@ export default async function SkillsPage() {
                     className="flex cursor-default items-center gap-3 rounded-lg border border-outline-variant/10 bg-surface-container-highest px-6 py-3 transition-colors hover:border-primary-container/50"
                   >
                     <MIcon
-                      name={s.icon || iconFor(s.name)}
+                      name={resolveSkillIcon(s.icon, s.name)}
                       className="text-primary"
                     />
                     <span className="text-sm font-medium">{s.name}</span>

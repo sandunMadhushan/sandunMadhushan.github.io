@@ -5,6 +5,8 @@ import { PageFade } from "@/components/motion/page-fade";
 import { HeroFloat } from "@/components/motion/hero-float";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
+import { HeroTechBadges } from "@/components/public/hero-tech-badges";
+import { normalizeHeroTechChips } from "@/lib/hero-tech-chips";
 import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
 
@@ -21,18 +23,19 @@ export default async function HomePage() {
   const stats = (about?.stats as Record<string, unknown>) ?? {};
   const tagline =
     (stats.heroTagline as string) ??
-    "Full-Stack Developer building modern, scalable web applications with editorial precision.";
+    "Software Engineering undergraduate and aspiring software engineer—building reliable full-stack web apps with React, TypeScript, and Node.js.";
   const profileImage = resolvePortraitSrc(stats.profileImage as string | undefined);
   const homeAboutHeadline =
-    (stats.homeAboutHeadline as string) ?? "Crafting code like architecture.";
+    (stats.homeAboutHeadline as string) ?? "Learning by shipping real software.";
   const homeAboutBody =
     (stats.homeAboutBody as string) ??
-    "I am a Full-Stack Developer based in Colombo, obsessed with the intersection of clean code and editorial design.";
+    "I'm a Software Engineering student in Colombo, working toward a career as a software engineer. I care about clean structure, solid fundamentals, and interfaces that feel as good as they perform.";
   const homeStats = (stats.homeStats as { value: string; label: string }[]) ?? [
-    { value: String(stats.projects ?? "6"), label: "Projects Delivered" },
-    { value: String(stats.technologies ?? "10"), label: "Tech Stack" },
-    { value: String(stats.experience ?? "2+"), label: "Years Experience" },
+    { value: String(stats.projects ?? "6"), label: "Projects & coursework" },
+    { value: String(stats.technologies ?? "10"), label: "Technologies in play" },
+    { value: String(stats.experience ?? "2+"), label: "Years building" },
   ];
+  const heroTechChips = normalizeHeroTechChips(stats.heroTechChips);
 
   let showcase = featured;
   if (showcase.length < 3) {
@@ -56,7 +59,7 @@ export default async function HomePage() {
           <div className="z-10 space-y-6">
             <div className="label-md inline-flex items-center gap-2 rounded-full bg-surface-container-high px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary">
               <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-              Available for New Projects
+              Open to internships &amp; collaborations
             </div>
             <h1 className="text-6xl font-extrabold leading-[1.1] tracking-tighter text-on-surface md:text-7xl">
               Sandun <br />{" "}
@@ -103,25 +106,8 @@ export default async function HomePage() {
                     unoptimized={profileImage.startsWith("http")}
                   />
                 </div>
-                {/* Floating skill chips — overlap corners like the mock */}
-                <div className="hero-badge absolute -right-3 -top-3 z-20 flex items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5 shadow-2xl md:-right-5 md:-top-5 md:gap-3 md:px-4 md:py-3.5">
-                  <MIcon name="javascript" className="text-2xl text-primary md:text-3xl" />
-                  <span className="text-xs font-bold tracking-tight text-on-surface md:text-sm">
-                    React.js
-                  </span>
-                </div>
-                <div className="hero-badge absolute left-0 top-1/2 z-20 flex -translate-x-[12%] -translate-y-1/2 items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5 shadow-2xl sm:-translate-x-[18%] md:-left-12 md:translate-x-0 md:px-4 md:py-3.5">
-                  <MIcon name="terminal" className="text-2xl text-tertiary md:text-3xl" />
-                  <span className="text-xs font-bold tracking-tight text-on-surface md:text-sm">
-                    TypeScript
-                  </span>
-                </div>
-                <div className="hero-badge absolute -bottom-5 right-6 z-20 flex items-center gap-2.5 rounded-xl border border-white/10 px-3 py-2.5 shadow-2xl md:-bottom-7 md:right-10 md:gap-3 md:px-4 md:py-3.5">
-                  <MIcon name="layers" className="text-2xl text-primary md:text-3xl" />
-                  <span className="text-xs font-bold tracking-tight text-on-surface md:text-sm">
-                    Full Stack
-                  </span>
-                </div>
+                {/* Floating skill chips — official brand marks via react-icons (Simple Icons) */}
+                <HeroTechBadges chips={heroTechChips} />
               </div>
             </HeroFloat>
           </div>
@@ -185,7 +171,7 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 items-center gap-20 lg:grid-cols-2">
               <div className="space-y-8">
                 <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-primary">
-                  About the Developer
+                  About me
                 </h2>
                 <h3 className="text-4xl font-extrabold tracking-tight">
                   {homeAboutHeadline}
@@ -214,18 +200,18 @@ export default async function HomePage() {
                   {[
                     {
                       icon: "bolt",
-                      t: "Performance First",
-                      d: "Optimized Core Web Vitals for every build.",
+                      t: "Performance-aware builds",
+                      d: "Faster loads and clearer UX—without sacrificing readability.",
                     },
                     {
                       icon: "shield",
-                      t: "Scalable Architecture",
-                      d: "Clean, maintainable, and modular codebase.",
+                      t: "Maintainable structure",
+                      d: "Code organized so teammates (and future me) can follow along.",
                     },
                     {
                       icon: "palette",
-                      t: "Design-Led Development",
-                      d: "Pixel-perfect translation from design to code.",
+                      t: "Design-to-implementation",
+                      d: "Turning layouts and specs into polished, responsive interfaces.",
                     },
                   ].map((x) => (
                     <div
@@ -247,18 +233,22 @@ export default async function HomePage() {
 
         <ScrollReveal>
           <section className="mx-auto mb-32 max-w-[1440px] px-6 md:px-12">
-            <div className="relative space-y-8 overflow-hidden rounded-[2rem] bg-primary-container p-16 text-center shadow-[0_40px_100px_rgba(79,70,229,0.3)] md:p-24">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1)_0%,_transparent_70%)]" />
-              <h2 className="text-4xl font-black tracking-tighter text-on-primary md:text-6xl">
-                Ready to start a project?
+            <div className="relative space-y-8 overflow-hidden rounded-[2rem] bg-primary-container p-16 text-center shadow-[0_40px_100px_rgba(79,70,229,0.35)] md:p-24">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,255,255,0.22),transparent_55%)]"
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 to-black/25" />
+              <h2 className="relative z-10 text-4xl font-black tracking-tighter text-white drop-shadow-sm md:text-6xl">
+                Want to work together?
               </h2>
-              <p className="mx-auto max-w-2xl text-xl opacity-80 text-on-primary-container">
-                Let&apos;s collaborate to build something exceptional — SaaS,
-                e-commerce, or custom web apps.
+              <p className="relative z-10 mx-auto max-w-2xl text-lg leading-relaxed text-white/90 md:text-xl">
+                I&apos;m open to internships, academic collaborations, and small
+                full-stack web projects—tell me what you have in mind.
               </p>
               <LinkNext
                 href="/contact"
-                className="relative z-10 inline-block rounded-full bg-on-primary px-12 py-5 text-lg font-black text-primary-container transition-all hover:bg-surface-bright hover:text-on-surface active:scale-95"
+                className="relative z-10 inline-flex items-center justify-center rounded-full bg-white px-12 py-5 text-lg font-bold text-primary-container shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all hover:bg-zinc-100 hover:text-[#4338ca] hover:shadow-[0_12px_40px_rgba(0,0,0,0.25)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
               >
                 Contact Me Now
               </LinkNext>

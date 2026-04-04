@@ -17,9 +17,9 @@ export default async function ProjectsPage() {
             Selected Works
           </h1>
           <p className="body-lg max-w-2xl text-on-surface-variant/75">
-            Exploring the intersection of human-centric design and scalable
-            architecture. A collection of digital experiences built with
-            precision and intent.
+            Coursework highlights, personal builds, and experiments from my journey as
+            a Software Engineering student—full-stack web apps with clear structure and
+            attention to UX.
           </p>
         </header>
         <ProjectsGrid projects={projects} />

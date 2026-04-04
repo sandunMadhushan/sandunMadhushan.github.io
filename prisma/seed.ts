@@ -1,5 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import {
+  DEFAULT_ABOUT_HEADLINE,
+  DEFAULT_ABOUT_INTRO,
+  getDefaultAboutContent,
+} from "../src/lib/about-content";
+import { DEFAULT_HERO_TECH_CHIPS } from "../src/lib/hero-tech-chips";
 
 const prisma = new PrismaClient();
 
@@ -45,47 +51,44 @@ async function main() {
 
   await prisma.about.create({
     data: {
-      content:
-        "Software Engineering undergraduate and full-stack developer focused on building modern, scalable web applications using React, TypeScript, and Node.js. Passionate about solving real-world problems and creating meaningful digital experiences.",
+      content: getDefaultAboutContent(),
       stats: {
         projects: 6,
         technologies: 10,
         experience: "2+ years",
         heroTagline:
-          "Full-Stack Developer building modern, scalable web applications with editorial precision.",
+          "Software Engineering undergraduate and aspiring software engineer—building reliable full-stack web apps with React, TypeScript, and Node.js.",
         profileImage: IMG.hero,
-        aboutHeadline: "Crafting digital landscapes with surgical precision.",
-        aboutIntro: [
-          "I am a digital architect specializing in the intersection of high-performance engineering and editorial aesthetics. My work is driven by the philosophy that code is an artifact—a functional gallery piece that should be as robust as it is beautiful.",
-          "With a foundation in Computer Science and a passion for minimalist design systems, I help brands bridge the gap between technical complexity and intuitive user experiences. I don't just build websites; I curate digital environments.",
-        ],
+        heroTechChips: DEFAULT_HERO_TECH_CHIPS.map((c) => ({ ...c })),
+        aboutHeadline: DEFAULT_ABOUT_HEADLINE,
+        aboutIntro: [...DEFAULT_ABOUT_INTRO],
         aboutPortrait: LOCAL_PORTRAIT,
         statCards: [
-          { value: "6+", label: "Projects Orchestrated", icon: "terminal" },
-          { value: "10", label: "Technologies Mastered", icon: "verified" },
-          { value: "2+", label: "Years of Experience", icon: "history_edu" },
+          { value: "6+", label: "Projects & builds", icon: "terminal" },
+          { value: "10", label: "Technologies", icon: "verified" },
+          { value: "2+", label: "Years learning & shipping", icon: "history_edu" },
         ],
         timeline: [
           {
             period: "2016 — 2020",
-            title: "Academic Foundation",
-            body: "BSc in Computer Science with a focus on Software Engineering and Human-Computer Interaction.",
+            title: "Foundations",
+            body: "Early focus on programming fundamentals, data structures, and the habits that still guide how I structure code today.",
             image:
               "https://lh3.googleusercontent.com/aida-public/AB6AXuAp1nxC1tIu2AV7q7cxCQcE7UsMsP0zP1EIL8Qq0wrG4Jdh-ZIriSl-Qk84uTu6CZ6ZxAZt0n3AhaOnHY4tvqT9DG_VdrwU2W0Vm62UNZBzU1ngpwZmufPNg0RXAySaqhU8jmwO5JzzfMaEBnLPriWsOf_q4LC4mFCuzQ_qU0kf31IbbHKRm6qQaZUQFYDVovg6zHRT5Swdeq1jXWH0ykPIPWveekNZUYZf1qpy2fcA-kl4gJY1og2uFdRCO7jjW-qmHV4cN4L6ww",
             align: "left",
           },
           {
             period: "2020 — 2022",
-            title: "The Catalyst Era",
-            body: "Led full-stack delivery for client platforms, defined reusable UI patterns, and shipped production systems end to end.",
+            title: "Deeper into full-stack",
+            body: "Coursework and projects that pushed into APIs, databases, and shipping usable UIs—not just tutorials, but end-to-end builds.",
             image:
               "https://lh3.googleusercontent.com/aida-public/AB6AXuBMKPUEhVJe16VBicoCj5SCk_fokfy1m7INGtBPvzopux_Nft5f9ir38RtyUjgtUy7y0LY-k46CBp47O50TXtrq-LOVekt5XElUlwWC8jbOuYmAB4KYx--1F1Zf6gev0JAw25eX43O-nSawPL39iymZIBZ2PlYk3k76UuM3OqmoZ0-hucWUB3Ic-lsd318pEZ4X18sDKsZhpFkrfecItrIAjJyPiZL3qOERNZirl9LQ_ygNVYg3_cXe0KGLXKA9Taj92u7lJlwkTA",
             align: "right",
           },
           {
             period: "Present Day",
-            title: "Continuous Curating",
-            body: "Exploring AI-assisted workflows, performance-first architectures, and design systems that scale.",
+            title: "Software Engineering track",
+            body: "Formal SE studies plus personal projects—performance, accessibility, and clearer architecture with every commit.",
             image:
               "https://lh3.googleusercontent.com/aida-public/AB6AXuDumqlr7MRNvZtvIXiU-STqxfpp56heX8ciuuuyroPRI5ghAn-R2nTJBjWK2bXp5QZk31w8t0yAyDhyAUU3lX_cLkNdQ1oT7UrgSMEiBuclA5uyWfVsPrFpNcTsDsTL7yKflAOzhwUtE7pw88s87LqYsTZliyNz4P-M-ZuKoZcgkKKdcN_szFuiZ_8ORkuF9JM30OJo2SFu6E_10r8cYfyo_uK520QkWjDrbBN124V62-s_hLQKziL8YdI1cx_-Zu0tbNo-VmCzcw",
             align: "left",
@@ -98,16 +101,16 @@ async function main() {
           { name: "Node.js", icon: "token" },
           { name: "Figma", icon: "brush" },
         ],
-        homeAboutHeadline: "Crafting code like architecture.",
+        homeAboutHeadline: "Learning by shipping real software.",
         homeAboutBody:
-          "I am a Full-Stack Developer based in Colombo, obsessed with the intersection of clean code and editorial design. I transform complex requirements into intuitive, high-performance digital artifacts.",
+          "I'm a Software Engineering student in Colombo, working toward a career as a software engineer. I care about clean structure, solid fundamentals, and interfaces that feel as good as they perform.",
         homeStats: [
-          { value: "6+", label: "Projects Delivered" },
-          { value: "10+", label: "Tech Stack" },
-          { value: "2+", label: "Years Experience" },
+          { value: "6+", label: "Projects & coursework" },
+          { value: "10+", label: "Technologies in play" },
+          { value: "2+", label: "Years building" },
         ],
         ctaSpecialization:
-          "Developing LLM-powered interfaces and RAG pipelines for modern enterprise applications.",
+          "Full-stack web apps, TypeScript/React, and APIs—always learning deeper.",
       },
     },
   });
@@ -138,7 +141,7 @@ async function main() {
       name: "TypeScript",
       category: "Languages",
       proficiency: 90,
-      icon: "variable",
+      icon: "javascript",
       description: "Typed JavaScript for safer systems.",
     },
     {

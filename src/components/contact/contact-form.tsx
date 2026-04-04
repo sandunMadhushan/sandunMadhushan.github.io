@@ -4,6 +4,12 @@ import { useState } from "react";
 import { MIcon } from "@/components/m-icon";
 import { toast } from "sonner";
 
+const labelClass =
+  "pl-4 text-[0.75rem] font-bold uppercase tracking-widest text-on-surface-variant/70";
+
+const fieldClass =
+  "w-full rounded-none border-0 border-b border-outline-variant/15 bg-surface-container-lowest px-4 py-3 text-on-surface placeholder:text-on-surface/35 focus:border-primary focus:shadow-[0_4px_12px_-4px_rgba(79,70,229,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low";
+
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading">("idle");
 
@@ -34,13 +40,10 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative z-10 space-y-8">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="contact-name"
-            className="text-[0.75rem] font-bold uppercase tracking-widest text-on-surface-variant/70"
-          >
+    <form onSubmit={onSubmit} className="relative z-10 space-y-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 md:items-start">
+        <div className="flex min-w-0 flex-col gap-2">
+          <label htmlFor="contact-name" className={labelClass}>
             Name
           </label>
           <input
@@ -48,15 +51,12 @@ export function ContactForm() {
             name="name"
             required
             autoComplete="name"
-            className="rounded-none border-0 border-b border-outline-variant/15 bg-surface-container-lowest px-0 py-3 text-on-surface placeholder:text-on-surface/25 focus:border-primary focus:shadow-[0_4px_12px_-4px_rgba(79,70,229,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low"
-            placeholder="John Doe"
+            className={fieldClass}
+            placeholder="Your full name"
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <label
-            htmlFor="contact-email"
-            className="text-[0.75rem] font-bold uppercase tracking-widest text-on-surface-variant/70"
-          >
+        <div className="flex min-w-0 flex-col gap-2">
+          <label htmlFor="contact-email" className={labelClass}>
             Email
           </label>
           <input
@@ -65,30 +65,24 @@ export function ContactForm() {
             type="email"
             required
             autoComplete="email"
-            className="rounded-none border-0 border-b border-outline-variant/15 bg-surface-container-lowest px-0 py-3 text-on-surface placeholder:text-on-surface/25 focus:border-primary focus:shadow-[0_4px_12px_-4px_rgba(79,70,229,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low"
-            placeholder="john@example.com"
+            className={fieldClass}
+            placeholder="you@university.edu or work email"
           />
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <label
-          htmlFor="contact-subject"
-          className="text-[0.75rem] font-bold uppercase tracking-widest text-on-surface-variant/70"
-        >
+        <label htmlFor="contact-subject" className={labelClass}>
           Subject
         </label>
         <input
           id="contact-subject"
           name="subject"
-          className="rounded-none border-0 border-b border-outline-variant/15 bg-surface-container-lowest px-0 py-3 text-on-surface placeholder:text-on-surface/25 focus:border-primary focus:shadow-[0_4px_12px_-4px_rgba(79,70,229,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low"
-          placeholder="Project Inquiry"
+          className={fieldClass}
+          placeholder="e.g. Internship, project collaboration, or technical question"
         />
       </div>
       <div className="flex flex-col gap-2">
-        <label
-          htmlFor="contact-message"
-          className="text-[0.75rem] font-bold uppercase tracking-widest text-on-surface-variant/70"
-        >
+        <label htmlFor="contact-message" className={labelClass}>
           Message
         </label>
         <textarea
@@ -96,8 +90,8 @@ export function ContactForm() {
           name="message"
           required
           rows={5}
-          className="resize-none rounded-none border-0 border-b border-outline-variant/15 bg-surface-container-lowest px-0 py-3 text-on-surface placeholder:text-on-surface/25 focus:border-primary focus:shadow-[0_4px_12px_-4px_rgba(79,70,229,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low"
-          placeholder="Tell me about your vision..."
+          className={`resize-none ${fieldClass}`}
+          placeholder="Introduce yourself and what you’d like to discuss—coursework, open source, a role, or a build idea."
         />
       </div>
       <button

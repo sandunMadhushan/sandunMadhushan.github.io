@@ -10,7 +10,10 @@ import { ContactSocialRow } from "@/components/public/public-social-blocks";
 export const revalidate = 30;
 
 export default async function ContactPage() {
-  const [about, socialLinks] = await Promise.all([getAbout(), getSocialLinks()]);
+  const [about, socialLinks] = await Promise.all([
+    getAbout(),
+    getSocialLinks(),
+  ]);
   const stats = (about?.stats as Record<string, unknown>) ?? {};
   const profile = resolvePortraitSrc(stats.profileImage as string | undefined);
 
@@ -23,8 +26,9 @@ export default async function ContactPage() {
             Get in touch
           </span>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
-            Let&apos;s build something{" "}
-            <span className="text-primary">extraordinary</span> together.
+            Let&apos;s talk{" "}
+            <span className="text-primary">code, coursework,</span> and
+            what&apos;s next.
           </h1>
         </div>
         <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12">
@@ -48,7 +52,7 @@ export default async function ContactPage() {
                     <p className="mb-1 text-sm text-on-surface-variant">
                       Email
                     </p>
-                    <p className="text-lg font-medium">hello@sandun.dev</p>
+                    <p className="text-lg font-medium">hello@sandun.me</p>
                   </div>
                 </div>
                 <div className="group flex items-start gap-4">
@@ -59,7 +63,7 @@ export default async function ContactPage() {
                     <p className="mb-1 text-sm text-on-surface-variant">
                       Phone
                     </p>
-                    <p className="text-lg font-medium">+94 XX XXX XXXX</p>
+                    <p className="text-lg font-medium">+94 71 134 9060</p>
                   </div>
                 </div>
               </div>
@@ -67,9 +71,9 @@ export default async function ContactPage() {
             <ContactSocialRow links={socialLinks} />
             <div className="rounded-xl border-l-2 border-primary-container bg-surface-container-lowest p-6">
               <p className="text-sm italic leading-relaxed text-on-surface-variant/80">
-                &quot;Design is not just what it looks like and feels like.
-                Design is how it works. Looking forward to discussing how we can
-                create something meaningful.&quot;
+                &quot;I&apos;m always up for a thoughtful technical
+                conversation—whether it&apos;s an internship, a team project, or
+                feedback on something I&apos;ve shipped.&quot;
               </p>
               <div className="mt-4 flex items-center gap-3">
                 <div className="h-8 w-8 overflow-hidden rounded-full bg-surface-container">
@@ -82,9 +86,14 @@ export default async function ContactPage() {
                     unoptimized={profile.startsWith("http")}
                   />
                 </div>
-                <span className="text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                  Lead Curator
-                </span>
+                <div>
+                  <span className="block text-sm font-semibold text-on-surface">
+                    Sandun Madhushan
+                  </span>
+                  <span className="text-[0.7rem] font-bold tracking-wide text-primary">
+                    Aspiring Software Engineer
+                  </span>
+                </div>
               </div>
             </div>
           </div>
