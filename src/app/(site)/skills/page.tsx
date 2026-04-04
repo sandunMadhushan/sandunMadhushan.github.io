@@ -19,6 +19,7 @@ export default async function SkillsPage() {
     (s) => s.category === "Frontend" || s.category === "Languages",
   );
   const backend = skills.filter((s) => s.category === "Backend");
+  const mobile = skills.filter((s) => s.category === "Mobile");
   const database = skills.filter((s) => s.category === "Database");
   const tools = skills.filter((s) => s.category === "Tools");
 
@@ -52,38 +53,25 @@ export default async function SkillsPage() {
                 </div>
                 <MIcon name="devices" className="text-4xl text-primary/40" />
               </div>
-              <div className="grid grid-cols-1 gap-x-12 gap-y-10 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2">
                 {presentation.length === 0 && (
                   <p className="col-span-full text-sm text-on-surface-variant/70">
                     No frontend or language skills yet — add them in the admin.
                   </p>
                 )}
-                {presentation.map((s) => {
-                  const pct = s.proficiency ?? 88;
-                  return (
-                    <div key={s.id} className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-container-highest text-primary">
-                            <SkillTechIcon name={s.name} iconKey={s.icon} size={26} />
-                          </div>
-                          <span className="text-lg font-semibold">
-                            {s.name}
-                          </span>
-                        </div>
-                        <span className="font-mono text-sm text-primary">
-                          {pct}%
-                        </span>
-                      </div>
-                      <div className="h-[2px] w-full overflow-hidden rounded-full bg-surface-container-highest">
-                        <div
-                          className="h-full bg-primary-container shadow-[0_0_10px_rgba(79,70,229,0.5)]"
-                          style={{ width: `${pct}%` }}
-                        />
-                      </div>
+                {presentation.map((s) => (
+                  <div key={s.id} className="flex items-center gap-6">
+                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
+                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
+                    </span>
+                    <div>
+                      <p className="font-semibold">{s.name}</p>
+                      <p className="text-sm text-on-surface-variant">
+                        {s.description ?? "—"}
+                      </p>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </section>
 
@@ -114,9 +102,43 @@ export default async function SkillsPage() {
               </div>
             </section>
 
+            <section className="glass-card group rounded-xl p-8 transition-all duration-500 hover:shadow-[0_0_40px_rgba(79,70,229,0.12)] md:col-span-12">
+              <div className="mb-10 flex items-end justify-between">
+                <div>
+                  <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
+                    03 / Native &amp; Mobile
+                  </span>
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    Platforms &amp; devices
+                  </h2>
+                </div>
+                <MIcon name="smartphone" className="text-4xl text-primary/40" />
+              </div>
+              <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
+                {mobile.length === 0 && (
+                  <p className="col-span-full text-sm text-on-surface-variant/70">
+                    No mobile or native platform skills yet — add them in the admin.
+                  </p>
+                )}
+                {mobile.map((s) => (
+                  <div key={s.id} className="flex items-center gap-6">
+                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
+                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
+                    </span>
+                    <div>
+                      <p className="font-semibold">{s.name}</p>
+                      <p className="text-sm text-on-surface-variant">
+                        {s.description ?? "—"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
             <section className="rounded-xl border-l-2 border-primary-container/20 bg-surface-container-low p-8 md:col-span-4">
               <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                03 / Persistence
+                04 / Persistence
               </span>
               <h2 className="mb-6 text-xl font-bold tracking-tight">
                 Database Systems
@@ -149,7 +171,7 @@ export default async function SkillsPage() {
                   The Digital Workbench
                 </h2>
                 <span className="font-mono text-sm text-on-surface-variant">
-                  Infrastructure &amp; Workflow
+                  05 / Infrastructure &amp; Workflow
                 </span>
               </div>
               <div className="flex flex-wrap gap-4">

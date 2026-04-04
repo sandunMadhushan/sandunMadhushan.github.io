@@ -152,6 +152,20 @@ async function main() {
       description: "Modern ES modules and async flows.",
     },
     {
+      name: "Java",
+      category: "Languages",
+      proficiency: 85,
+      icon: "java",
+      description: "OOP, JVM fundamentals, and coursework patterns.",
+    },
+    {
+      name: "Python",
+      category: "Languages",
+      proficiency: 88,
+      icon: "python",
+      description: "Scripting, data structures, and small services.",
+    },
+    {
       name: "Node.js",
       category: "Backend",
       proficiency: 88,
@@ -164,6 +178,20 @@ async function main() {
       proficiency: 85,
       icon: "express",
       description: "Lean HTTP layers and middleware.",
+    },
+    {
+      name: "Firebase",
+      category: "Backend",
+      proficiency: 82,
+      icon: "firebase",
+      description: "Auth, Firestore, and serverless-friendly backends.",
+    },
+    {
+      name: "Flask",
+      category: "Backend",
+      proficiency: 80,
+      icon: "flask",
+      description: "Lightweight Python APIs and prototypes.",
     },
     {
       name: "MongoDB",
@@ -180,6 +208,13 @@ async function main() {
       description: "Relational data with strong integrity.",
     },
     {
+      name: "Android",
+      category: "Mobile",
+      proficiency: 84,
+      icon: "android",
+      description: "Native-adjacent workflows, SDKs, and device constraints.",
+    },
+    {
       name: "Git",
       category: "Tools",
       proficiency: 95,
@@ -192,6 +227,27 @@ async function main() {
       proficiency: 93,
       icon: "github",
       description: "CI/CD and collaboration workflows.",
+    },
+    {
+      name: "Figma",
+      category: "Tools",
+      proficiency: 86,
+      icon: "figma",
+      description: "UI exploration, handoff, and design–dev alignment.",
+    },
+    {
+      name: "Postman",
+      category: "Tools",
+      proficiency: 90,
+      icon: "postman",
+      description: "API exploration, collections, and environment testing.",
+    },
+    {
+      name: "VS Code",
+      category: "Tools",
+      proficiency: 95,
+      icon: "vscode",
+      description: "Primary editor—extensions, debugging, and Git integration.",
     },
   ];
 

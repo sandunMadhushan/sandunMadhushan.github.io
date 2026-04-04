@@ -1,5 +1,9 @@
 import type { IconType } from "react-icons";
+import { FaJava } from "react-icons/fa6";
+import { VscVscode } from "react-icons/vsc";
+import { cn } from "@/lib/utils";
 import {
+  SiAndroid,
   SiAngular,
   SiAstro,
   SiBootstrap,
@@ -24,7 +28,6 @@ import {
   SiJest,
   SiKotlin,
   SiKubernetes,
-  SiOpenjdk,
   SiLinux,
   SiMongodb,
   SiMysql,
@@ -51,6 +54,7 @@ import {
   SiWebpack,
   SiPhp,
   SiLaravel,
+  SiPostman,
   SiCodesandbox,
   SiZod,
 } from "react-icons/si";
@@ -58,6 +62,7 @@ import {
 /** Simple Icons keys → component. `default` is the fallback glyph. */
 export const SKILL_ICON_MAP: Record<string, IconType> = {
   default: SiCodesandbox,
+  android: SiAndroid,
   angular: SiAngular,
   astro: SiAstro,
   bootstrap: SiBootstrap,
@@ -80,7 +85,10 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   html5: SiHtml5,
   javascript: SiJavascript,
   jest: SiJest,
-  java: SiOpenjdk,
+  /** Font Awesome — official Java wordmark (Simple Icons only has OpenJDK’s cup). */
+  java: FaJava,
+  /** Legacy / Simple Icons key — same glyph as Java language. */
+  openjdk: FaJava,
   kotlin: SiKotlin,
   kubernetes: SiKubernetes,
   laravel: SiLaravel,
@@ -93,6 +101,7 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   php: SiPhp,
   postgresql: SiPostgresql,
   prisma: SiPrisma,
+  postman: SiPostman,
   python: SiPython,
   react: SiReact,
   redis: SiRedis,
@@ -107,13 +116,30 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   typescript: SiTypescript,
   vercel: SiVercel,
   vite: SiVite,
+  /** VS Code product icon from the Codicons set (Si “Vsco” is a different brand). */
+  vscode: VscVscode,
   vuedotjs: SiVuedotjs,
   webpack: SiWebpack,
   zod: SiZod,
 };
 
+/** Alternate DB / admin values → canonical `SKILL_ICON_MAP` key */
+const STORED_ICON_ALIASES: Record<string, string> = {
+  reactjs: "react",
+  "react.js": "react",
+  vsc: "vscode",
+  visualstudiocode: "vscode",
+  "vs code": "vscode",
+};
+
+/** Optional brand tint so marks stay recognizable on muted surfaces (e.g. skills grid). */
+const SKILL_ICON_BRAND_CLASS: Record<string, string> = {
+  react: "text-[#61DAFB] transition-colors group-hover:text-primary",
+};
+
 /** Admin dropdown: label + registry key (sorted by label). */
 export const SKILL_ICON_CHOICES: { value: string; label: string }[] = [
+  { value: "android", label: "Android" },
   { value: "angular", label: "Angular" },
   { value: "astro", label: "Astro" },
   { value: "bootstrap", label: "Bootstrap" },
@@ -148,6 +174,7 @@ export const SKILL_ICON_CHOICES: { value: string; label: string }[] = [
   { value: "nodedotjs", label: "Node.js" },
   { value: "php", label: "PHP" },
   { value: "postgresql", label: "PostgreSQL" },
+  { value: "postman", label: "Postman" },
   { value: "prisma", label: "Prisma" },
   { value: "python", label: "Python" },
   { value: "react", label: "React" },
@@ -163,6 +190,7 @@ export const SKILL_ICON_CHOICES: { value: string; label: string }[] = [
   { value: "typescript", label: "TypeScript" },
   { value: "vercel", label: "Vercel" },
   { value: "vite", label: "Vite" },
+  { value: "vscode", label: "VS Code" },
   { value: "vuedotjs", label: "Vue.js" },
   { value: "webpack", label: "Webpack" },
   { value: "zod", label: "Zod" },
@@ -182,6 +210,9 @@ const LEGACY_MATERIAL_TO_KEY: Record<string, string> = {
 
 const NAME_RULES: { re: RegExp; key: string }[] = [
   { re: /\bnext\.?js\b/i, key: "nextjs" },
+  { re: /\bvs code\b|\bvisual studio code\b|\bvscode\b/i, key: "vscode" },
+  { re: /\bpostman\b/i, key: "postman" },
+  { re: /\bandroid\b/i, key: "android" },
   { re: /\breact\b/i, key: "react" },
   { re: /\btypescript\b|\bts\b(?![a-z])/i, key: "typescript" },
   { re: /\bjavascript\b|\bjs\b(?![a-z])/i, key: "javascript" },
@@ -245,19 +276,21 @@ function inferIconKeyFromName(nameLower: string): string | null {
  * Resolves which Simple Icons key to use: explicit DB value, legacy Material symbols, or name matching.
  */
 export function resolveSkillIconKey(stored: string | null | undefined, name: string): string {
-  const s = (stored ?? "").trim().toLowerCase();
+  const raw = (stored ?? "").trim().toLowerCase();
+  const s = STORED_ICON_ALIASES[raw] ?? raw;
   const n = name.toLowerCase();
 
   if (!s || s === "variable") {
     return inferIconKeyFromName(n) ?? "default";
   }
 
-  if (s in SKILL_ICON_MAP && s !== "default") {
-    return s;
-  }
-
+  // "javascript" is a valid key but is often mis-assigned to React in the DB — trust the name first.
   if (s === "javascript") {
     return inferIconKeyFromName(n) ?? "javascript";
+  }
+
+  if (s in SKILL_ICON_MAP && s !== "default") {
+    return s;
   }
 
   const legacy = LEGACY_MATERIAL_TO_KEY[s];
@@ -280,5 +313,13 @@ type SkillTechIconProps = {
 export function SkillTechIcon({ name, iconKey, className, size = 24, title }: SkillTechIconProps) {
   const key = resolveSkillIconKey(iconKey, name);
   const Icon = SKILL_ICON_MAP[key] ?? SKILL_ICON_MAP.default;
-  return <Icon className={className} size={size} aria-hidden title={title} />;
+  const brandClass = SKILL_ICON_BRAND_CLASS[key];
+  return (
+    <Icon
+      className={cn(className, brandClass)}
+      size={size}
+      aria-hidden
+      title={title}
+    />
+  );
 }

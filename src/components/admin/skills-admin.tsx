@@ -12,7 +12,14 @@ import { AdminFieldLabel } from "@/components/admin/field-label";
 import { SKILL_ICON_CHOICES, SkillTechIcon } from "@/components/skill-tech-icon";
 import { toast } from "sonner";
 
-const CATS = ["Frontend", "Backend", "Languages", "Database", "Tools"];
+const CATS = [
+  "Frontend",
+  "Backend",
+  "Languages",
+  "Database",
+  "Mobile",
+  "Tools",
+];
 
 function emptyForm() {
   return {
