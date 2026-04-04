@@ -2,7 +2,7 @@
  * One-shot: remove "in Colombo" from About.content and About.stats (homeAboutBody, aboutIntro).
  * Run: npx tsx scripts/strip-colombo-about.ts
  */
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { stripColomboFromCopy } from "../src/lib/about-content";
 
 const prisma = new PrismaClient();
@@ -39,7 +39,7 @@ async function main() {
         where: { id: row.id },
         data: {
           ...(contentChanged && { content: contentNext }),
-          ...(changed && { stats }),
+          ...(changed && { stats: stats as Prisma.InputJsonValue }),
         },
       });
       n += 1;
