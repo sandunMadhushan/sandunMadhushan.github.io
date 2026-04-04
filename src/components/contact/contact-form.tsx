@@ -15,8 +15,9 @@ export function ContactForm() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
     setStatus("loading");
-    const fd = new FormData(e.currentTarget);
+    const fd = new FormData(form);
     const body = {
       name: fd.get("name"),
       email: fd.get("email"),
@@ -29,8 +30,16 @@ export function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error();
-      e.currentTarget.reset();
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        const msg =
+          typeof data.error === "string" && data.error.trim()
+            ? data.error
+            : "Could not send message. Please try again.";
+        toast.error(msg);
+        return;
+      }
+      form.reset();
       toast.success("Message sent — I’ll get back to you soon.");
     } catch {
       toast.error("Could not send message. Please try again.");

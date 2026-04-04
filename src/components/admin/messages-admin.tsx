@@ -29,7 +29,19 @@ export function MessagesAdmin({ messages }: { messages: Message[] }) {
   }
 
   return (
-    <div className="flex flex-1 overflow-hidden">
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <p className="border-b border-outline-variant/10 bg-surface-container-lowest px-6 py-3 text-xs leading-relaxed text-on-surface-variant md:px-8">
+        Each submission is{" "}
+        <span className="font-medium text-on-surface-variant">saved here</span> and{" "}
+        <span className="font-medium text-on-surface-variant">emailed to you</span> when{" "}
+        <code className="rounded bg-surface-container-high px-1 font-mono text-[0.65rem]">RESEND_API_KEY</code>{" "}
+        +{" "}
+        <code className="rounded bg-surface-container-high px-1 font-mono text-[0.65rem]">CONTACT_NOTIFY_EMAIL</code>{" "}
+        are set (see <code className="rounded bg-surface-container-high px-1 font-mono text-[0.65rem]">.env.example</code>
+        ). Requires{" "}
+        <code className="rounded bg-surface-container-high px-1 font-mono text-[0.65rem]">DATABASE_URL</code> on Vercel.
+      </p>
+      <div className="flex min-h-0 flex-1 overflow-hidden">
       <section className="flex w-full max-w-sm flex-col border-r border-outline-variant/10 bg-surface-container-low md:max-w-md">
         <div className="p-6">
           <div className="relative">
@@ -125,6 +137,7 @@ export function MessagesAdmin({ messages }: { messages: Message[] }) {
           <div className="flex flex-1 items-center justify-center text-on-surface-variant">Select a message</div>
         )}
       </section>
+      </div>
 
       <ConfirmDialog
         open={deleteId !== null}

@@ -35,6 +35,10 @@ export default async function ContactPage() {
           <div className="lg:col-span-7">
             <div className="relative overflow-hidden rounded-xl bg-surface-container-low p-8 md:p-12">
               <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary-container/10 blur-[100px]" />
+              <p className="relative z-10 mb-8 text-sm leading-relaxed text-on-surface-variant/85">
+                I read every message. Your note is delivered to my inbox and kept in my admin archive—
+                I&apos;ll reply at the email you provide.
+              </p>
               <ContactForm />
             </div>
           </div>
