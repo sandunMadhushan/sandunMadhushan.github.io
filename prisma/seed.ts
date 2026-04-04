@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import {
   DEFAULT_ABOUT_HEADLINE,
   DEFAULT_ABOUT_INTRO,
+  DEFAULT_HERO_TAGLINE,
   getDefaultAboutContent,
 } from "../src/lib/about-content";
 import { DEFAULT_HERO_TECH_CHIPS } from "../src/lib/hero-tech-chips";
@@ -56,8 +57,7 @@ async function main() {
         projects: 6,
         technologies: 10,
         experience: "2+ years",
-        heroTagline:
-          "Software Engineering undergraduate and aspiring software engineer—building reliable full-stack web apps with React, TypeScript, and Node.js.",
+        heroTagline: DEFAULT_HERO_TAGLINE,
         profileImage: IMG.hero,
         heroTechChips: DEFAULT_HERO_TECH_CHIPS.map((c) => ({ ...c })),
         aboutHeadline: DEFAULT_ABOUT_HEADLINE,

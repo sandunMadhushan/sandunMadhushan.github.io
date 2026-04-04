@@ -7,6 +7,7 @@ import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { MIcon } from "@/components/m-icon";
 import { HeroTechBadges } from "@/components/public/hero-tech-badges";
 import { normalizeHeroTechChips } from "@/lib/hero-tech-chips";
+import { resolveHeroTagline } from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
 
@@ -21,15 +22,13 @@ export default async function HomePage() {
   ]);
 
   const stats = (about?.stats as Record<string, unknown>) ?? {};
-  const tagline =
-    (stats.heroTagline as string) ??
-    "Software Engineering undergraduate and aspiring software engineer—building reliable full-stack web apps with React, TypeScript, and Node.js.";
+  const tagline = resolveHeroTagline(stats.heroTagline);
   const profileImage = resolvePortraitSrc(stats.profileImage as string | undefined);
   const homeAboutHeadline =
     (stats.homeAboutHeadline as string) ?? "Learning by shipping real software.";
   const homeAboutBody =
     (stats.homeAboutBody as string) ??
-    "I'm a Software Engineering student in Colombo, working toward a career as a software engineer. I care about clean structure, solid fundamentals, and interfaces that feel as good as they perform.";
+    "I'm a Software Engineering student, working toward a career as a software engineer. I care about clean structure, solid fundamentals, and interfaces that feel as good as they perform.";
   const homeStats = (stats.homeStats as { value: string; label: string }[]) ?? [
     { value: String(stats.projects ?? "6"), label: "Projects & coursework" },
     { value: String(stats.technologies ?? "10"), label: "Technologies in play" },
@@ -49,7 +48,7 @@ export default async function HomePage() {
     <PageFade>
       <SiteNav active="/" />
       <main className="pt-0">
-        <section className="relative isolate box-border flex min-h-[100dvh] w-full flex-col justify-center overflow-x-clip pt-14 pb-8 md:pt-16 md:pb-10">
+        <section className="relative isolate box-border flex min-h-[100dvh] w-full flex-col justify-center overflow-x-clip pt-28 pb-10 md:pt-28 md:pb-12 lg:pt-20 lg:pb-10">
           {/* Full-bleed indigo ambient — not clipped by max-width container */}
           <div
             aria-hidden

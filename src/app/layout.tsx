@@ -11,7 +11,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Sandun Madhushan | Aspiring Software Engineer",
   description:
-    "Software Engineering undergraduate and aspiring software engineer — full-stack web projects with React, TypeScript, and Node.js.",
+    "Aspiring software engineer — learning full-stack web development with React, TypeScript, and Node.js.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -88,7 +88,7 @@ export default async function AboutPage() {
     <PageFade>
       <SiteNav active="/about" />
       <main className="pb-20 pt-0">
-        <section className="box-border mb-24 flex min-h-[100dvh] flex-col justify-center overflow-x-clip pt-[4.25rem] pb-10 md:mb-32 md:pt-20 md:pb-12">
+        <section className="box-border mb-24 flex min-h-[100dvh] flex-col justify-center overflow-x-clip pt-28 pb-10 md:mb-32 md:pt-28 md:pb-12 lg:pt-24">
           <div className="mx-auto grid w-full min-h-0 max-w-[1440px] grid-cols-1 items-center gap-10 px-6 md:grid-cols-2 md:gap-12 md:px-12 lg:gap-16">
             <div className="min-h-0">
               <span className="mb-4 block max-w-xl text-[0.8125rem] font-semibold leading-snug tracking-wide text-primary md:mb-6">

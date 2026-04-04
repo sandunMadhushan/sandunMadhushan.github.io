@@ -36,8 +36,8 @@ export async function SiteFooter() {
               S<span className="text-primary-container">M</span>
             </Link>
             <p className="max-w-sm text-[0.9375rem] leading-relaxed text-on-surface-variant/85">
-              Sandun Madhushan — Software Engineering undergraduate and aspiring software
-              engineer, building fast, accessible full-stack web experiences.
+              Sandun Madhushan — aspiring software engineer, always learning and building
+              fast, accessible full-stack web experiences.
             </p>
             <div className="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high/50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" aria-hidden />

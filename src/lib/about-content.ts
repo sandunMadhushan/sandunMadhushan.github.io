@@ -10,9 +10,22 @@ export const ABOUT_HEADLINE_ACCENT = "full-stack";
 export const DEFAULT_ABOUT_HEADLINE =
   "Crafting full-stack systems with surgical precision.";
 
+/** Home hero line under the name; stored in `About.stats.heroTagline`. */
+export const DEFAULT_HERO_TAGLINE =
+  "Aspiring Software Engineer—always learning and building reliable full-stack web apps with React, TypeScript, and Node.js.";
+
+const LEGACY_HERO_SNIPPET = "Software Engineering undergraduate";
+
+/** Uses DB copy when set; replaces legacy “undergraduate …” wording with {@link DEFAULT_HERO_TAGLINE}. */
+export function resolveHeroTagline(stored: unknown): string {
+  const s = typeof stored === "string" ? stored.trim() : "";
+  if (!s || s.includes(LEGACY_HERO_SNIPPET)) return DEFAULT_HERO_TAGLINE;
+  return s;
+}
+
 export const DEFAULT_ABOUT_INTRO = [
-  "I am a Software Engineering undergraduate in Colombo, drawn to the place where disciplined engineering meets clarity of expression—where systems behave predictably and interfaces respect the person on the other side of the screen. My work is shaped by the belief that code is a long-term asset: it should read like something your future self and your teammates can follow without guessing.",
-  "With a foundation in formal software engineering study and a growing practice across React, TypeScript, and Node.js, I build full-stack applications that aim to shrink the gap between a clear requirement and software someone can rely on day after day. I don't just assemble UIs; I care how data moves, how failures surface, and how the stack holds together—because that's the craft I'm strengthening on the path to becoming a software engineer.",
+  "I am an aspiring software engineer in Colombo, drawn to the place where disciplined engineering meets clarity of expression—where systems behave predictably and interfaces respect the person on the other side of the screen. My work is shaped by the belief that code is a long-term asset: it should read like something your future self and your teammates can follow without guessing.",
+  "I'm still learning every day—through coursework and hands-on work with React, TypeScript, and Node.js—and I build full-stack applications that aim to shrink the gap between a clear requirement and software someone can rely on day after day. I don't just assemble UIs; I care how data moves, how failures surface, and how the stack holds together—because that's the craft I'm strengthening as I grow into the role.",
 ] as const;
 
 /** Short bio stored on `About.content` (admin + fallbacks elsewhere). */
