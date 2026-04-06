@@ -3,6 +3,7 @@ import NextImage from "next/image";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { CountUpOnView } from "@/components/motion/count-up-on-view";
 import { MIcon } from "@/components/m-icon";
 import { SkillTechIcon } from "@/components/skill-tech-icon";
 import {
@@ -138,7 +139,7 @@ export default async function AboutPage() {
                   />
                   <div>
                     <h3 className="mb-2 text-5xl font-black tracking-tighter">
-                      {s.value}
+                      <CountUpOnView value={s.value} />
                     </h3>
                     <p className="font-medium tracking-tight text-on-surface-variant">
                       {s.label}

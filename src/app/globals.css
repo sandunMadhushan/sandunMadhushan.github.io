@@ -94,12 +94,7 @@
   border-radius: 10px;
 }
 
-/* Anchor / programmatic scroll when Lenis is disabled (reduced motion) */
+/* Keep route navigation instant; avoid smooth page-to-page scroll motion. */
 html {
-  scroll-behavior: smooth;
-}
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+  scroll-behavior: auto;
 }

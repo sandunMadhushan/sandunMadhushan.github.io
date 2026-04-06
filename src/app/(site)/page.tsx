@@ -4,6 +4,7 @@ import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { HeroFloat } from "@/components/motion/hero-float";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { CountUpOnView } from "@/components/motion/count-up-on-view";
 import { MIcon } from "@/components/m-icon";
 import { HeroTechBadges } from "@/components/public/hero-tech-badges";
 import { normalizeHeroTechChips } from "@/lib/hero-tech-chips";
@@ -180,7 +181,7 @@ export default async function HomePage() {
                   {homeStats.map((s) => (
                     <div key={s.label}>
                       <div className="mb-1 text-4xl font-bold text-primary">
-                        {s.value}
+                        <CountUpOnView value={s.value} />
                       </div>
                       <div className="text-[10px] font-bold uppercase tracking-widest text-on-surface/50">
                         {s.label}
