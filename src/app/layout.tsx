@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppToaster } from "@/components/app-toaster";
+import { ScrollToTopOnRoute } from "@/components/motion/scroll-to-top";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className={`${inter.variable} min-h-screen font-sans`} suppressHydrationWarning>
+        <ScrollToTopOnRoute />
         {children}
         <AppToaster />
       </body>
