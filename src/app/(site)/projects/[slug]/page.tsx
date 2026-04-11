@@ -79,7 +79,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               src={heroSrc}
               alt={project.title}
               fill
-              className="object-contain"
+              className="object-cover"
               priority
               sizes="(max-width: 768px) 100vw, min(1440px, 100vw)"
               unoptimized={isRemoteImageSrc(heroSrc)}

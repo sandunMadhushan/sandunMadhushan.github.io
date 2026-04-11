@@ -313,7 +313,7 @@ export function ProjectForm({ project }: { project?: Project }) {
               Hero image
             </AdminFieldLabel>
             <p className="text-[11px] leading-relaxed text-on-surface-variant">
-              Large banner on the public case-study page. If empty, the cover image is used. Uses <code className="text-[10px]">object-contain</code> so the full image fits.
+              Large banner on the public case-study page. If empty, the cover image is used. Fills the frame edge-to-edge (may crop slightly if the aspect ratio differs).
             </p>
             <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-outline-variant/20 bg-surface-container-highest py-6 hover:border-primary/50">
               <MIcon name="cloud_upload" className="mb-1 text-3xl text-on-surface-variant" />
