@@ -17,6 +17,7 @@ const siteDescription =
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
+  referrer: "strict-origin-when-cross-origin",
   title: {
     default: siteTitle,
     template: "%s | Sandun Madhushan",
@@ -39,7 +40,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   alternates: {
     canonical: "/",
@@ -68,17 +75,33 @@ export const metadata: Metadata = {
     site: "@sandunMadhushan",
     creator: "@sandunMadhushan",
   },
+  formatDetection: {
+    telephone: true,
+    email: true,
+    address: true,
+  },
   verification: {
     google: "b648pEfc1hBPsTV9oKHUX_kiAN6jEqp1YUcoictpzDI",
   },
   other: {
+    bingbot: "index, follow",
+    "geo.position": "7.4675;80.6234",
+    ICBM: "7.4675,80.6234",
+    "DC.title": siteTitle,
+    "DC.creator": "Sandun Madhushan",
+    "DC.publisher": "Sandun Madhushan",
+    "DC.language": "en",
+    "DC.coverage": "Worldwide",
+    "DC.coverage.spatial": "Matale, Central Province, Sri Lanka",
     "geo.region": "LK-2",
     "geo.placename": "Matale, Central Province, Sri Lanka",
-    "format-detection": "telephone=yes",
+    thumbnail: `${getSiteUrl()}/sandun-madhushan.png`,
   },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <head>
@@ -87,7 +110,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.variable} min-h-screen font-sans`} suppressHydrationWarning>
+      <body
+        className={`${inter.variable} min-h-screen font-sans`}
+        suppressHydrationWarning
+      >
         <SiteJsonLd />
         <ScrollToTopOnRoute />
         {children}

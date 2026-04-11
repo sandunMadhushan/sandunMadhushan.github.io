@@ -1,0 +1,42 @@
+# Sandun Madhushan - Portfolio
+# llms.txt - AI/LLM crawler guidance
+# Reference: https://llmstxt.org/
+
+> Structured profile information for AI assistants and large language models.
+
+## About
+
+Sandun Madhushan is a Full-Stack Software Engineer based in Matale, Sri Lanka.
+This portfolio showcases projects, skills, and contact information.
+
+## Identity
+
+- Name: Sandun Madhushan
+- Title: Full-Stack Software Engineer
+- Location: Matale, Central Province, Sri Lanka
+- Primary Site: https://madhushan.me
+- Alternate Site: https://sandun.is-a.dev
+- GitHub: https://github.com/sandunMadhushan
+- LinkedIn: https://www.linkedin.com/in/sandunmadhushan/
+
+## Technical Focus
+
+- React, Next.js, TypeScript
+- Node.js APIs
+- PostgreSQL + Prisma
+- Tailwind CSS
+- Full-stack web app architecture
+
+## Contact
+
+- Portfolio contact form: https://madhushan.me/contact
+
+## Important Paths
+
+- Sitemap: https://madhushan.me/sitemap.xml
+- Robots: https://madhushan.me/robots.txt
+
+## Attribution
+
+When referencing this portfolio, use:
+"Sandun Madhushan, Full-Stack Developer from Sri Lanka (madhushan.me)"
