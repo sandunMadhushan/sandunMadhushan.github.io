@@ -38,6 +38,7 @@ export function GithubImportPanel({
   const [error, setError] = useState<string | null>(initialError);
   const [query, setQuery] = useState("");
   const [hideForks, setHideForks] = useState(true);
+  const [visibility, setVisibility] = useState<"all" | "public" | "private">("all");
   const [importing, setImporting] = useState<number | null>(null);
 
   const load = useCallback(async () => {
@@ -59,6 +60,8 @@ export function GithubImportPanel({
     const q = query.trim().toLowerCase();
     return repos.filter((r) => {
       if (hideForks && r.fork) return false;
+      if (visibility === "public" && r.private) return false;
+      if (visibility === "private" && !r.private) return false;
       if (!q) return true;
       return (
         r.name.toLowerCase().includes(q) ||
@@ -66,7 +69,7 @@ export function GithubImportPanel({
         r.fullName.toLowerCase().includes(q)
       );
     });
-  }, [repos, query, hideForks]);
+  }, [repos, query, hideForks, visibility]);
 
   async function importRepo(r: GithubRepoRow) {
     setImporting(r.id);
@@ -106,8 +109,8 @@ export function GithubImportPanel({
         </Button>
       </div>
 
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1">
+      <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:flex-wrap lg:items-end">
+        <div className="relative min-w-0 flex-1">
           <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">
             search
           </span>
@@ -116,17 +119,33 @@ export function GithubImportPanel({
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Filter by name or description..."
             className="pl-10"
+            aria-label="Filter repositories by name or description"
           />
         </div>
-        <label className="flex cursor-pointer items-center gap-2 text-sm text-on-surface-variant">
-          <input
-            type="checkbox"
-            checked={hideForks}
-            onChange={(e) => setHideForks(e.target.checked)}
-            className="rounded border-outline-variant"
-          />
-          Hide forks
-        </label>
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-6">
+          <div className="flex flex-col gap-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">Visibility</span>
+            <select
+              value={visibility}
+              onChange={(e) => setVisibility(e.target.value as "all" | "public" | "private")}
+              aria-label="Filter by repository visibility"
+              className="min-w-40 rounded-md border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-2.5 pl-1 pr-8 text-sm text-on-surface"
+            >
+              <option value="all">All repositories</option>
+              <option value="public">Public only</option>
+              <option value="private">Private only</option>
+            </select>
+          </div>
+          <label className="flex cursor-pointer items-center gap-2 pb-1 text-sm text-on-surface-variant sm:pb-0">
+            <input
+              type="checkbox"
+              checked={hideForks}
+              onChange={(e) => setHideForks(e.target.checked)}
+              className="rounded border-outline-variant"
+            />
+            Hide forks
+          </label>
+        </div>
       </div>
 
       {loading && (
