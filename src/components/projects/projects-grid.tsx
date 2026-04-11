@@ -21,22 +21,28 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
   const featured = projects.find((p) => p.featured) ?? projects[0];
   const rest = filtered.filter((p) => p.id !== featured?.id);
   const featuredCover = featured ? projectCardSrc(featured, DEFAULT_PORTRAIT_SRC) : DEFAULT_PORTRAIT_SRC;
+  const featuredOutsideFilter = Boolean(
+    featured && !filtered.some((p) => p.id === featured.id),
+  );
+  const visibleCount = filtered.length + (featuredOutsideFilter ? 1 : 0);
 
   return (
     <>
-      {featured && (tab === "All" || featured.category === tab) && (
+      {featured && (
         <section className="mb-20">
           <div className="group relative overflow-hidden rounded-xl bg-surface-container-low transition-all duration-500 hover:shadow-[0_0_40px_rgba(79,70,229,0.15)]">
             <div className="flex flex-col lg:flex-row">
-              <div className="overflow-hidden lg:w-3/5">
-                <NextImage
-                  src={featuredCover}
-                  alt={featured.title}
-                  width={1200}
-                  height={800}
-                  className="aspect-video min-h-[400px] w-full object-cover grayscale-[20%] transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 lg:aspect-auto"
-                  unoptimized={isRemoteImageSrc(featuredCover)}
-                />
+              <div className="relative w-full overflow-hidden lg:w-3/5">
+                <div className="relative aspect-[4/3] min-h-[200px] w-full max-h-[min(72dvh,480px)] sm:aspect-video sm:min-h-[240px] lg:max-h-none lg:aspect-auto lg:min-h-[360px] lg:h-[min(420px,50dvh)] xl:min-h-[400px] xl:h-[460px]">
+                  <NextImage
+                    src={featuredCover}
+                    alt={featured.title}
+                    fill
+                    className="object-cover grayscale-[20%] transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                    sizes="(max-width: 1023px) 100vw, 60vw"
+                    unoptimized={isRemoteImageSrc(featuredCover)}
+                  />
+                </div>
               </div>
               <div className="flex flex-col justify-center p-8 lg:w-2/5 lg:p-12">
                 <span className="label-md mb-4 font-bold uppercase tracking-widest text-primary">
@@ -85,7 +91,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
           ))}
         </div>
         <div className="text-sm font-medium text-on-surface-variant/50">
-          Showing {filtered.length} {filtered.length === 1 ? "project" : "projects"}
+          Showing {visibleCount} {visibleCount === 1 ? "project" : "projects"}
         </div>
       </div>
 
@@ -102,13 +108,13 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             key={p.id}
             className="group flex flex-col overflow-hidden rounded-xl bg-surface-container-low transition-all duration-300 hover:translate-y-[-8px]"
           >
-            <div className="relative aspect-[4/3] overflow-hidden">
+            <div className="relative aspect-[4/3] w-full overflow-hidden sm:min-h-[200px]">
               <NextImage
                 src={cover}
                 alt={p.title}
-                width={800}
-                height={600}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-110"
                 unoptimized={isRemoteImageSrc(cover)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60" />

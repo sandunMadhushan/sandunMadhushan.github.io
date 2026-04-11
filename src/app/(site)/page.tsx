@@ -142,13 +142,13 @@ export default async function HomePage() {
                     href={`/projects/${p.slug}`}
                     className="group relative overflow-hidden rounded-xl bg-surface-container transition-all duration-500 hover:translate-y-[-8px]"
                   >
-                    <div className="h-64 overflow-hidden">
+                    <div className="relative aspect-[5/4] w-full min-h-[180px] max-h-[min(55vw,280px)] overflow-hidden sm:aspect-video sm:max-h-[min(50vw,320px)] md:aspect-auto md:h-56 md:max-h-none lg:h-64">
                       <NextImage
                         src={cover}
                         alt={p.title}
-                        width={640}
-                        height={400}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px"
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
                         unoptimized={isRemoteImageSrc(cover)}
                       />
                     </div>

@@ -74,14 +74,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </header>
 
         <section className="mx-auto mb-32 max-w-[1440px] px-6 md:px-12">
-          <div className="relative h-[400px] w-full overflow-hidden rounded-xl bg-surface-container md:h-[600px]">
+          <div className="relative aspect-[16/10] w-full min-h-[200px] max-h-[min(80dvh,520px)] overflow-hidden rounded-xl bg-surface-container sm:aspect-video sm:min-h-[220px] md:aspect-auto md:h-[min(520px,calc(100vw-6rem))] md:max-h-none lg:h-[600px]">
             <NextImage
               src={heroSrc}
               alt={project.title}
               fill
               className="object-cover"
               priority
-              sizes="(max-width: 768px) 100vw, min(1440px, 100vw)"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) min(100vw, 900px), min(1320px, 90vw)"
               unoptimized={isRemoteImageSrc(heroSrc)}
             />
           </div>
@@ -139,7 +139,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     src={src}
                     alt=""
                     fill
-                    sizes="(max-width:768px) 100vw, 33vw"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     unoptimized={isRemoteImageSrc(src)}
                   />

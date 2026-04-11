@@ -15,7 +15,7 @@ export default function ProjectsLoading() {
             key={i}
             className="overflow-hidden rounded-xl border border-outline-variant/15 bg-surface-container-low"
           >
-            <Skeleton className="h-64 w-full rounded-none" />
+            <Skeleton className="aspect-[4/3] w-full max-h-[min(52vw,280px)] rounded-none sm:max-h-[min(48vw,320px)] md:aspect-auto md:h-64 md:max-h-none" />
             <div className="space-y-3 p-8">
               <Skeleton className="h-3 w-20" />
               <Skeleton className="h-8 w-[80%]" />
