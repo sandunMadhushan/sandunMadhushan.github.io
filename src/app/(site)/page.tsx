@@ -233,9 +233,8 @@ export default async function HomePage() {
             <div className="relative space-y-8 overflow-hidden rounded-[2rem] bg-primary-container p-16 text-center shadow-[0_40px_100px_rgba(79,70,229,0.35)] md:p-24">
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,255,255,0.22),transparent_55%)]"
+                className="pointer-events-none absolute inset-0 rounded-[inherit] bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(255,255,255,0.22),transparent_55%)]"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 to-black/25" />
               <h2 className="relative z-10 text-4xl font-black tracking-tighter text-white drop-shadow-sm md:text-6xl">
                 Want to work together?
               </h2>
