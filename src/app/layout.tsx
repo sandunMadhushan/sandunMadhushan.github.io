@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: "Sandun Madhushan | Aspiring Software Engineer",
   description:
     "Aspiring software engineer — learning full-stack web development with React, TypeScript, and Node.js.",
+  verification: {
+    google: "b648pEfc1hBPsTV9oKHUX_kiAN6jEqp1YUcoictpzDI",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
