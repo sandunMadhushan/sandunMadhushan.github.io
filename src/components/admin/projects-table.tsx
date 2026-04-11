@@ -41,7 +41,7 @@ type RowProps = {
   project: Project;
   index: number;
   rowCount: number;
-  dimmed: boolean;
+  reorderLocked: boolean;
   reordering: boolean;
   onSwap: (i: number, j: number) => void;
   onToggleFeatured: (p: Project) => void;
@@ -53,16 +53,17 @@ function SortableProjectRow({
   project: p,
   index: i,
   rowCount,
-  dimmed,
+  reorderLocked,
   reordering,
   onSwap,
   onToggleFeatured,
   onTogglePublished,
   onRequestDelete,
 }: RowProps) {
+  const sortableDisabled = reordering || reorderLocked;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: p.id,
-    disabled: reordering,
+    disabled: sortableDisabled,
   });
 
   const style = {
@@ -79,7 +80,6 @@ function SortableProjectRow({
       className={cn(
         "group transition-colors hover:bg-surface-bright/30",
         isDragging && "relative z-10 opacity-60",
-        dimmed && !isDragging && "opacity-[0.38]",
       )}
     >
       <td className="px-4 py-6 align-middle md:px-6">
@@ -88,18 +88,19 @@ function SortableProjectRow({
             type="button"
             className={cn(
               "touch-none rounded p-1 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface",
-              reordering && "pointer-events-none opacity-40",
+              sortableDisabled && "cursor-not-allowed opacity-40 hover:bg-transparent",
             )}
-            aria-label={`Drag to reorder ${p.title}`}
+            aria-label={reorderLocked ? "Clear filters to reorder projects" : `Drag to reorder ${p.title}`}
+            title={reorderLocked ? "Clear filters to reorder" : undefined}
             {...attributes}
-            {...listeners}
+            {...(reorderLocked ? {} : listeners)}
           >
             <MIcon name="drag_indicator" className="text-xl" />
           </button>
           <div className="flex flex-col items-center gap-0.5">
             <button
               type="button"
-              disabled={i === 0 || reordering}
+              disabled={i === 0 || sortableDisabled}
               onClick={() => void onSwap(i, i - 1)}
               className="rounded p-1 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface disabled:opacity-25"
               aria-label={`Move ${p.title} up`}
@@ -108,7 +109,7 @@ function SortableProjectRow({
             </button>
             <button
               type="button"
-              disabled={i === rowCount - 1 || reordering}
+              disabled={i === rowCount - 1 || sortableDisabled}
               onClick={() => void onSwap(i, i + 1)}
               className="rounded p-1 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface disabled:opacity-25"
               aria-label={`Move ${p.title} down`}
@@ -210,11 +211,14 @@ function SortableProjectRow({
 
 export function ProjectsTable({
   projects,
-  isRowDimmed,
+  portfolioStats,
+  reorderLocked = false,
 }: {
   projects: Project[];
-  /** When set, matching rows are visually faded (filters); order and DnD still use the full list. */
-  isRowDimmed?: (p: Project) => boolean;
+  /** Totals for the whole portfolio (used in footer when the table lists a filtered subset). */
+  portfolioStats?: { total: number; published: number; draft: number };
+  /** When true, drag and arrow reorder are disabled (e.g. filtered list is not the full set for persist). */
+  reorderLocked?: boolean;
 }) {
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -253,6 +257,7 @@ export function ProjectsTable({
   }, [router]);
 
   async function swapRows(i: number, j: number) {
+    if (reorderLocked) return;
     const a = items[i];
     const b = items[j];
     if (!a || !b) return;
@@ -272,6 +277,7 @@ export function ProjectsTable({
   }
 
   async function handleDragEnd(event: DragEndEvent) {
+    if (reorderLocked) return;
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     const oldIndex = items.findIndex((x) => x.id === active.id);
@@ -360,31 +366,45 @@ export function ProjectsTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-outline-variant/10">
-            <SortableContext items={items.map((p) => p.id)} strategy={verticalListSortingStrategy}>
-              {items.map((p, i) => (
-                <SortableProjectRow
-                  key={p.id}
-                  project={p}
-                  index={i}
-                  rowCount={items.length}
-                  dimmed={isRowDimmed?.(p) ?? false}
-                  reordering={reordering}
-                  onSwap={swapRows}
-                  onToggleFeatured={toggleFeatured}
-                  onTogglePublished={togglePublished}
-                  onRequestDelete={setDeleteId}
-                />
-              ))}
-            </SortableContext>
+            {items.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={7}
+                  className="px-6 py-16 text-center text-sm text-on-surface-variant"
+                >
+                  No projects match your filters.
+                </td>
+              </tr>
+            ) : (
+              <SortableContext items={items.map((p) => p.id)} strategy={verticalListSortingStrategy}>
+                {items.map((p, i) => (
+                  <SortableProjectRow
+                    key={p.id}
+                    project={p}
+                    index={i}
+                    rowCount={items.length}
+                    reorderLocked={reorderLocked}
+                    reordering={reordering}
+                    onSwap={swapRows}
+                    onToggleFeatured={toggleFeatured}
+                    onTogglePublished={togglePublished}
+                    onRequestDelete={setDeleteId}
+                  />
+                ))}
+              </SortableContext>
+            )}
           </tbody>
         </table>
         <div className="flex flex-col gap-1 bg-surface-container-high/20 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
           <span className="text-[11px] font-medium text-on-surface-variant/60">
-            {projects.length} projects · {projects.filter((p) => p.published).length} published ·{" "}
-            {projects.filter((p) => !p.published).length} drafts
+            {portfolioStats ? portfolioStats.total : projects.length} projects ·{" "}
+            {portfolioStats ? portfolioStats.published : projects.filter((p) => p.published).length} published ·{" "}
+            {portfolioStats ? portfolioStats.draft : projects.filter((p) => !p.published).length} drafts
           </span>
           <span className="text-[11px] text-on-surface-variant/50">
-            Public order: lowest sort value first. Drag the handle or use arrows—values update automatically.
+            {reorderLocked
+              ? "Reorder is disabled while filters are on. Clear filters to drag or use arrows on the full list."
+              : "Public order: lowest sort value first. Drag the handle or use arrows—values update automatically."}
           </span>
         </div>
 

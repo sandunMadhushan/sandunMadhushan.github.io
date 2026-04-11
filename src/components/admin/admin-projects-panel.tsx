@@ -7,15 +7,15 @@ import { cn } from "@/lib/utils";
 
 type StatusFilter = "all" | "published" | "draft";
 
-function useRowDimmed(search: string, status: StatusFilter, tech: string) {
+function useMatchesFilter(search: string, status: StatusFilter, tech: string) {
   return useMemo(() => {
     const q = search.trim().toLowerCase();
     return (p: Project) => {
-      if (q && !p.title.toLowerCase().includes(q)) return true;
-      if (status === "published" && !p.published) return true;
-      if (status === "draft" && p.published) return true;
-      if (tech !== "all" && !p.technologies.includes(tech)) return true;
-      return false;
+      if (q && !p.title.toLowerCase().includes(q)) return false;
+      if (status === "published" && !p.published) return false;
+      if (status === "draft" && p.published) return false;
+      if (tech !== "all" && !p.technologies.includes(tech)) return false;
+      return true;
     };
   }, [search, status, tech]);
 }
@@ -33,11 +33,20 @@ export function AdminProjectsPanel({ projects }: { projects: Project[] }) {
     return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
   }, [projects]);
 
-  const isRowDimmed = useRowDimmed(search, status, tech);
+  const matchesFilter = useMatchesFilter(search, status, tech);
 
-  const visibleCount = useMemo(
-    () => projects.filter((p) => !isRowDimmed(p)).length,
-    [projects, isRowDimmed],
+  const visibleProjects = useMemo(
+    () => projects.filter(matchesFilter),
+    [projects, matchesFilter],
+  );
+
+  const portfolioStats = useMemo(
+    () => ({
+      total: projects.length,
+      published: projects.filter((p) => p.published).length,
+      draft: projects.filter((p) => !p.published).length,
+    }),
+    [projects],
   );
 
   const filtersActive = Boolean(search.trim()) || status !== "all" || tech !== "all";
@@ -114,12 +123,16 @@ export function AdminProjectsPanel({ projects }: { projects: Project[] }) {
 
       {filtersActive ? (
         <p className="mb-4 text-xs text-on-surface-variant/70">
-          Showing <span className="font-semibold text-on-surface">{visibleCount}</span> of {projects.length}{" "}
-          projects. Rows that do not match are faded; drag-and-drop order still applies to the full list.
+          Showing <span className="font-semibold text-on-surface">{visibleProjects.length}</span> of{" "}
+          {projects.length} projects that match. Clear all filters to drag-reorder the full list.
         </p>
       ) : null}
 
-      <ProjectsTable projects={projects} isRowDimmed={isRowDimmed} />
+      <ProjectsTable
+        projects={visibleProjects}
+        portfolioStats={portfolioStats}
+        reorderLocked={filtersActive}
+      />
     </>
   );
 }
