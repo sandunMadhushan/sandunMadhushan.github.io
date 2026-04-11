@@ -1,0 +1,26 @@
+{
+  "redirects": [
+    { "source": "/github", "destination": "https://github.com/sandunMadhushan", "permanent": true },
+    { "source": "/linkedin", "destination": "https://www.linkedin.com/in/sandunmadhushan/", "permanent": true },
+    { "source": "/facebook", "destination": "https://www.facebook.com/sandunhmadhushan", "permanent": true },
+    { "source": "/whatsapp", "destination": "https://wa.me/94711349060", "permanent": true },
+    { "source": "/email", "destination": "/contact", "permanent": false },
+    { "source": "/email/", "destination": "/contact", "permanent": false },
+
+    { "source": "/REFLECT", "destination": "https://github.com/sandunMadhushan/REFLECT", "permanent": true },
+    { "source": "/MealBridge-SriLanka", "destination": "https://github.com/sandunMadhushan/MealBridge-SriLanka-Overview", "permanent": true },
+    { "source": "/MealBridge-SriLanka-Overview", "destination": "https://github.com/sandunMadhushan/MealBridge-SriLanka-Overview", "permanent": true },
+    { "source": "/FairHack-Coding-Contest-Platform", "destination": "https://github.com/sandunMadhushan/FairHack-Coding-Contest-Platform", "permanent": true },
+    { "source": "/free-cv-builder", "destination": "https://github.com/sandunMadhushan/free-cv-builder", "permanent": true },
+    { "source": "/E-Doc_Mobile-App", "destination": "https://github.com/sandunMadhushan/E-Doc_Mobile-App", "permanent": true },
+    { "source": "/PersonalOrganizerApp", "destination": "https://github.com/sandunMadhushan/PersonalOrganizerApp", "permanent": true },
+    { "source": "/LMS-Activity-Monitor-New", "destination": "https://github.com/sandunMadhushan/LMS-Activity-Monitor-New", "permanent": true },
+    { "source": "/mood-melodies-app", "destination": "https://github.com/sandunMadhushan/mood-melodies-app", "permanent": true },
+    { "source": "/ai-powered-resume-analyzer", "destination": "https://github.com/sandunMadhushan/ai-powered-resume-analyzer", "permanent": true },
+
+    { "source": "/MealBridge-SriLanka-live", "destination": "https://mealbridge.lk/", "permanent": true },
+    { "source": "/free-cv-builder-live", "destination": "https://free-cv-builder.netlify.app", "permanent": true },
+    { "source": "/LMS-Activity-Monitor-New-live", "destination": "https://lms-activity-monitor-new.onrender.com", "permanent": true },
+    { "source": "/ai-powered-resume-analyzer-live", "destination": "https://sandunmadhushan.github.io/ai-powered-resume-analyzer/", "permanent": true }
+  ]
+}

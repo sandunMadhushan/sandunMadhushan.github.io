@@ -1,6 +1,7 @@
 /**
  * Canonical origin for metadata, sitemap, and robots (no trailing slash).
- * Set NEXT_PUBLIC_APP_URL in production (e.g. https://madhushan.vercel.app).
+ * Set NEXT_PUBLIC_APP_URL in production (e.g. https://madhushan.me). Use one canonical host if you also
+ * attach aliases (e.g. sandun.is-a.dev) in Vercel → Domains.
  */
 export function getSiteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/$/, "");
