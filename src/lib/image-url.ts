@@ -5,6 +5,11 @@
 
 const DRIVE_FOLDER = /drive\.google\.com\/drive\/folders\//;
 
+/** Embeddable Drive image URL (redirects to lh3.googleusercontent.com; works better than uc?export=view in Next/Image). */
+function driveThumbnailUrl(fileId: string): string {
+  return `https://drive.google.com/thumbnail?id=${encodeURIComponent(fileId)}&sz=w2000`;
+}
+
 export function normalizeProjectImageUrl(raw: string): { ok: true; url: string } | { ok: false; error: string } {
   const s = raw.trim();
   if (!s) return { ok: false, error: "Empty image URL." };
@@ -34,12 +39,12 @@ export function normalizeProjectImageUrl(raw: string): { ok: true; url: string }
     if (u.hostname === "drive.google.com" || u.hostname === "docs.google.com") {
       const fileMatch = u.pathname.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
       if (fileMatch) {
-        return { ok: true, url: `https://drive.google.com/uc?export=view&id=${fileMatch[1]}` };
+        return { ok: true, url: driveThumbnailUrl(fileMatch[1]) };
       }
       if (u.pathname === "/open" || u.searchParams.has("id")) {
         const id = u.searchParams.get("id");
         if (id && /^[a-zA-Z0-9_-]+$/.test(id)) {
-          return { ok: true, url: `https://drive.google.com/uc?export=view&id=${id}` };
+          return { ok: true, url: driveThumbnailUrl(id) };
         }
       }
     }
@@ -48,6 +53,42 @@ export function normalizeProjectImageUrl(raw: string): { ok: true; url: string }
   }
 
   return { ok: true, url: s };
+}
+
+/** Fix legacy stored `uc?export=view` links (they redirect to hosts Next/Image may block). */
+export function resolveProjectImageSrc(url: string): string {
+  try {
+    const u = new URL(url.trim());
+    if (u.hostname !== "drive.google.com") return url.trim();
+    if (u.pathname === "/uc" && u.searchParams.get("export") === "view") {
+      const id = u.searchParams.get("id");
+      if (id && /^[a-zA-Z0-9_-]+$/.test(id)) return driveThumbnailUrl(id);
+    }
+    return url.trim();
+  } catch {
+    return url.trim();
+  }
+}
+
+/**
+ * Prefer Vercel Blob / local paths over Google Drive for the hero (Drive is unreliable for hotlinking).
+ */
+export function sortProjectImagesForDisplay(urls: string[]): string[] {
+  const rank = (u: string): number => {
+    const s = u.trim();
+    if (s.startsWith("/")) return 100;
+    if (/\.public\.blob\.vercel-storage\.com/i.test(s)) return 95;
+    if (/drive\.google\.com/i.test(s)) return 20;
+    return 50;
+  };
+  return [...urls].sort((a, b) => rank(b) - rank(a));
+}
+
+/** Resolve legacy Drive URLs, prefer Blob/local for cover, then merge with fallback portrait. */
+export function prepareProjectGallery(urls: string[], fallback: string): string[] {
+  if (!urls.length) return [fallback];
+  const resolved = urls.map(resolveProjectImageSrc);
+  return sortProjectImagesForDisplay(resolved);
 }
 
 export function normalizeProjectImageUrls(urls: string[]): { ok: true; urls: string[] } | { ok: false; error: string } {

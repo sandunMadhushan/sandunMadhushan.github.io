@@ -1,7 +1,8 @@
 "use client";
 
 import NextImage from "next/image";
-import { isRemoteImageSrc } from "@/lib/image-url";
+import { isRemoteImageSrc, prepareProjectGallery } from "@/lib/image-url";
+import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -66,19 +67,21 @@ export function ProjectsTable({ projects }: { projects: Project[] }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-outline-variant/10">
-          {projects.map((p) => (
+          {projects.map((p) => {
+            const thumb = p.images.length ? prepareProjectGallery(p.images, DEFAULT_PORTRAIT_SRC)[0] : null;
+            return (
             <tr key={p.id} className="group transition-colors hover:bg-surface-bright/30">
               <td className="px-8 py-6">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 overflow-hidden rounded-lg bg-surface-container-lowest">
-                    {p.images[0] && (
+                    {thumb && (
                       <NextImage
-                        src={p.images[0]}
+                        src={thumb}
                         alt=""
                         width={48}
                         height={48}
                         className="h-full w-full object-cover"
-                        unoptimized={isRemoteImageSrc(p.images[0])}
+                        unoptimized={isRemoteImageSrc(thumb)}
                       />
                     )}
                   </div>
@@ -137,7 +140,8 @@ export function ProjectsTable({ projects }: { projects: Project[] }) {
                 </div>
               </td>
             </tr>
-          ))}
+          );
+          })}
         </tbody>
       </table>
       <div className="flex items-center justify-between bg-surface-container-high/20 px-8 py-6">

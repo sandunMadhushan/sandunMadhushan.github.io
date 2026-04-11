@@ -10,7 +10,7 @@ import { HeroTechBadges } from "@/components/public/hero-tech-badges";
 import { normalizeHeroTechChips } from "@/lib/hero-tech-chips";
 import { resolveHeroTagline, resolveHomeAboutBody } from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
-import { isRemoteImageSrc } from "@/lib/image-url";
+import { isRemoteImageSrc, prepareProjectGallery } from "@/lib/image-url";
 import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
 
 /** Cache page shell so prefetched routes feel instant; refresh every 30s. */
@@ -133,7 +133,9 @@ export default async function HomePage() {
                 </LinkNext>
               </div>
               <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-                {showcase.map((p) => (
+                {showcase.map((p) => {
+                  const cover = prepareProjectGallery(p.images, profileImage)[0];
+                  return (
                   <LinkNext
                     key={p.id}
                     href={`/projects/${p.slug}`}
@@ -141,12 +143,12 @@ export default async function HomePage() {
                   >
                     <div className="h-64 overflow-hidden">
                       <NextImage
-                        src={p.images[0] ?? profileImage}
+                        src={cover}
                         alt={p.title}
                         width={640}
                         height={400}
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        unoptimized={isRemoteImageSrc(p.images[0] ?? "")}
+                        unoptimized={isRemoteImageSrc(cover)}
                       />
                     </div>
                     <div className="space-y-4 p-8">
@@ -159,7 +161,8 @@ export default async function HomePage() {
                       </p>
                     </div>
                   </LinkNext>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </section>

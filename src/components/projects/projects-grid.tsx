@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import NextImage from "next/image";
-import { isRemoteImageSrc } from "@/lib/image-url";
+import { isRemoteImageSrc, prepareProjectGallery } from "@/lib/image-url";
 import Link from "next/link";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
@@ -19,6 +19,9 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
 
   const featured = projects.find((p) => p.featured) ?? projects[0];
   const rest = filtered.filter((p) => p.id !== featured?.id);
+  const featuredCover = featured
+    ? prepareProjectGallery(featured.images, DEFAULT_PORTRAIT_SRC)[0]
+    : DEFAULT_PORTRAIT_SRC;
 
   return (
     <>
@@ -28,12 +31,12 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             <div className="flex flex-col lg:flex-row">
               <div className="overflow-hidden lg:w-3/5">
                 <NextImage
-                  src={featured.images[0] ?? DEFAULT_PORTRAIT_SRC}
+                  src={featuredCover}
                   alt={featured.title}
                   width={1200}
                   height={800}
                   className="aspect-video min-h-[400px] w-full object-cover grayscale-[20%] transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 lg:aspect-auto"
-                  unoptimized={isRemoteImageSrc(featured.images[0] ?? "")}
+                  unoptimized={isRemoteImageSrc(featuredCover)}
                 />
               </div>
               <div className="flex flex-col justify-center p-8 lg:w-2/5 lg:p-12">
@@ -93,19 +96,21 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             No projects match this filter.
           </p>
         )}
-        {rest.map((p) => (
+        {rest.map((p) => {
+          const cover = prepareProjectGallery(p.images, DEFAULT_PORTRAIT_SRC)[0];
+          return (
           <article
             key={p.id}
             className="group flex flex-col overflow-hidden rounded-xl bg-surface-container-low transition-all duration-300 hover:translate-y-[-8px]"
           >
             <div className="relative aspect-[4/3] overflow-hidden">
               <NextImage
-                src={p.images[0] ?? DEFAULT_PORTRAIT_SRC}
+                src={cover}
                 alt={p.title}
                 width={800}
                 height={600}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                unoptimized={isRemoteImageSrc(p.images[0] ?? "")}
+                unoptimized={isRemoteImageSrc(cover)}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60" />
             </div>
@@ -134,7 +139,8 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
               </Link>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </>
   );
