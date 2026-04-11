@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { validateProjectBody } from "@/lib/project-validation";
+import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 
 const GITHUB_API = "https://api.github.com";
 
@@ -228,7 +229,7 @@ export async function importGithubRepoAsProject(
         `Repository: ${htmlUrl}`,
       ].join("\n\n");
 
-  const images = [meta.owner.avatar_url].filter(Boolean);
+  const thumb = meta.owner.avatar_url?.trim() || DEFAULT_PORTRAIT_SRC;
   const features =
     (Array.isArray(meta.topics) && meta.topics.length > 0
       ? meta.topics.slice(0, 6)
@@ -240,7 +241,9 @@ export async function importGithubRepoAsProject(
     description,
     content,
     technologies: techUnique,
-    images,
+    coverImage: thumb,
+    heroImage: thumb,
+    galleryImages: [] as string[],
     githubLink: htmlUrl,
     liveLink: meta.homepage?.trim() || null,
     featured: false,

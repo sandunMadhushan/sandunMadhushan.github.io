@@ -29,13 +29,15 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [category, setCategory] = useState(project?.category ?? "Web");
   const [cardIcon, setCardIcon] = useState(project?.cardIcon ?? "code");
   const [technologies, setTechnologies] = useState((project?.technologies ?? []).join(", "));
-  const [images, setImages] = useState((project?.images ?? []).join("\n"));
+  const [coverImage, setCoverImage] = useState(project?.coverImage ?? "");
+  const [heroImage, setHeroImage] = useState(project?.heroImage ?? "");
+  const [galleryImages, setGalleryImages] = useState((project?.galleryImages ?? []).join("\n"));
   const [features, setFeatures] = useState((project?.features ?? []).join("\n"));
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  async function uploadFile(file: File) {
+  async function uploadFile(file: File, onUrl: (url: string) => void) {
     const fd = new FormData();
     fd.append("file", file);
     const res = await fetch("/api/upload", { method: "POST", body: fd });
@@ -45,9 +47,7 @@ export function ProjectForm({ project }: { project?: Project }) {
       return;
     }
     if (data.url) {
-      const list = images.split("\n").filter(Boolean);
-      list.push(data.url);
-      setImages(list.join("\n"));
+      onUrl(data.url);
       toast.success("Image uploaded");
     } else toast.error("Upload failed");
   }
@@ -67,7 +67,9 @@ export function ProjectForm({ project }: { project?: Project }) {
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
-      images: images
+      coverImage: coverImage.trim() || null,
+      heroImage: heroImage.trim() || null,
+      galleryImages: galleryImages
         .split("\n")
         .map((t) => t.trim())
         .filter(Boolean),
@@ -271,36 +273,105 @@ export function ProjectForm({ project }: { project?: Project }) {
         </div>
 
         <div className="space-y-8">
-          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
             <AdminFieldLabel
-              htmlFor="project-images"
-              required
+              htmlFor="project-cover-image"
               className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
             >
-              Cover &amp; Gallery URLs
+              Cover image
             </AdminFieldLabel>
-            <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-outline-variant/20 bg-surface-container-highest py-8 hover:border-primary/50">
-              <MIcon name="cloud_upload" className="mb-2 text-4xl text-on-surface-variant" />
-              <span className="text-sm text-on-surface-variant">Upload image</span>
+            <p className="text-[11px] leading-relaxed text-on-surface-variant">
+              Shown on project cards, the /projects grid, and the home “Featured” strip. Square or 4:3 thumbnails work well.
+            </p>
+            <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-outline-variant/20 bg-surface-container-highest py-6 hover:border-primary/50">
+              <MIcon name="cloud_upload" className="mb-1 text-3xl text-on-surface-variant" />
+              <span className="text-xs text-on-surface-variant">Upload cover</span>
               <input
                 type="file"
                 accept="image/*"
                 className="hidden"
                 onChange={(e) => {
                   const f = e.target.files?.[0];
-                  if (f) uploadFile(f);
+                  if (f) uploadFile(f, setCoverImage);
+                }}
+              />
+            </label>
+            <Input
+              id="project-cover-image"
+              value={coverImage}
+              onChange={(e) => setCoverImage(e.target.value)}
+              placeholder="https://… or /uploads/…"
+              autoComplete="off"
+            />
+          </section>
+
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
+            <AdminFieldLabel
+              htmlFor="project-hero-image"
+              className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+            >
+              Hero image
+            </AdminFieldLabel>
+            <p className="text-[11px] leading-relaxed text-on-surface-variant">
+              Large banner on the public case-study page. If empty, the cover image is used. Uses <code className="text-[10px]">object-contain</code> so the full image fits.
+            </p>
+            <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-outline-variant/20 bg-surface-container-highest py-6 hover:border-primary/50">
+              <MIcon name="cloud_upload" className="mb-1 text-3xl text-on-surface-variant" />
+              <span className="text-xs text-on-surface-variant">Upload hero</span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) uploadFile(f, setHeroImage);
+                }}
+              />
+            </label>
+            <Input
+              id="project-hero-image"
+              value={heroImage}
+              onChange={(e) => setHeroImage(e.target.value)}
+              placeholder="https://… or /uploads/…"
+              autoComplete="off"
+            />
+          </section>
+
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
+            <AdminFieldLabel
+              htmlFor="project-gallery-images"
+              className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+            >
+              Gallery (artifacts)
+            </AdminFieldLabel>
+            <p className="text-[11px] leading-relaxed text-on-surface-variant">
+              Optional extra shots under <strong className="text-on-surface">Project Artifacts</strong> on the case-study page.
+              One URL per line. You need at least a cover, a hero, or one gallery URL overall.
+            </p>
+            <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-outline-variant/20 bg-surface-container-highest py-6 hover:border-primary/50">
+              <MIcon name="cloud_upload" className="mb-1 text-3xl text-on-surface-variant" />
+              <span className="text-xs text-on-surface-variant">Append upload to gallery</span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f)
+                    uploadFile(f, (url) => {
+                      const list = galleryImages.split("\n").filter(Boolean);
+                      list.push(url);
+                      setGalleryImages(list.join("\n"));
+                    });
                 }}
               />
             </label>
             <Textarea
-              id="project-images"
-              value={images}
-              onChange={(e) => setImages(e.target.value)}
-              rows={6}
-              placeholder={
-                "One URL per line. Google Drive: use each file’s share link (not a folder). Uploads on Vercel need Blob storage — see .env.example."
-              }
-              aria-required
+              id="project-gallery-images"
+              value={galleryImages}
+              onChange={(e) => setGalleryImages(e.target.value)}
+              rows={5}
+              placeholder={"One URL per line. Google Drive: file share links only (not folders)."}
             />
           </section>
 

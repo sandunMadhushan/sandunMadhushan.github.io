@@ -22,7 +22,12 @@ model Project {
   description  String
   content      String   @db.Text
   technologies String[]
-  images       String[]
+  /// Thumbnail for project cards, home, and listings.
+  coverImage   String?
+  /// Large image on the public case-study page (falls back to cover if empty).
+  heroImage    String?
+  /// Extra images in the “Project Artifacts” section (one URL per entry).
+  galleryImages String[] @default([])
   githubLink   String?
   liveLink     String?
   featured     Boolean  @default(false)

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { optionalJson } from "@/lib/prisma-json";
 import { requireAdmin } from "@/lib/api-auth";
-import { validateProjectBody } from "@/lib/project-validation";
+import { mergeProjectPatch, validateProjectBody } from "@/lib/project-validation";
 
 type Ctx = { params: Promise<{ id: string }> };
 
@@ -19,7 +19,9 @@ export async function PATCH(req: Request, ctx: Ctx) {
   if ("error" in admin) return admin.error;
   const { id } = await ctx.params;
   const body = await req.json();
-  const v = validateProjectBody(body);
+  const existing = await prisma.project.findUnique({ where: { id } });
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const v = validateProjectBody(mergeProjectPatch(existing, body));
   if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
   const { challenges, results } = body as { challenges?: unknown; results?: unknown };
   try {

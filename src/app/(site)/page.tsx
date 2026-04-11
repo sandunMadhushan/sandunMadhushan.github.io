@@ -10,7 +10,8 @@ import { HeroTechBadges } from "@/components/public/hero-tech-badges";
 import { normalizeHeroTechChips } from "@/lib/hero-tech-chips";
 import { resolveHeroTagline, resolveHomeAboutBody } from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
-import { isRemoteImageSrc, prepareProjectGallery } from "@/lib/image-url";
+import { isRemoteImageSrc } from "@/lib/image-url";
+import { projectCardSrc } from "@/lib/project-media";
 import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
 
 /** Cache page shell so prefetched routes feel instant; refresh every 30s. */
@@ -134,7 +135,7 @@ export default async function HomePage() {
               </div>
               <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                 {showcase.map((p) => {
-                  const cover = prepareProjectGallery(p.images, profileImage)[0];
+                  const cover = projectCardSrc(p, profileImage);
                   return (
                   <LinkNext
                     key={p.id}

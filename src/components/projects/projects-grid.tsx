@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import NextImage from "next/image";
-import { isRemoteImageSrc, prepareProjectGallery } from "@/lib/image-url";
+import { isRemoteImageSrc } from "@/lib/image-url";
+import { projectCardSrc } from "@/lib/project-media";
 import Link from "next/link";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
@@ -19,9 +20,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
 
   const featured = projects.find((p) => p.featured) ?? projects[0];
   const rest = filtered.filter((p) => p.id !== featured?.id);
-  const featuredCover = featured
-    ? prepareProjectGallery(featured.images, DEFAULT_PORTRAIT_SRC)[0]
-    : DEFAULT_PORTRAIT_SRC;
+  const featuredCover = featured ? projectCardSrc(featured, DEFAULT_PORTRAIT_SRC) : DEFAULT_PORTRAIT_SRC;
 
   return (
     <>
@@ -97,7 +96,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
           </p>
         )}
         {rest.map((p) => {
-          const cover = prepareProjectGallery(p.images, DEFAULT_PORTRAIT_SRC)[0];
+          const cover = projectCardSrc(p, DEFAULT_PORTRAIT_SRC);
           return (
           <article
             key={p.id}

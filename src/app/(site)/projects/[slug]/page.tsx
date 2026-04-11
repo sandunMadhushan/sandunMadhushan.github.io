@@ -5,7 +5,8 @@ import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { MIcon } from "@/components/m-icon";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
-import { isRemoteImageSrc, prepareProjectGallery } from "@/lib/image-url";
+import { isRemoteImageSrc } from "@/lib/image-url";
+import { projectGallerySrcs, projectHeroSrc } from "@/lib/project-media";
 import { getProjectBySlug, getProjects } from "@/lib/queries";
 
 export const revalidate = 30;
@@ -25,7 +26,8 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
 
   const challenges = (project.challenges as Challenge[] | null) ?? [];
   const results = (project.results as Result[] | null) ?? [];
-  const gallery = prepareProjectGallery(project.images, DEFAULT_PORTRAIT_SRC);
+  const heroSrc = projectHeroSrc(project, DEFAULT_PORTRAIT_SRC);
+  const artifacts = projectGallerySrcs(project);
 
   return (
     <PageFade>
@@ -72,16 +74,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         </header>
 
         <section className="mx-auto mb-32 max-w-[1440px] px-6 md:px-12">
-          <div className="relative h-[400px] w-full overflow-hidden rounded-xl group md:h-[600px]">
+          <div className="relative h-[400px] w-full overflow-hidden rounded-xl bg-surface-container md:h-[600px]">
             <NextImage
-              src={gallery[0]}
+              src={heroSrc}
               alt={project.title}
               fill
-              className="object-cover"
+              className="object-contain"
               priority
-              unoptimized={isRemoteImageSrc(gallery[0])}
+              sizes="(max-width: 768px) 100vw, min(1440px, 100vw)"
+              unoptimized={isRemoteImageSrc(heroSrc)}
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
           </div>
         </section>
 
@@ -124,26 +126,24 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </div>
         </section>
 
-        {gallery.length > 1 && (
+        {artifacts.length > 0 && (
           <section className="mx-auto mb-40 max-w-[1440px] px-6 md:px-12">
             <h2 className="mb-12 text-[1.75rem] font-semibold tracking-tight text-on-surface">Project Artifacts</h2>
-            <div className="grid grid-cols-1 gap-6 md:h-[800px] md:grid-cols-4 md:grid-rows-2">
-              {gallery.slice(1, 5).map((src, i) => (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {artifacts.map((src, i) => (
                 <div
                   key={src + i}
-                  className={`group relative min-h-[220px] cursor-pointer overflow-hidden rounded-xl bg-surface-container md:min-h-0 ${
-                    i === 0 ? "md:col-span-2 md:row-span-2" : i === 1 ? "md:col-span-2" : ""
-                  }`}
+                  className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-container"
                 >
                   <NextImage
                     src={src}
                     alt=""
                     fill
-                    sizes="(max-width:768px) 100vw, 50vw"
+                    sizes="(max-width:768px) 100vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                     unoptimized={isRemoteImageSrc(src)}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center bg-primary-container/20 opacity-0 transition-opacity group-hover:opacity-100">
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-primary-container/20 opacity-0 transition-opacity group-hover:opacity-100">
                     <MIcon name="zoom_in" className="text-4xl text-white" />
                   </div>
                 </div>

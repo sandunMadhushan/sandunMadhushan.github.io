@@ -1,7 +1,8 @@
 "use client";
 
 import NextImage from "next/image";
-import { isRemoteImageSrc, prepareProjectGallery } from "@/lib/image-url";
+import { isRemoteImageSrc } from "@/lib/image-url";
+import { projectCardSrc } from "@/lib/project-media";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -68,22 +69,20 @@ export function ProjectsTable({ projects }: { projects: Project[] }) {
         </thead>
         <tbody className="divide-y divide-outline-variant/10">
           {projects.map((p) => {
-            const thumb = p.images.length ? prepareProjectGallery(p.images, DEFAULT_PORTRAIT_SRC)[0] : null;
+            const thumb = projectCardSrc(p, DEFAULT_PORTRAIT_SRC);
             return (
             <tr key={p.id} className="group transition-colors hover:bg-surface-bright/30">
               <td className="px-8 py-6">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 overflow-hidden rounded-lg bg-surface-container-lowest">
-                    {thumb && (
-                      <NextImage
-                        src={thumb}
-                        alt=""
-                        width={48}
-                        height={48}
-                        className="h-full w-full object-cover"
-                        unoptimized={isRemoteImageSrc(thumb)}
-                      />
-                    )}
+                    <NextImage
+                      src={thumb}
+                      alt=""
+                      width={48}
+                      height={48}
+                      className="h-full w-full object-cover"
+                      unoptimized={isRemoteImageSrc(thumb)}
+                    />
                   </div>
                   <div>
                     <div className="text-sm font-bold text-on-surface transition-colors group-hover:text-primary">
