@@ -1,18 +1,24 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NextImage from "next/image";
 import { isRemoteImageSrc } from "@/lib/image-url";
 import { projectCardSrc } from "@/lib/project-media";
 import Link from "next/link";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
+import { Button } from "@/components/ui/button";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 
 const TABS = ["All", "Web", "Mobile", "AI"] as const;
 
+/** Grid cards only (featured hero is always shown separately). */
+const INITIAL_GRID_VISIBLE = 6;
+const LOAD_MORE_STEP = 6;
+
 export function ProjectsGrid({ projects }: { projects: Project[] }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("All");
+  const [visibleGridCount, setVisibleGridCount] = useState(INITIAL_GRID_VISIBLE);
   const filtered = useMemo(() => {
     if (tab === "All") return projects;
     return projects.filter((p) => p.category === tab);
@@ -25,6 +31,16 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
     featured && !filtered.some((p) => p.id === featured.id),
   );
   const visibleCount = filtered.length + (featuredOutsideFilter ? 1 : 0);
+
+  const displayedRest = useMemo(
+    () => rest.slice(0, visibleGridCount),
+    [rest, visibleGridCount],
+  );
+  const hasMoreInGrid = visibleGridCount < rest.length;
+
+  useEffect(() => {
+    setVisibleGridCount(INITIAL_GRID_VISIBLE);
+  }, [tab]);
 
   return (
     <>
@@ -101,7 +117,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             No projects match this filter.
           </p>
         )}
-        {rest.map((p) => {
+        {displayedRest.map((p) => {
           const cover = projectCardSrc(p, DEFAULT_PORTRAIT_SRC);
           return (
           <article
@@ -147,6 +163,24 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
           );
         })}
       </div>
+
+      {hasMoreInGrid ? (
+        <div className="mt-12 flex justify-center">
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            className="min-w-[200px] border-outline-variant/30 font-bold"
+            onClick={() =>
+              setVisibleGridCount((n) => Math.min(n + LOAD_MORE_STEP, rest.length))
+            }
+            aria-label="Load more projects"
+          >
+            Load more
+            <MIcon name="expand_more" />
+          </Button>
+        </div>
+      ) : null}
     </>
   );
 }

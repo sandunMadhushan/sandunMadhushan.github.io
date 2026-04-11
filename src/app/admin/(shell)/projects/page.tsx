@@ -2,12 +2,12 @@ import Link from "next/link";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { ProjectsTable } from "@/components/admin/projects-table";
 import { MIcon } from "@/components/m-icon";
-import { getProjects } from "@/lib/queries";
+import { getProjectsForAdmin } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminProjectsPage() {
-  const projects = await getProjects();
+  const projects = await getProjectsForAdmin();
 
   return (
     <>

@@ -19,6 +19,8 @@ export type ValidatedProjectData = {
   githubLink: string | null;
   liveLink: string | null;
   featured: boolean;
+  published: boolean;
+  sortOrder: number;
   category: string;
   cardIcon: string;
   features: string[];
@@ -27,6 +29,12 @@ export type ValidatedProjectData = {
 function strArray(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
   return v.filter((x): x is string => typeof x === "string").map((s) => s.trim()).filter(Boolean);
+}
+
+function parseSortOrder(v: unknown, fallback: number): number {
+  if (typeof v === "number" && Number.isFinite(v)) return Math.trunc(v);
+  if (typeof v === "string" && v.trim() !== "" && !Number.isNaN(Number(v))) return Math.trunc(Number(v));
+  return fallback;
 }
 
 function normOptionalUrl(raw: unknown): { ok: true; url: string | null } | { ok: false; error: string } {
@@ -81,6 +89,8 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
     typeof body.githubLink === "string" && body.githubLink.trim() ? body.githubLink.trim() : null;
   const liveLink = typeof body.liveLink === "string" && body.liveLink.trim() ? body.liveLink.trim() : null;
   const featured = Boolean(body.featured);
+  const published = typeof body.published === "boolean" ? body.published : true;
+  const sortOrder = parseSortOrder(body.sortOrder, 0);
 
   return {
     ok: true,
@@ -96,6 +106,8 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
       githubLink,
       liveLink,
       featured,
+      published,
+      sortOrder,
       category,
       cardIcon,
       features,
@@ -117,6 +129,8 @@ export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): Pr
     githubLink: body.githubLink !== undefined ? body.githubLink : existing.githubLink,
     liveLink: body.liveLink !== undefined ? body.liveLink : existing.liveLink,
     featured: body.featured !== undefined ? body.featured : existing.featured,
+    published: body.published !== undefined ? body.published : existing.published,
+    sortOrder: body.sortOrder !== undefined ? body.sortOrder : existing.sortOrder,
     category: body.category !== undefined ? body.category : existing.category,
     cardIcon: body.cardIcon !== undefined ? body.cardIcon : existing.cardIcon,
     features: body.features !== undefined ? body.features : existing.features,

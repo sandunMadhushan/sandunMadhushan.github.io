@@ -31,6 +31,10 @@ model Project {
   githubLink   String?
   liveLink     String?
   featured     Boolean  @default(false)
+  /// When false, hidden from the public site, sitemap, and listings (admin-only).
+  published    Boolean  @default(true)
+  /// Lower numbers appear first on the public site and in the admin list.
+  sortOrder    Int      @default(0)
   category     String   @default("Web")
   cardIcon     String   @default("code")
   features     String[] @default([])

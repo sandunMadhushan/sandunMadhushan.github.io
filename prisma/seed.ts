@@ -437,7 +437,8 @@ async function main() {
     },
   ];
 
-  for (const p of projects) {
+  for (let i = 0; i < projects.length; i++) {
+    const p = projects[i];
     await prisma.project.create({
       data: {
         title: p.title,
@@ -451,6 +452,8 @@ async function main() {
         githubLink: p.githubLink,
         liveLink: p.liveLink,
         featured: p.featured,
+        published: true,
+        sortOrder: i * 10,
         category: p.category,
         cardIcon: p.cardIcon,
         features: p.features,

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 import { MIcon } from "@/components/m-icon";
-import { getMessageCount, getProjects } from "@/lib/queries";
+import { getMessageCount, getProjectsForAdmin } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminDashboardPage() {
   const [projects, msgCount] = await Promise.all([
-    getProjects(),
+    getProjectsForAdmin(),
     getMessageCount(),
   ]);
 
@@ -27,7 +27,7 @@ export default async function AdminDashboardPage() {
               {projects.length}
             </div>
             <div className="mt-2 text-[12px] font-medium text-primary">
-              Portfolio entries
+              {projects.filter((p) => p.published).length} live · {projects.filter((p) => !p.published).length} draft
             </div>
           </div>
           <div className="group rounded-lg bg-surface-container-low p-6 transition-all duration-300 hover:bg-surface-container">
@@ -156,7 +156,7 @@ export default async function AdminDashboardPage() {
                         {p.title}
                       </h4>
                       <span className="text-[11px] font-medium text-on-surface-variant/40">
-                        {p.featured ? "Featured" : "Standard"}
+                        {!p.published ? "Draft" : p.featured ? "Featured" : "Published"}
                       </span>
                     </div>
                     <p className="mt-1 line-clamp-1 text-sm text-on-surface-variant">

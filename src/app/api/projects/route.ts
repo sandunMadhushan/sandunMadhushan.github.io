@@ -5,7 +5,9 @@ import { requireAdmin } from "@/lib/api-auth";
 import { validateProjectBody } from "@/lib/project-validation";
 
 export async function GET() {
-  const projects = await prisma.project.findMany({ orderBy: { createdAt: "desc" } });
+  const projects = await prisma.project.findMany({
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+  });
   return NextResponse.json(projects);
 }
 
@@ -16,9 +18,12 @@ export async function POST(req: Request) {
   const v = validateProjectBody(body);
   if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
   const { challenges, results } = body as { challenges?: unknown; results?: unknown };
+  const maxSo = await prisma.project.aggregate({ _max: { sortOrder: true } });
+  const nextSort = (maxSo._max.sortOrder ?? 0) + 10;
   const project = await prisma.project.create({
     data: {
       ...v.data,
+      sortOrder: nextSort,
       ...(challenges !== undefined ? { challenges: optionalJson(challenges) } : {}),
       ...(results !== undefined ? { results: optionalJson(results) } : {}),
     },

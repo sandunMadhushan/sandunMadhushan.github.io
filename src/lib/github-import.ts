@@ -247,6 +247,7 @@ export async function importGithubRepoAsProject(
     githubLink: htmlUrl,
     liveLink: meta.homepage?.trim() || null,
     featured: false,
+    published: false,
     category: "Web",
     cardIcon: "code",
     features,

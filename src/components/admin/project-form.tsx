@@ -26,6 +26,7 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [githubLink, setGithubLink] = useState(project?.githubLink ?? "");
   const [liveLink, setLiveLink] = useState(project?.liveLink ?? "");
   const [featured, setFeatured] = useState(project?.featured ?? false);
+  const [published, setPublished] = useState(project?.published ?? true);
   const [category, setCategory] = useState(project?.category ?? "Web");
   const [cardIcon, setCardIcon] = useState(project?.cardIcon ?? "code");
   const [technologies, setTechnologies] = useState((project?.technologies ?? []).join(", "));
@@ -77,6 +78,8 @@ export function ProjectForm({ project }: { project?: Project }) {
         .split("\n")
         .map((t) => t.trim())
         .filter(Boolean),
+      published,
+      ...(isEdit && project ? { sortOrder: project.sortOrder } : {}),
     };
     const v = validateProjectBody(payload);
     if (!v.ok) {
@@ -399,11 +402,20 @@ export function ProjectForm({ project }: { project?: Project }) {
             <Textarea value={features} onChange={(e) => setFeatures(e.target.value)} rows={5} />
           </section>
 
-          <section className="rounded-xl bg-surface-container-low p-8">
-            <div className="flex items-center justify-between">
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+            <div className="flex items-center justify-between gap-4">
               <div>
-                <h3 className="text-sm font-semibold text-on-surface">Featured Project</h3>
-                <p className="text-[11px] text-on-surface-variant">Promote to the front page gallery.</p>
+                <h3 className="text-sm font-semibold text-on-surface">Published on site</h3>
+                <p className="text-[11px] text-on-surface-variant">
+                  Drafts are hidden from /projects, the home page, and sitemap. You can still edit them here.
+                </p>
+              </div>
+              <Switch checked={published} onCheckedChange={setPublished} />
+            </div>
+            <div className="flex items-center justify-between gap-4 border-t border-outline-variant/10 pt-6">
+              <div>
+                <h3 className="text-sm font-semibold text-on-surface">Featured project</h3>
+                <p className="text-[11px] text-on-surface-variant">Spotlight on the projects page (when published).</p>
               </div>
               <Switch checked={featured} onCheckedChange={setFeatured} />
             </div>

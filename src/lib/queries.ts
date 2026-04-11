@@ -42,9 +42,26 @@ function staticSocialLinksFallback(): SocialLink[] {
   }));
 }
 
+const projectListOrderBy = [{ sortOrder: "asc" as const }, { createdAt: "desc" as const }];
+
+/** Published projects only — public site, sitemap, APIs that mirror the live portfolio. */
 export async function getProjects(): Promise<Project[]> {
-  return withDbFallback("getProjects", () =>
-    prisma.project.findMany({ orderBy: { createdAt: "desc" } }),
+  return withDbFallback(
+    "getProjects",
+    () =>
+      prisma.project.findMany({
+        where: { published: true },
+        orderBy: projectListOrderBy,
+      }),
+    [],
+  );
+}
+
+/** All projects including drafts; same ordering as the public list for easy reordering in admin. */
+export async function getProjectsForAdmin(): Promise<Project[]> {
+  return withDbFallback(
+    "getProjectsForAdmin",
+    () => prisma.project.findMany({ orderBy: projectListOrderBy }),
     [],
   );
 }
@@ -54,8 +71,8 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
     "getFeaturedProjects",
     () =>
       prisma.project.findMany({
-        where: { featured: true },
-        orderBy: { createdAt: "desc" },
+        where: { featured: true, published: true },
+        orderBy: projectListOrderBy,
         take: limit,
       }),
     [],
@@ -63,7 +80,14 @@ export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
-  return withDbFallback("getProjectBySlug", () => prisma.project.findUnique({ where: { slug } }), null);
+  return withDbFallback(
+    "getProjectBySlug",
+    () =>
+      prisma.project.findFirst({
+        where: { slug, published: true },
+      }),
+    null,
+  );
 }
 
 export async function getSkills(): Promise<Skill[]> {
