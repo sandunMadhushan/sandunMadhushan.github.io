@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppToaster } from "@/components/app-toaster";
 import { ScrollToTopOnRoute } from "@/components/motion/scroll-to-top";
+import { getSiteUrl } from "@/lib/site-url";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -10,6 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: "Sandun Madhushan | Aspiring Software Engineer",
   description:
     "Aspiring software engineer — learning full-stack web development with React, TypeScript, and Node.js.",
