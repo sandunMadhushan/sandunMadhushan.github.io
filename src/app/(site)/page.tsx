@@ -12,17 +12,14 @@ import { resolveHeroTagline, resolveHomeAboutBody } from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
 import { isRemoteImageSrc } from "@/lib/image-url";
 import { projectCardSrc } from "@/lib/project-media";
-import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
+import { resolveHomeShowcaseProjects } from "@/lib/home-showcase";
+import { getAbout, getProjects } from "@/lib/queries";
 
 /** Cache page shell so prefetched routes feel instant; refresh every 30s. */
 export const revalidate = 30;
 
 export default async function HomePage() {
-  const [about, featured, allProjects] = await Promise.all([
-    getAbout(),
-    getFeaturedProjects(3),
-    getProjects(),
-  ]);
+  const [about, allProjects] = await Promise.all([getAbout(), getProjects()]);
 
   const stats = (about?.stats as Record<string, unknown>) ?? {};
   const tagline = resolveHeroTagline(stats.heroTagline);
@@ -37,13 +34,10 @@ export default async function HomePage() {
   ];
   const heroTechChips = normalizeHeroTechChips(stats.heroTechChips);
 
-  let showcase = featured;
-  if (showcase.length < 3) {
-    const rest = allProjects.filter(
-      (p) => !showcase.find((f) => f.id === p.id),
-    );
-    showcase = [...showcase, ...rest].slice(0, 3);
-  }
+  const showcase = resolveHomeShowcaseProjects(
+    allProjects,
+    about?.stats as Record<string, unknown> | undefined,
+  );
 
   return (
     <PageFade>

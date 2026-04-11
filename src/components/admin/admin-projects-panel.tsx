@@ -128,6 +128,13 @@ export function AdminProjectsPanel({ projects }: { projects: Project[] }) {
         </p>
       ) : null}
 
+      <p className="mb-6 max-w-3xl text-sm leading-relaxed text-on-surface-variant">
+        List order below controls the public <span className="font-medium text-on-surface">Projects</span> page only.
+        The home page “Featured Projects” row is chosen under{" "}
+        <span className="font-medium text-on-surface">Admin → About</span> (three slots). The Featured toggle here
+        highlights one project on the Projects page.
+      </p>
+
       <ProjectsTable
         projects={visibleProjects}
         portfolioStats={portfolioStats}

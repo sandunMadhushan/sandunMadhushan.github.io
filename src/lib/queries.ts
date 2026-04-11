@@ -66,19 +66,6 @@ export async function getProjectsForAdmin(): Promise<Project[]> {
   );
 }
 
-export async function getFeaturedProjects(limit = 3): Promise<Project[]> {
-  return withDbFallback(
-    "getFeaturedProjects",
-    () =>
-      prisma.project.findMany({
-        where: { featured: true, published: true },
-        orderBy: projectListOrderBy,
-        take: limit,
-      }),
-    [],
-  );
-}
-
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
   return withDbFallback(
     "getProjectBySlug",

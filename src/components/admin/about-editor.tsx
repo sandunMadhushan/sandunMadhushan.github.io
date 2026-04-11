@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { About } from "@prisma/client";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,23 +12,76 @@ import {
   HERO_TECH_ICON_OPTIONS,
   normalizeHeroTechChips,
 } from "@/lib/hero-tech-chips";
+import {
+  HOME_SHOWCASE_PROJECT_IDS_KEY,
+  omitHomeShowcaseIdsFromStats,
+  parseHomeFeaturedProjectIds,
+} from "@/lib/home-showcase";
 
-export function AboutEditor({ about }: { about: About | null }) {
+export type AboutAdminProjectOption = {
+  id: string;
+  title: string;
+  published: boolean;
+};
+
+function homeSlotsFromAbout(about: About | null): [string, string, string] {
+  if (!about?.stats) return ["", "", ""];
+  const ids = parseHomeFeaturedProjectIds(about.stats as Record<string, unknown>);
+  return [ids[0] ?? "", ids[1] ?? "", ids[2] ?? ""];
+}
+
+function buildHomeFeaturedIds(slots: [string, string, string]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of slots) {
+    const t = raw.trim();
+    if (!t || seen.has(t)) continue;
+    seen.add(t);
+    out.push(t);
+  }
+  return out.slice(0, 3);
+}
+
+export function AboutEditor({
+  about,
+  adminProjects = [],
+}: {
+  about: About | null;
+  adminProjects?: AboutAdminProjectOption[];
+}) {
   const router = useRouter();
   const [content, setContent] = useState(about?.content ?? "");
-  const [statsJson, setStatsJson] = useState(JSON.stringify(about?.stats ?? {}, null, 2));
+  const [statsJson, setStatsJson] = useState(() =>
+    JSON.stringify(omitHomeShowcaseIdsFromStats((about?.stats as Record<string, unknown>) ?? {}), null, 2),
+  );
   const [heroChips, setHeroChips] = useState<HeroTechChip[]>(() =>
     normalizeHeroTechChips((about?.stats as Record<string, unknown> | undefined)?.heroTechChips),
   );
+  const [homeSlots, setHomeSlots] = useState<[string, string, string]>(() => homeSlotsFromAbout(about));
   const [saving, setSaving] = useState(false);
+
+  const sortedAdminProjects = useMemo(
+    () =>
+      [...adminProjects].sort((a, b) =>
+        a.title.localeCompare(b.title, undefined, { sensitivity: "base" }),
+      ),
+    [adminProjects],
+  );
 
   useEffect(() => {
     if (!about) return;
     setContent(about.content ?? "");
-    setStatsJson(JSON.stringify(about.stats ?? {}, null, 2));
+    setStatsJson(
+      JSON.stringify(
+        omitHomeShowcaseIdsFromStats((about.stats as Record<string, unknown>) ?? {}),
+        null,
+        2,
+      ),
+    );
     setHeroChips(
       normalizeHeroTechChips((about.stats as Record<string, unknown> | undefined)?.heroTechChips),
     );
+    setHomeSlots(homeSlotsFromAbout(about));
   }, [about]);
 
   function setChip(i: number, patch: Partial<HeroTechChip>) {
@@ -46,6 +99,12 @@ export function AboutEditor({ about }: { about: About | null }) {
     } catch {
       toast.error("Invalid JSON in stats");
       return;
+    }
+    const picks = buildHomeFeaturedIds(homeSlots);
+    if (picks.length > 0) {
+      stats[HOME_SHOWCASE_PROJECT_IDS_KEY] = picks;
+    } else {
+      delete stats[HOME_SHOWCASE_PROJECT_IDS_KEY];
     }
     stats.heroTechChips = normalizeHeroTechChips(heroChips);
     setSaving(true);
@@ -112,6 +171,48 @@ export function AboutEditor({ about }: { about: About | null }) {
                   ))}
                 </select>
               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-outline-variant/20 bg-surface-container-low p-6">
+        <h3 className="mb-1 text-lg font-semibold text-on-surface">Home — Featured Projects row</h3>
+        <p className="mb-4 text-sm text-on-surface-variant">
+          Pick up to three projects for the home page grid only. Order here is independent of the Project Portfolio list
+          order (drag handles on <span className="font-medium text-on-surface">Admin → Projects</span>), which controls
+          the public <span className="font-medium text-on-surface">Projects</span> page. Leave a slot as None to show
+          fewer than three cards. If all three are None, the first three published projects in portfolio order are used.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-3">
+          {([0, 1, 2] as const).map((i) => (
+            <div key={i} className="space-y-1.5">
+              <label
+                htmlFor={`home-showcase-${i}`}
+                className="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant"
+              >
+                Slot {i + 1}
+              </label>
+              <select
+                id={`home-showcase-${i}`}
+                value={homeSlots[i]}
+                onChange={(e) =>
+                  setHomeSlots((prev) => {
+                    const next: [string, string, string] = [...prev];
+                    next[i] = e.target.value;
+                    return next;
+                  })
+                }
+                className="h-10 w-full rounded-md border border-outline-variant/30 bg-surface-container-highest px-3 text-sm text-on-surface"
+              >
+                <option value="">None</option>
+                {sortedAdminProjects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                    {!p.published ? " (draft)" : ""}
+                  </option>
+                ))}
+              </select>
             </div>
           ))}
         </div>
