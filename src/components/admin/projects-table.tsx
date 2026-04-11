@@ -41,6 +41,7 @@ type RowProps = {
   project: Project;
   index: number;
   rowCount: number;
+  dimmed: boolean;
   reordering: boolean;
   onSwap: (i: number, j: number) => void;
   onToggleFeatured: (p: Project) => void;
@@ -52,6 +53,7 @@ function SortableProjectRow({
   project: p,
   index: i,
   rowCount,
+  dimmed,
   reordering,
   onSwap,
   onToggleFeatured,
@@ -77,6 +79,7 @@ function SortableProjectRow({
       className={cn(
         "group transition-colors hover:bg-surface-bright/30",
         isDragging && "relative z-10 opacity-60",
+        dimmed && !isDragging && "opacity-[0.38]",
       )}
     >
       <td className="px-4 py-6 align-middle md:px-6">
@@ -182,17 +185,22 @@ function SortableProjectRow({
         <div className="text-xs font-medium text-on-surface-variant">{new Date(p.createdAt).toLocaleDateString()}</div>
       </td>
       <td className="px-4 py-6 text-right align-middle md:px-8">
-        <div className="flex justify-end gap-3 opacity-100 md:opacity-0 md:transition-opacity md:group-hover:opacity-100">
-          <Link href={`/admin/projects/edit/${p.id}`} className="text-on-surface-variant hover:text-primary">
-            <MIcon name="edit" />
+        <div className="flex justify-end gap-3">
+          <Link
+            href={`/admin/projects/edit/${p.id}`}
+            className="rounded-md p-1.5 text-on-surface/75 transition-colors hover:bg-surface-container-high hover:text-primary"
+            title="Edit project"
+          >
+            <MIcon name="edit" className="text-xl" />
           </Link>
           <button
             type="button"
             onClick={() => onRequestDelete(p.id)}
-            className="text-on-surface-variant hover:text-error"
+            className="rounded-md p-1.5 text-on-surface/75 transition-colors hover:bg-surface-container-high hover:text-error"
             aria-label="Delete project"
+            title="Delete project"
           >
-            <MIcon name="delete" />
+            <MIcon name="delete" className="text-xl" />
           </button>
         </div>
       </td>
@@ -200,7 +208,14 @@ function SortableProjectRow({
   );
 }
 
-export function ProjectsTable({ projects }: { projects: Project[] }) {
+export function ProjectsTable({
+  projects,
+  isRowDimmed,
+}: {
+  projects: Project[];
+  /** When set, matching rows are visually faded (filters); order and DnD still use the full list. */
+  isRowDimmed?: (p: Project) => boolean;
+}) {
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -352,6 +367,7 @@ export function ProjectsTable({ projects }: { projects: Project[] }) {
                   project={p}
                   index={i}
                   rowCount={items.length}
+                  dimmed={isRowDimmed?.(p) ?? false}
                   reordering={reordering}
                   onSwap={swapRows}
                   onToggleFeatured={toggleFeatured}

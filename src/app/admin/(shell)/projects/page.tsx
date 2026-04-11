@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
-import { ProjectsTable } from "@/components/admin/projects-table";
+import { AdminProjectsPanel } from "@/components/admin/admin-projects-panel";
 import { MIcon } from "@/components/m-icon";
 import { getProjectsForAdmin } from "@/lib/queries";
 
@@ -39,33 +39,7 @@ export default async function AdminProjectsPage() {
             </Link>
           </div>
         </div>
-        <div className="mb-8 flex flex-col gap-4 rounded-xl bg-surface-container-low p-6 md:flex-row md:items-center">
-          <div className="relative w-full md:w-96">
-            <span className="material-symbols-outlined pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">
-              search
-            </span>
-            <input
-              readOnly
-              placeholder="Search projects by title..."
-              className="w-full rounded-lg border-none border-b border-outline-variant bg-surface-container-lowest py-3 pl-12 pr-4 text-sm text-on-surface placeholder:text-on-surface-variant/50"
-            />
-          </div>
-          <div className="ml-auto flex gap-2">
-            <button
-              type="button"
-              className="rounded-lg border border-outline-variant/20 px-4 py-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:bg-surface-bright"
-            >
-              All Status
-            </button>
-            <button
-              type="button"
-              className="rounded-lg border border-outline-variant/20 px-4 py-2 text-xs font-bold uppercase tracking-widest text-on-surface-variant transition-colors hover:bg-surface-bright"
-            >
-              Tech Stack
-            </button>
-          </div>
-        </div>
-        <ProjectsTable projects={projects} />
+        <AdminProjectsPanel projects={projects} />
       </section>
       <footer className="w-full border-t border-[#e5e2e3]/10 bg-[#131314] px-12 py-20">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-8 md:flex-row">
