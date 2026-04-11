@@ -12,6 +12,7 @@ import {
   DEFAULT_ABOUT_INTRO,
   stripColomboFromCopy,
 } from "@/lib/about-content";
+import { resolveDisplayImageSrc } from "@/lib/image-url";
 import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout } from "@/lib/queries";
 
@@ -64,8 +65,8 @@ export default async function AboutPage() {
       : about?.content
         ? [stripColomboFromCopy(about.content)]
         : [...DEFAULT_ABOUT_INTRO];
-  const portrait = resolvePortraitSrc(
-    stats.aboutPortrait as string | undefined,
+  const portrait = resolveDisplayImageSrc(
+    resolvePortraitSrc(stats.aboutPortrait as string | undefined),
   );
   const statCards = (stats.statCards as {
     value: string;
@@ -183,7 +184,7 @@ export default async function AboutPage() {
                             {item.image && (
                               <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
                                 <NextImage
-                                  src={item.image}
+                                  src={resolveDisplayImageSrc(item.image)}
                                   alt=""
                                   width={640}
                                   height={360}
@@ -224,7 +225,7 @@ export default async function AboutPage() {
                             {item.image && (
                               <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
                                 <NextImage
-                                  src={item.image}
+                                  src={resolveDisplayImageSrc(item.image)}
                                   alt=""
                                   width={640}
                                   height={360}

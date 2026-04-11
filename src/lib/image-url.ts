@@ -55,6 +55,17 @@ export function normalizeProjectImageUrl(raw: string): { ok: true; url: string }
   return { ok: true, url: s };
 }
 
+/**
+ * Use on public pages when rendering stored image URLs: converts Google Drive file share
+ * links to the thumbnail endpoint; leaves `/…` paths and normal https URLs unchanged.
+ */
+export function resolveDisplayImageSrc(raw: string): string {
+  const s = raw.trim();
+  if (!s) return s;
+  const n = normalizeProjectImageUrl(s);
+  return n.ok ? n.url : s;
+}
+
 /** Fix legacy stored `uc?export=view` links (they redirect to hosts Next/Image may block). */
 export function resolveProjectImageSrc(url: string): string {
   try {

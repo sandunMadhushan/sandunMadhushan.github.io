@@ -121,6 +121,12 @@ export function AboutEditor({ about }: { about: About | null }) {
         <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
           Stats JSON (projects, technologies, experience, heroTagline, timeline, …)
         </label>
+        <p className="text-sm text-on-surface-variant">
+          Journey images: in <code className="rounded bg-surface-container-highest px-1 py-0.5 text-xs">timeline</code>, add{" "}
+          <code className="rounded bg-surface-container-highest px-1 py-0.5 text-xs">&quot;image&quot;</code> with a direct URL, a path like{" "}
+          <code className="rounded bg-surface-container-highest px-1 py-0.5 text-xs">/photo.jpg</code>, or a Google Drive{" "}
+          <strong>file</strong> share link (Anyone with the link). Folder links are not supported. The site converts Drive file links when the page loads.
+        </p>
         <Textarea value={statsJson} onChange={(e) => setStatsJson(e.target.value)} rows={20} className="font-mono text-sm" />
       </div>
       <Button type="button" onClick={save} disabled={saving}>
