@@ -297,7 +297,9 @@ export function ProjectForm({ project }: { project?: Project }) {
               value={images}
               onChange={(e) => setImages(e.target.value)}
               rows={6}
-              placeholder={"One image URL per line"}
+              placeholder={
+                "One URL per line. Google Drive: use each file’s share link (not a folder). Uploads on Vercel need Blob storage — see .env.example."
+              }
               aria-required
             />
           </section>

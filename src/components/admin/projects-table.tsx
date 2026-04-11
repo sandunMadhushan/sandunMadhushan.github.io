@@ -1,6 +1,7 @@
 "use client";
 
 import NextImage from "next/image";
+import { isRemoteImageSrc } from "@/lib/image-url";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -77,7 +78,7 @@ export function ProjectsTable({ projects }: { projects: Project[] }) {
                         width={48}
                         height={48}
                         className="h-full w-full object-cover"
-                        unoptimized={p.images[0].startsWith("http")}
+                        unoptimized={isRemoteImageSrc(p.images[0])}
                       />
                     )}
                   </div>

@@ -5,6 +5,7 @@ import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { MIcon } from "@/components/m-icon";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
+import { isRemoteImageSrc } from "@/lib/image-url";
 import { getProjectBySlug, getProjects } from "@/lib/queries";
 
 export const revalidate = 30;
@@ -78,7 +79,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               fill
               className="object-cover"
               priority
-              unoptimized={gallery[0].startsWith("http")}
+              unoptimized={isRemoteImageSrc(gallery[0])}
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
           </div>
@@ -140,7 +141,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     fill
                     sizes="(max-width:768px) 100vw, 50vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    unoptimized={src.startsWith("http")}
+                    unoptimized={isRemoteImageSrc(src)}
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-primary-container/20 opacity-0 transition-opacity group-hover:opacity-100">
                     <MIcon name="zoom_in" className="text-4xl text-white" />

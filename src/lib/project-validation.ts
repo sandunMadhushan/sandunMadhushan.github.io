@@ -1,5 +1,7 @@
 /** Shared rules for admin project create/update (client + API). */
 
+import { normalizeProjectImageUrls } from "@/lib/image-url";
+
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export type ProjectBodyInput = Record<string, unknown>;
@@ -50,6 +52,9 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
     return { ok: false, error: "Add at least one cover or gallery image URL." };
   }
 
+  const normalized = normalizeProjectImageUrls(images);
+  if (!normalized.ok) return { ok: false, error: normalized.error };
+
   const category = typeof body.category === "string" && body.category.trim() ? body.category.trim() : "Web";
   const cardIcon = typeof body.cardIcon === "string" && body.cardIcon.trim() ? body.cardIcon.trim() : "code";
   const githubLink =
@@ -65,7 +70,7 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
       description,
       content,
       technologies,
-      images,
+      images: normalized.urls,
       githubLink,
       liveLink,
       featured,

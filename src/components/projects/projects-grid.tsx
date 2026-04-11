@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import NextImage from "next/image";
+import { isRemoteImageSrc } from "@/lib/image-url";
 import Link from "next/link";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
@@ -32,7 +33,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                   width={1200}
                   height={800}
                   className="aspect-video min-h-[400px] w-full object-cover grayscale-[20%] transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0 lg:aspect-auto"
-                  unoptimized={(featured.images[0] ?? "").startsWith("http")}
+                  unoptimized={isRemoteImageSrc(featured.images[0] ?? "")}
                 />
               </div>
               <div className="flex flex-col justify-center p-8 lg:w-2/5 lg:p-12">
@@ -104,7 +105,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                 width={800}
                 height={600}
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                unoptimized={(p.images[0] ?? "").startsWith("http")}
+                unoptimized={isRemoteImageSrc(p.images[0] ?? "")}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent opacity-60" />
             </div>

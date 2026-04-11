@@ -4,6 +4,7 @@ import { PageFade } from "@/components/motion/page-fade";
 import { ContactForm } from "@/components/contact/contact-form";
 import { MIcon } from "@/components/m-icon";
 import { resolvePortraitSrc } from "@/lib/site-constants";
+import { isRemoteImageSrc } from "@/lib/image-url";
 import { getAbout, getSocialLinks } from "@/lib/queries";
 import { ContactSocialRow } from "@/components/public/public-social-blocks";
 
@@ -87,7 +88,7 @@ export default async function ContactPage() {
                     width={32}
                     height={32}
                     className="h-full w-full object-cover object-[center_22%]"
-                    unoptimized={profile.startsWith("http")}
+                    unoptimized={isRemoteImageSrc(profile)}
                   />
                 </div>
                 <div>

@@ -10,6 +10,7 @@ import { HeroTechBadges } from "@/components/public/hero-tech-badges";
 import { normalizeHeroTechChips } from "@/lib/hero-tech-chips";
 import { resolveHeroTagline, resolveHomeAboutBody } from "@/lib/about-content";
 import { resolvePortraitSrc } from "@/lib/site-constants";
+import { isRemoteImageSrc } from "@/lib/image-url";
 import { getAbout, getFeaturedProjects, getProjects } from "@/lib/queries";
 
 /** Cache page shell so prefetched routes feel instant; refresh every 30s. */
@@ -101,7 +102,7 @@ export default async function HomePage() {
                     height={500}
                     className="h-[min(400px,88vw)] w-full max-w-[400px] origin-[center_22%] scale-[1.14] rounded-2xl object-cover object-[center_22%] grayscale transition-all duration-700 [@media(hover:none)]:grayscale-0 [@media(hover:hover)]:group-hover:scale-[1.18] [@media(hover:hover)]:group-hover:grayscale-0 md:h-[500px]"
                     priority
-                    unoptimized={profileImage.startsWith("http")}
+                    unoptimized={isRemoteImageSrc(profileImage)}
                   />
                 </div>
                 {/* Floating skill chips — official brand marks via react-icons (Simple Icons) */}
@@ -145,7 +146,7 @@ export default async function HomePage() {
                         width={640}
                         height={400}
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        unoptimized={(p.images[0] ?? "").startsWith("http")}
+                        unoptimized={isRemoteImageSrc(p.images[0] ?? "")}
                       />
                     </div>
                     <div className="space-y-4 p-8">
