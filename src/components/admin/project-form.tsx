@@ -10,11 +10,27 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { AdminFieldLabel } from "@/components/admin/field-label";
-import { validateProjectBody } from "@/lib/project-validation";
+import {
+  parseProjectChallenges,
+  parseProjectResults,
+  validateProjectBody,
+  type ProjectChallenge,
+  type ProjectResult,
+} from "@/lib/project-validation";
 import { toast } from "sonner";
 
 const CATEGORIES = ["Web", "Mobile", "AI"];
 const ICONS = ["code", "smartphone", "psychology", "analytics", "restaurant", "calendar_month", "description"];
+
+function challengesFromDb(p?: Project): ProjectChallenge[] {
+  const r = parseProjectChallenges(p?.challenges ?? undefined);
+  return r.ok ? r.value : [];
+}
+
+function resultsFromDb(p?: Project): ProjectResult[] {
+  const r = parseProjectResults(p?.results ?? undefined);
+  return r.ok ? r.value : [];
+}
 
 export function ProjectForm({ project }: { project?: Project }) {
   const router = useRouter();
@@ -34,6 +50,8 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [heroImage, setHeroImage] = useState(project?.heroImage ?? "");
   const [galleryImages, setGalleryImages] = useState((project?.galleryImages ?? []).join("\n"));
   const [features, setFeatures] = useState((project?.features ?? []).join("\n"));
+  const [challenges, setChallenges] = useState<ProjectChallenge[]>(() => challengesFromDb(project));
+  const [results, setResults] = useState<ProjectResult[]>(() => resultsFromDb(project));
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -78,6 +96,8 @@ export function ProjectForm({ project }: { project?: Project }) {
         .split("\n")
         .map((t) => t.trim())
         .filter(Boolean),
+      challenges,
+      results,
       published,
       ...(isEdit && project ? { sortOrder: project.sortOrder } : {}),
     };
@@ -253,6 +273,130 @@ export function ProjectForm({ project }: { project?: Project }) {
             />
           </section>
 
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+            <div>
+              <h3 className="text-sm font-semibold text-on-surface">The Friction</h3>
+              <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
+                Public case study: left column under “The Friction”. Use the same number of lines in{" "}
+                <strong className="text-on-surface">Features</strong> (first lines, in order) for “The Resolution” on the
+                right.
+              </p>
+            </div>
+            {challenges.length === 0 ? (
+              <p className="text-sm text-on-surface-variant">No challenge cards — that section stays hidden on the site.</p>
+            ) : (
+              <div className="space-y-4">
+                {challenges.map((c, i) => (
+                  <div
+                    key={i}
+                    className="space-y-3 rounded-lg border border-outline-variant/15 bg-surface-container-lowest p-4"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                        Challenge {i + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setChallenges((prev) => prev.filter((_, j) => j !== i))}
+                        className="text-[11px] font-semibold text-error hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <Input
+                      value={c.title}
+                      onChange={(e) =>
+                        setChallenges((prev) =>
+                          prev.map((row, j) => (j === i ? { ...row, title: e.target.value } : row)),
+                        )
+                      }
+                      placeholder="Title (e.g. Compliance)"
+                    />
+                    <Textarea
+                      value={c.description}
+                      onChange={(e) =>
+                        setChallenges((prev) =>
+                          prev.map((row, j) => (j === i ? { ...row, description: e.target.value } : row)),
+                        )
+                      }
+                      placeholder="Description"
+                      rows={3}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full sm:w-auto"
+              onClick={() => setChallenges((prev) => [...prev, { title: "", description: "" }])}
+            >
+              Add challenge
+            </Button>
+          </section>
+
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+            <div>
+              <h3 className="text-sm font-semibold text-on-surface">Impact Driven banner</h3>
+              <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
+                Big numbers on the purple banner (e.g. value <strong className="text-on-surface">12</strong>, label{" "}
+                <strong className="text-on-surface">CLINICS ONBOARDED</strong>). Leave empty to hide the banner.
+              </p>
+            </div>
+            {results.length === 0 ? (
+              <p className="text-sm text-on-surface-variant">No metrics — banner stays hidden on the site.</p>
+            ) : (
+              <div className="space-y-4">
+                {results.map((r, i) => (
+                  <div
+                    key={i}
+                    className="grid gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-lowest p-4 sm:grid-cols-2"
+                  >
+                    <div className="sm:col-span-2 flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                        Metric {i + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setResults((prev) => prev.filter((_, j) => j !== i))}
+                        className="text-[11px] font-semibold text-error hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <Input
+                      value={r.value}
+                      onChange={(e) =>
+                        setResults((prev) =>
+                          prev.map((row, j) => (j === i ? { ...row, value: e.target.value } : row)),
+                        )
+                      }
+                      placeholder="Value (e.g. 12 or 3k+)"
+                    />
+                    <Input
+                      value={r.label}
+                      onChange={(e) =>
+                        setResults((prev) =>
+                          prev.map((row, j) => (j === i ? { ...row, label: e.target.value } : row)),
+                        )
+                      }
+                      placeholder="Label (e.g. CLINICS ONBOARDED)"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full sm:w-auto"
+              onClick={() => setResults((prev) => [...prev, { label: "", value: "" }])}
+            >
+              Add metric
+            </Button>
+          </section>
+
           <section className="grid grid-cols-2 gap-6 rounded-xl bg-surface-container-low p-8">
             <div className="space-y-2">
               <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
@@ -399,6 +543,12 @@ export function ProjectForm({ project }: { project?: Project }) {
             <label className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
               Features (one per line)
             </label>
+            <p className="text-[11px] leading-relaxed text-on-surface-variant">
+              Checklist under <strong className="text-on-surface">Highlights</strong>. If you added{" "}
+              <strong className="text-on-surface">Friction</strong> challenges, the{" "}
+              <strong className="text-on-surface">first N lines</strong> here (same order, N = number of challenges) fill
+              “The Resolution” cards; remaining lines are highlights only.
+            </p>
             <Textarea value={features} onChange={(e) => setFeatures(e.target.value)} rows={5} />
           </section>
 

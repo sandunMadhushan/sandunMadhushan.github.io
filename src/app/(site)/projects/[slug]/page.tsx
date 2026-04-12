@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
+import { ProjectDetailLayout } from "@/components/projects/project-detail-layout";
 import { MIcon } from "@/components/m-icon";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import { isRemoteImageSrc } from "@/lib/image-url";
@@ -33,46 +34,52 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
     <PageFade>
       <SiteNav active="/projects" />
       <main className="pb-24 pt-32">
-        <header className="mx-auto mb-24 max-w-[1440px] px-6 md:px-12">
-          <div className="grid grid-cols-1 items-end gap-12 md:grid-cols-12">
-            <div className="md:col-span-8">
-              <span className="label-md mb-4 block font-bold uppercase tracking-widest text-primary">
-                Case Study
-              </span>
-              <h1 className="mb-6 text-[2.5rem] font-extrabold leading-[0.95] tracking-tighter md:max-w-3xl md:text-[3.5rem]">
-                {project.title}
-              </h1>
-              <p className="max-w-2xl text-xl font-medium leading-relaxed text-on-surface-variant">
-                {project.description}
-              </p>
-            </div>
-            <div className="flex flex-col gap-4 md:col-span-4">
-              {project.liveLink && (
-                <a
-                  href={project.liveLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex w-full items-center justify-center gap-3 rounded-lg bg-primary-container py-4 text-lg font-bold text-on-primary-container shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all hover:opacity-90"
-                >
-                  <MIcon name="launch" />
-                  Live Demo
-                </a>
-              )}
-              {project.githubLink && (
-                <a
-                  href={project.githubLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high py-4 text-lg font-bold text-on-surface transition-all hover:bg-surface-bright"
-                >
-                  <MIcon name="code" />
-                  View GitHub
-                </a>
-              )}
-            </div>
-          </div>
-        </header>
-
+        <ProjectDetailLayout
+          title={project.title}
+          githubLink={project.githubLink}
+          liveLink={project.liveLink}
+          header={
+            <header className="mx-auto mb-24 max-w-[1440px] px-6 md:px-12">
+              <div className="grid grid-cols-1 items-end gap-12 md:grid-cols-12">
+                <div className="md:col-span-8">
+                  <span className="label-md mb-4 block font-bold uppercase tracking-widest text-primary">
+                    Case Study
+                  </span>
+                  <h1 className="mb-6 text-[2.5rem] font-extrabold leading-[0.95] tracking-tighter md:max-w-3xl md:text-[3.5rem]">
+                    {project.title}
+                  </h1>
+                  <p className="max-w-2xl text-xl font-medium leading-relaxed text-on-surface-variant">
+                    {project.description}
+                  </p>
+                </div>
+                <div className="flex flex-col gap-4 md:col-span-4">
+                  {project.liveLink && (
+                    <a
+                      href={project.liveLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex w-full items-center justify-center gap-3 rounded-lg bg-primary-container py-4 text-lg font-bold text-on-primary-container shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all hover:opacity-90"
+                    >
+                      <MIcon name="launch" />
+                      Live Demo
+                    </a>
+                  )}
+                  {project.githubLink && (
+                    <a
+                      href={project.githubLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high py-4 text-lg font-bold text-on-surface transition-all hover:bg-surface-bright"
+                    >
+                      <MIcon name="code" />
+                      View GitHub
+                    </a>
+                  )}
+                </div>
+              </div>
+            </header>
+          }
+        >
         <section className="mx-auto mb-32 max-w-[1440px] px-6 md:px-12">
           <div className="relative aspect-[16/10] w-full min-h-[200px] max-h-[min(80dvh,520px)] overflow-hidden rounded-xl bg-surface-container sm:aspect-video sm:min-h-[220px] md:aspect-auto md:h-[min(520px,calc(100vw-6rem))] md:max-h-none lg:h-[600px]">
             <NextImage
@@ -253,6 +260,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
         </div>
+        </ProjectDetailLayout>
       </main>
     </PageFade>
   );

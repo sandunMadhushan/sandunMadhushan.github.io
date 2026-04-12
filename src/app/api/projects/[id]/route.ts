@@ -1,7 +1,5 @@
-import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { optionalJson } from "@/lib/prisma-json";
 import { requireAdmin } from "@/lib/api-auth";
 import { mergeProjectPatch, validateProjectBody } from "@/lib/project-validation";
 
@@ -23,15 +21,10 @@ export async function PATCH(req: Request, ctx: Ctx) {
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const v = validateProjectBody(mergeProjectPatch(existing, body));
   if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
-  const { challenges, results } = body as { challenges?: unknown; results?: unknown };
   try {
-    const updateData: Prisma.ProjectUpdateInput = { ...v.data };
-    if (challenges !== undefined) updateData.challenges = optionalJson(challenges);
-    if (results !== undefined) updateData.results = optionalJson(results);
-
     const project = await prisma.project.update({
       where: { id },
-      data: updateData,
+      data: v.data,
     });
     return NextResponse.json(project);
   } catch {

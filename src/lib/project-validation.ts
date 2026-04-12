@@ -7,6 +7,12 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export type ProjectBodyInput = Record<string, unknown>;
 
+/** Case study “The Friction” cards (stored as JSON on `Project.challenges`). */
+export type ProjectChallenge = { title: string; description: string };
+
+/** Case study “Impact Driven” stats (stored as JSON on `Project.results`). */
+export type ProjectResult = { label: string; value: string };
+
 export type ValidatedProjectData = {
   title: string;
   slug: string;
@@ -24,11 +30,65 @@ export type ValidatedProjectData = {
   category: string;
   cardIcon: string;
   features: string[];
+  challenges: ProjectChallenge[];
+  results: ProjectResult[];
 };
 
 function strArray(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
   return v.filter((x): x is string => typeof x === "string").map((s) => s.trim()).filter(Boolean);
+}
+
+export function parseProjectChallenges(
+  input: unknown,
+): { ok: true; value: ProjectChallenge[] } | { ok: false; error: string } {
+  if (input === null || input === undefined) return { ok: true, value: [] };
+  if (!Array.isArray(input)) return { ok: false, error: "Challenges must be a list." };
+  const out: ProjectChallenge[] = [];
+  for (let i = 0; i < input.length; i++) {
+    const row = input[i];
+    if (row === null || typeof row !== "object" || Array.isArray(row)) {
+      return { ok: false, error: `Challenge ${i + 1}: invalid entry.` };
+    }
+    const o = row as Record<string, unknown>;
+    const title = typeof o.title === "string" ? o.title.trim() : "";
+    const description = typeof o.description === "string" ? o.description.trim() : "";
+    if (!title && !description) continue;
+    if (!title || !description) {
+      return {
+        ok: false,
+        error: `Challenge ${i + 1}: enter both a title and a description, or clear the row.`,
+      };
+    }
+    out.push({ title, description });
+  }
+  return { ok: true, value: out };
+}
+
+export function parseProjectResults(
+  input: unknown,
+): { ok: true; value: ProjectResult[] } | { ok: false; error: string } {
+  if (input === null || input === undefined) return { ok: true, value: [] };
+  if (!Array.isArray(input)) return { ok: false, error: "Impact metrics must be a list." };
+  const out: ProjectResult[] = [];
+  for (let i = 0; i < input.length; i++) {
+    const row = input[i];
+    if (row === null || typeof row !== "object" || Array.isArray(row)) {
+      return { ok: false, error: `Impact metric ${i + 1}: invalid entry.` };
+    }
+    const o = row as Record<string, unknown>;
+    const label = typeof o.label === "string" ? o.label.trim() : "";
+    const value = typeof o.value === "string" ? o.value.trim() : "";
+    if (!label && !value) continue;
+    if (!label || !value) {
+      return {
+        ok: false,
+        error: `Impact metric ${i + 1}: enter both a label and a value, or clear the row.`,
+      };
+    }
+    out.push({ label, value });
+  }
+  return { ok: true, value: out };
 }
 
 function parseSortOrder(v: unknown, fallback: number): number {
@@ -92,6 +152,11 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
   const published = typeof body.published === "boolean" ? body.published : true;
   const sortOrder = parseSortOrder(body.sortOrder, 0);
 
+  const challengesParsed = parseProjectChallenges(body.challenges);
+  if (!challengesParsed.ok) return { ok: false, error: challengesParsed.error };
+  const resultsParsed = parseProjectResults(body.results);
+  if (!resultsParsed.ok) return { ok: false, error: resultsParsed.error };
+
   return {
     ok: true,
     data: {
@@ -111,12 +176,17 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
       category,
       cardIcon,
       features,
+      challenges: challengesParsed.value,
+      results: resultsParsed.value,
     },
   };
 }
 
 /** Merge PATCH body with an existing row so partial updates (e.g. featured toggle) validate. */
 export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): ProjectBodyInput {
+  const mergedChallenges = parseProjectChallenges(existing.challenges);
+  const mergedResults = parseProjectResults(existing.results);
+
   return {
     title: body.title !== undefined ? body.title : existing.title,
     slug: body.slug !== undefined ? body.slug : existing.slug,
@@ -134,5 +204,7 @@ export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): Pr
     category: body.category !== undefined ? body.category : existing.category,
     cardIcon: body.cardIcon !== undefined ? body.cardIcon : existing.cardIcon,
     features: body.features !== undefined ? body.features : existing.features,
+    challenges: body.challenges !== undefined ? body.challenges : mergedChallenges.ok ? mergedChallenges.value : [],
+    results: body.results !== undefined ? body.results : mergedResults.ok ? mergedResults.value : [],
   };
 }
