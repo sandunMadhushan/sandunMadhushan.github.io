@@ -18,15 +18,35 @@ export function AdminLoginForm() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    const fd = new FormData(e.currentTarget);
-    const email = fd.get("email") as string;
-    const password = fd.get("password") as string;
-    const res = await signIn("credentials", { email, password, redirect: false, callbackUrl });
-    setLoading(false);
-    if (res?.ok) {
-      window.location.href = callbackUrl;
-    } else {
-      toast.error("Invalid email or password");
+    try {
+      const fd = new FormData(e.currentTarget);
+      const email = fd.get("email") as string;
+      const password = fd.get("password") as string;
+      const res = await signIn("credentials", { email, password, redirect: false, callbackUrl });
+
+      if (res?.error) {
+        const msg =
+          res.error === "CredentialsSignin"
+            ? "Invalid email or password."
+            : `Could not sign in: ${res.error}`;
+        toast.error(msg);
+        setLoading(false);
+        return;
+      }
+
+      if (res?.ok) {
+        toast.success("Signed in successfully.");
+        window.setTimeout(() => {
+          window.location.href = callbackUrl;
+        }, 450);
+        return;
+      }
+
+      toast.error("Sign in failed. Please try again.");
+      setLoading(false);
+    } catch {
+      toast.error("Something went wrong. Check your connection and try again.");
+      setLoading(false);
     }
   }
 
@@ -37,15 +57,19 @@ export function AdminLoginForm() {
         <div className="absolute bottom-[-10%] right-[-10%] h-[40%] w-[40%] rounded-full bg-primary/5 blur-[120px]" />
       </div>
       <main className="relative z-10 w-full max-w-[420px] px-6">
-        <div className="mb-12 flex flex-col items-center">
-          <div className="ghost-border mb-6 flex h-16 w-16 items-center justify-center rounded-xl bg-surface-container-high">
-            <MIcon name="lock" className="text-3xl text-primary" />
-          </div>
-          <h1 className="mb-2 text-3xl font-bold tracking-tighter text-on-surface">
-            Architect Portfolio
-          </h1>
+        <div className="mb-12 flex flex-col items-center text-center">
+          <Link
+            href="/"
+            className="ghost-border mb-6 inline-flex h-16 min-w-16 items-center justify-center rounded-xl bg-surface-container-high px-5 transition-opacity hover:opacity-90"
+            aria-label="Portfolio home"
+          >
+            <span className="text-2xl font-bold tracking-tighter text-on-surface sm:text-3xl">
+              S<span className="text-primary-container">M</span>
+            </span>
+          </Link>
+          <h1 className="mb-2 text-3xl font-bold tracking-tighter text-on-surface">Sign in</h1>
           <p className="text-sm font-medium uppercase tracking-wide text-on-surface-variant">
-            Administrative Access
+            Administrative access
           </p>
         </div>
         <div className="glass-panel ghost-border rounded-xl p-10 shadow-2xl">

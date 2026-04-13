@@ -15,6 +15,7 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "prisma db seed",
+    "db:set-admin": "tsx scripts/set-admin-credentials.ts",
     "db:studio": "prisma studio",
     "about:sync": "tsx scripts/sync-about-defaults.ts",
     "about:strip-colombo": "tsx scripts/strip-colombo-about.ts"

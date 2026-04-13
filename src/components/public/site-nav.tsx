@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MIcon } from "@/components/m-icon";
-import { SITE_NAV_LINKS } from "@/lib/site-nav-links";
+import {
+  SITE_NAV_LINKS,
+  isNavOffSiteStyle,
+  isTrailingNavLink,
+} from "@/lib/site-nav-links";
 
 export function SiteNav({ active }: { active?: string }) {
   const router = useRouter();
@@ -15,7 +19,7 @@ export function SiteNav({ active }: { active?: string }) {
     const prefetchAll = () => {
       if (cancelled) return;
       SITE_NAV_LINKS.forEach((l) => {
-        if (!("external" in l && l.external)) router.prefetch(l.href);
+        if (!isNavOffSiteStyle(l)) router.prefetch(l.href);
       });
     };
     let idleId = 0;
@@ -56,34 +60,63 @@ export function SiteNav({ active }: { active?: string }) {
         >
           S<span className="text-primary-container">M</span>
         </Link>
-        <div className="hidden items-center gap-8 text-[15px] font-medium tracking-tight md:flex">
-          {SITE_NAV_LINKS.map((l) => {
-            const isExternal = "external" in l && l.external;
-            const isActive =
-              !isExternal &&
-              (active === l.href || (l.href !== "/" && active?.startsWith(l.href)));
-            const className = isActive
-              ? "border-b-2 border-primary-container pb-1 font-semibold text-primary-container"
-              : "text-on-surface/70 transition-colors duration-300 hover:text-primary-container";
-            return isExternal ? (
-              <a
-                key={l.href}
-                href={l.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center gap-1 ${className}`}
-              >
-                {l.label}
-                <MIcon name="open_in_new" className="!text-base opacity-70" aria-hidden />
-              </a>
-            ) : (
-              <Link key={l.href} href={l.href} className={className}>
-                {l.label}
-              </Link>
-            );
-          })}
+        <div className="hidden min-w-0 flex-1 justify-center md:flex">
+          <div className="flex items-center gap-8 text-[15px] font-medium tracking-tight">
+            {SITE_NAV_LINKS.filter((l) => !isTrailingNavLink(l)).map((l) => {
+              const offSite = isNavOffSiteStyle(l);
+              const isActive =
+                !offSite && (active === l.href || (l.href !== "/" && active?.startsWith(l.href)));
+              const className = isActive
+                ? "border-b-2 border-primary-container pb-1 font-semibold text-primary-container"
+                : "text-on-surface/70 transition-colors duration-300 hover:text-primary-container";
+              return offSite ? (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex items-center gap-1 ${className}`}
+                >
+                  {l.label}
+                  <MIcon name="open_in_new" className="!text-base opacity-70" aria-hidden />
+                </a>
+              ) : (
+                <Link key={l.href} href={l.href} className={className}>
+                  {l.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+          {SITE_NAV_LINKS.some(isTrailingNavLink) ? (
+            <div className="hidden items-center gap-5 border-l border-outline-variant/10 pl-5 text-[15px] font-medium tracking-tight md:flex lg:pl-6">
+              {SITE_NAV_LINKS.filter((l) => isTrailingNavLink(l)).map((l) => {
+                const offSite = isNavOffSiteStyle(l);
+                const isActive =
+                  !offSite && (active === l.href || (l.href !== "/" && active?.startsWith(l.href)));
+                const className = isActive
+                  ? "inline-flex items-center gap-1 border-b-2 border-primary-container pb-1 font-semibold text-primary-container"
+                  : "inline-flex items-center gap-1 text-on-surface/70 transition-colors duration-300 hover:text-primary-container";
+                return offSite ? (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={className}
+                  >
+                    {l.label}
+                    <MIcon name="open_in_new" className="!text-base opacity-70" aria-hidden />
+                  </a>
+                ) : (
+                  <Link key={l.href} href={l.href} className={className}>
+                    {l.label}
+                  </Link>
+                );
+              })}
+            </div>
+          ) : null}
           <Link
             href="/contact"
             className="rounded-lg bg-primary-container px-3 py-2 text-xs font-semibold text-on-primary-container transition-all hover:brightness-110 active:scale-95 sm:px-6 sm:text-sm"
@@ -115,10 +148,9 @@ export function SiteNav({ active }: { active?: string }) {
       >
         <ul className="flex flex-col gap-1 px-6 py-4 pb-6">
           {SITE_NAV_LINKS.map((l) => {
-            const isExternal = "external" in l && l.external;
+            const offSite = isNavOffSiteStyle(l);
             const isActive =
-              !isExternal &&
-              (active === l.href || (l.href !== "/" && active?.startsWith(l.href)));
+              !offSite && (active === l.href || (l.href !== "/" && active?.startsWith(l.href)));
             const mobileClass = `flex items-center justify-between gap-2 rounded-lg px-4 py-3 text-lg font-medium transition-colors ${
               isActive
                 ? "bg-surface-container-high text-primary-container"
@@ -126,7 +158,7 @@ export function SiteNav({ active }: { active?: string }) {
             }`;
             return (
               <li key={l.href}>
-                {isExternal ? (
+                {offSite ? (
                   <a
                     href={l.href}
                     target="_blank"

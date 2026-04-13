@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SiteFooterSocialSection } from "@/components/public/public-social-blocks";
 import { MIcon } from "@/components/m-icon";
 import { getSocialLinks } from "@/lib/queries";
-import { SITE_NAV_LINKS } from "@/lib/site-nav-links";
+import { SITE_NAV_LINKS, isNavOffSiteStyle } from "@/lib/site-nav-links";
 
 export async function SiteFooter() {
   const year = new Date().getFullYear();
@@ -46,19 +46,19 @@ export async function SiteFooter() {
             </h2>
             <ul className="flex flex-col gap-3">
               {SITE_NAV_LINKS.map((l) => {
-                const isExternal = "external" in l && l.external;
+                const offSite = isNavOffSiteStyle(l);
                 const inner = (
                   <>
                     <span className="h-px w-0 bg-primary-container transition-all duration-300 group-hover:w-4" />
                     {l.label}
-                    {isExternal ? (
+                    {offSite ? (
                       <MIcon name="open_in_new" className="!text-base opacity-60" aria-hidden />
                     ) : null}
                   </>
                 );
                 return (
                   <li key={l.href}>
-                    {isExternal ? (
+                    {offSite ? (
                       <a
                         href={l.href}
                         target="_blank"
