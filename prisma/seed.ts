@@ -266,6 +266,7 @@ async function main() {
     { platform: "github", url: "https://github.com/", sortOrder: 0 },
     { platform: "linkedin", url: "https://www.linkedin.com/", sortOrder: 1 },
     { platform: "facebook", url: "https://www.facebook.com/", sortOrder: 2 },
+    { platform: "blog", url: "https://blog.madhushan.me/", sortOrder: 3 },
   ];
   for (const sl of socialLinks) {
     await prisma.socialLink.create({ data: sl });

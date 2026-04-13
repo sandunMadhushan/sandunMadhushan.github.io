@@ -1,14 +1,8 @@
 import Link from "next/link";
 import { SiteFooterSocialSection } from "@/components/public/public-social-blocks";
+import { MIcon } from "@/components/m-icon";
 import { getSocialLinks } from "@/lib/queries";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/projects", label: "Projects" },
-  { href: "/skills", label: "Skills" },
-  { href: "/contact", label: "Contact" },
-] as const;
+import { SITE_NAV_LINKS } from "@/lib/site-nav-links";
 
 export async function SiteFooter() {
   const year = new Date().getFullYear();
@@ -51,17 +45,39 @@ export async function SiteFooter() {
               Explore
             </h2>
             <ul className="flex flex-col gap-3">
-              {navLinks.map(({ href, label }) => (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    className="group inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface"
-                  >
+              {SITE_NAV_LINKS.map((l) => {
+                const isExternal = "external" in l && l.external;
+                const inner = (
+                  <>
                     <span className="h-px w-0 bg-primary-container transition-all duration-300 group-hover:w-4" />
-                    {label}
-                  </Link>
-                </li>
-              ))}
+                    {l.label}
+                    {isExternal ? (
+                      <MIcon name="open_in_new" className="!text-base opacity-60" aria-hidden />
+                    ) : null}
+                  </>
+                );
+                return (
+                  <li key={l.href}>
+                    {isExternal ? (
+                      <a
+                        href={l.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface"
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <Link
+                        href={l.href}
+                        className="group inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface"
+                      >
+                        {inner}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
 

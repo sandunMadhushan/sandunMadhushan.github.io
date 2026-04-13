@@ -1,4 +1,4 @@
-import { Link2 } from "lucide-react";
+import { BookOpen, Link2 } from "lucide-react";
 import { IconFacebook, IconGithub, IconLinkedin } from "@/components/icons/social-brand-icons";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,8 @@ export function SocialBrandGlyph({ platform, className }: Props) {
       return <IconLinkedin className={c} />;
     case "facebook":
       return <IconFacebook className={c} />;
+    case "blog":
+      return <BookOpen className={c} strokeWidth={2} aria-hidden />;
     default:
       return <Link2 className={c} strokeWidth={2} aria-hidden />;
   }

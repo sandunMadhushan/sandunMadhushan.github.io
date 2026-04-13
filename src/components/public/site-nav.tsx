@@ -4,14 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MIcon } from "@/components/m-icon";
-
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/projects", label: "Projects" },
-  { href: "/skills", label: "Skills" },
-  { href: "/contact", label: "Contact" },
-];
+import { SITE_NAV_LINKS } from "@/lib/site-nav-links";
 
 export function SiteNav({ active }: { active?: string }) {
   const router = useRouter();
@@ -21,7 +14,9 @@ export function SiteNav({ active }: { active?: string }) {
     let cancelled = false;
     const prefetchAll = () => {
       if (cancelled) return;
-      links.forEach((l) => router.prefetch(l.href));
+      SITE_NAV_LINKS.forEach((l) => {
+        if (!("external" in l && l.external)) router.prefetch(l.href);
+      });
     };
     let idleId = 0;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
@@ -62,19 +57,27 @@ export function SiteNav({ active }: { active?: string }) {
           S<span className="text-primary-container">M</span>
         </Link>
         <div className="hidden items-center gap-8 text-[15px] font-medium tracking-tight md:flex">
-          {links.map((l) => {
+          {SITE_NAV_LINKS.map((l) => {
+            const isExternal = "external" in l && l.external;
             const isActive =
-              active === l.href || (l.href !== "/" && active?.startsWith(l.href));
-            return (
-              <Link
+              !isExternal &&
+              (active === l.href || (l.href !== "/" && active?.startsWith(l.href)));
+            const className = isActive
+              ? "border-b-2 border-primary-container pb-1 font-semibold text-primary-container"
+              : "text-on-surface/70 transition-colors duration-300 hover:text-primary-container";
+            return isExternal ? (
+              <a
                 key={l.href}
                 href={l.href}
-                className={
-                  isActive
-                    ? "border-b-2 border-primary-container pb-1 font-semibold text-primary-container"
-                    : "text-on-surface/70 transition-colors duration-300 hover:text-primary-container"
-                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-1 ${className}`}
               >
+                {l.label}
+                <MIcon name="open_in_new" className="!text-base opacity-70" aria-hidden />
+              </a>
+            ) : (
+              <Link key={l.href} href={l.href} className={className}>
                 {l.label}
               </Link>
             );
@@ -111,22 +114,34 @@ export function SiteNav({ active }: { active?: string }) {
         aria-hidden={open ? "false" : "true"}
       >
         <ul className="flex flex-col gap-1 px-6 py-4 pb-6">
-          {links.map((l) => {
+          {SITE_NAV_LINKS.map((l) => {
+            const isExternal = "external" in l && l.external;
             const isActive =
-              active === l.href || (l.href !== "/" && active?.startsWith(l.href));
+              !isExternal &&
+              (active === l.href || (l.href !== "/" && active?.startsWith(l.href)));
+            const mobileClass = `flex items-center justify-between gap-2 rounded-lg px-4 py-3 text-lg font-medium transition-colors ${
+              isActive
+                ? "bg-surface-container-high text-primary-container"
+                : "text-on-surface/80 hover:bg-surface-container-low hover:text-on-surface"
+            }`;
             return (
               <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className={`block rounded-lg px-4 py-3 text-lg font-medium transition-colors ${
-                    isActive
-                      ? "bg-surface-container-high text-primary-container"
-                      : "text-on-surface/80 hover:bg-surface-container-low hover:text-on-surface"
-                  }`}
-                  onClick={() => setOpen(false)}
-                >
-                  {l.label}
-                </Link>
+                {isExternal ? (
+                  <a
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={mobileClass}
+                    onClick={() => setOpen(false)}
+                  >
+                    {l.label}
+                    <MIcon name="open_in_new" className="!text-xl opacity-70" aria-hidden />
+                  </a>
+                ) : (
+                  <Link href={l.href} className={mobileClass} onClick={() => setOpen(false)}>
+                    {l.label}
+                  </Link>
+                )}
               </li>
             );
           })}

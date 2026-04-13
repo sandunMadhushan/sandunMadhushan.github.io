@@ -6,6 +6,8 @@
     { "source": "/whatsapp", "destination": "https://wa.me/94711349060", "permanent": true },
     { "source": "/email", "destination": "/contact", "permanent": false },
     { "source": "/email/", "destination": "/contact", "permanent": false },
+    { "source": "/blog", "destination": "https://blog.madhushan.me/", "permanent": true },
+    { "source": "/blog/", "destination": "https://blog.madhushan.me/", "permanent": true },
 
     { "source": "/REFLECT", "destination": "https://github.com/sandunMadhushan/REFLECT", "permanent": true },
     { "source": "/MealBridge-SriLanka", "destination": "https://github.com/sandunMadhushan/MealBridge-SriLanka-Overview", "permanent": true },
