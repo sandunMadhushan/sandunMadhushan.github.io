@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:webpack": "next dev",
-    "build": "prisma migrate deploy && prisma generate && next build",
+    "build": "node scripts/prisma-migrate-deploy-retry.mjs && prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
