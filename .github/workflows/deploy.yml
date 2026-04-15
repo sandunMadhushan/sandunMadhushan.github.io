@@ -5,10 +5,16 @@ on:
     branches: [master]
   workflow_dispatch:
 
+concurrency:
+  group: vercel-deploy-hook-master
+  cancel-in-progress: true
+
 jobs:
   trigger-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Wait 5 minutes before triggering deploy
+        run: sleep 300
       - name: Trigger Vercel deploy hook
         run: |
           curl -sS -o /dev/null -w "HTTP status: %{http_code}\n" \
