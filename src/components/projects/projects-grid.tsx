@@ -37,6 +37,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
     [rest, visibleGridCount],
   );
   const hasMoreInGrid = visibleGridCount < rest.length;
+  const canCollapseGrid = rest.length > INITIAL_GRID_VISIBLE && visibleGridCount > INITIAL_GRID_VISIBLE;
 
   useEffect(() => {
     setVisibleGridCount(INITIAL_GRID_VISIBLE);
@@ -164,20 +165,24 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
         })}
       </div>
 
-      {hasMoreInGrid ? (
+      {hasMoreInGrid || canCollapseGrid ? (
         <div className="mt-12 flex justify-center">
           <Button
             type="button"
             variant="secondary"
             size="lg"
             className="min-w-[200px] border-outline-variant/30 font-bold"
-            onClick={() =>
-              setVisibleGridCount((n) => Math.min(n + LOAD_MORE_STEP, rest.length))
-            }
-            aria-label="Load more projects"
+            onClick={() => {
+              if (hasMoreInGrid) {
+                setVisibleGridCount((n) => Math.min(n + LOAD_MORE_STEP, rest.length));
+                return;
+              }
+              setVisibleGridCount(INITIAL_GRID_VISIBLE);
+            }}
+            aria-label={hasMoreInGrid ? "Load more projects" : "Show fewer projects"}
           >
-            Load more
-            <MIcon name="expand_more" />
+            {hasMoreInGrid ? "Load more" : "Show less"}
+            <MIcon name={hasMoreInGrid ? "expand_more" : "expand_less"} />
           </Button>
         </div>
       ) : null}
