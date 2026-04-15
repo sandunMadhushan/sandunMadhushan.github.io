@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NextImage from "next/image";
 import { isRemoteImageSrc } from "@/lib/image-url";
 import { projectCardSrc } from "@/lib/project-media";
@@ -19,6 +19,13 @@ const LOAD_MORE_STEP = 6;
 export function ProjectsGrid({ projects }: { projects: Project[] }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("All");
   const [visibleGridCount, setVisibleGridCount] = useState(INITIAL_GRID_VISIBLE);
+  const gridStartRef = useRef<HTMLDivElement | null>(null);
+  const cardRefs = useRef<Array<HTMLElement | null>>([]);
+  const pendingScrollRef = useRef<
+    | { type: "more"; index: number }
+    | { type: "less" }
+    | null
+  >(null);
   const filtered = useMemo(() => {
     if (tab === "All") return projects;
     return projects.filter((p) => p.category === tab);
@@ -41,7 +48,23 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
 
   useEffect(() => {
     setVisibleGridCount(INITIAL_GRID_VISIBLE);
+    pendingScrollRef.current = null;
   }, [tab]);
+
+  useEffect(() => {
+    const pending = pendingScrollRef.current;
+    if (!pending) return;
+    pendingScrollRef.current = null;
+
+    if (pending.type === "more") {
+      const target = cardRefs.current[pending.index];
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return;
+    }
+    gridStartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [visibleGridCount]);
 
   return (
     <>
@@ -112,17 +135,20 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div ref={gridStartRef} className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {rest.length === 0 && (
           <p className="col-span-full rounded-xl border border-dashed border-outline-variant/25 bg-surface-container-low/50 py-16 text-center text-on-surface-variant">
             No projects match this filter.
           </p>
         )}
-        {displayedRest.map((p) => {
+        {displayedRest.map((p, i) => {
           const cover = projectCardSrc(p, DEFAULT_PORTRAIT_SRC);
           return (
           <article
             key={p.id}
+            ref={(el) => {
+              cardRefs.current[i] = el;
+            }}
             className="group flex flex-col overflow-hidden rounded-xl bg-surface-container-low transition-all duration-300 hover:translate-y-[-8px]"
           >
             <div className="relative aspect-[4/3] w-full overflow-hidden sm:min-h-[200px]">
@@ -174,9 +200,13 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             className="min-w-[200px] border-outline-variant/30 font-bold"
             onClick={() => {
               if (hasMoreInGrid) {
-                setVisibleGridCount((n) => Math.min(n + LOAD_MORE_STEP, rest.length));
+                setVisibleGridCount((n) => {
+                  pendingScrollRef.current = { type: "more", index: n };
+                  return Math.min(n + LOAD_MORE_STEP, rest.length);
+                });
                 return;
               }
+              pendingScrollRef.current = { type: "less" };
               setVisibleGridCount(INITIAL_GRID_VISIBLE);
             }}
             aria-label={hasMoreInGrid ? "Load more projects" : "Show fewer projects"}
