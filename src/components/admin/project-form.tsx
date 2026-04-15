@@ -12,9 +12,11 @@ import { ConfirmDialog } from "@/components/admin/confirm-dialog";
 import { AdminFieldLabel } from "@/components/admin/field-label";
 import {
   parseProjectChallenges,
+  parseProjectResolutions,
   parseProjectResults,
   validateProjectBody,
   type ProjectChallenge,
+  type ProjectResolution,
   type ProjectResult,
 } from "@/lib/project-validation";
 import { toast } from "sonner";
@@ -29,6 +31,12 @@ function challengesFromDb(p?: Project): ProjectChallenge[] {
 
 function resultsFromDb(p?: Project): ProjectResult[] {
   const r = parseProjectResults(p?.results ?? undefined);
+  return r.ok ? r.value : [];
+}
+
+function resolutionsFromDb(p?: Project): ProjectResolution[] {
+  const raw = (p as unknown as { resolutions?: unknown } | undefined)?.resolutions;
+  const r = parseProjectResolutions(raw ?? undefined);
   return r.ok ? r.value : [];
 }
 
@@ -51,6 +59,7 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [galleryImages, setGalleryImages] = useState((project?.galleryImages ?? []).join("\n"));
   const [features, setFeatures] = useState((project?.features ?? []).join("\n"));
   const [challenges, setChallenges] = useState<ProjectChallenge[]>(() => challengesFromDb(project));
+  const [resolutions, setResolutions] = useState<ProjectResolution[]>(() => resolutionsFromDb(project));
   const [results, setResults] = useState<ProjectResult[]>(() => resultsFromDb(project));
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -97,6 +106,7 @@ export function ProjectForm({ project }: { project?: Project }) {
         .map((t) => t.trim())
         .filter(Boolean),
       challenges,
+      resolutions,
       results,
       published,
       ...(isEdit && project ? { sortOrder: project.sortOrder } : {}),
@@ -277,9 +287,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             <div>
               <h3 className="text-sm font-semibold text-on-surface">The Friction</h3>
               <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
-                Public case study: left column under “The Friction”. Use the same number of lines in{" "}
-                <strong className="text-on-surface">Features</strong> (first lines, in order) for “The Resolution” on the
-                right.
+                Public case study: left column under “The Friction”.
               </p>
             </div>
             {challenges.length === 0 ? (
@@ -333,6 +341,67 @@ export function ProjectForm({ project }: { project?: Project }) {
               onClick={() => setChallenges((prev) => [...prev, { title: "", description: "" }])}
             >
               Add challenge
+            </Button>
+          </section>
+
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+            <div>
+              <h3 className="text-sm font-semibold text-on-surface">The Resolution</h3>
+              <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
+                Public case study: right column under “The Resolution”.
+              </p>
+            </div>
+            {resolutions.length === 0 ? (
+              <p className="text-sm text-on-surface-variant">No resolution cards — that section stays hidden on the site.</p>
+            ) : (
+              <div className="space-y-4">
+                {resolutions.map((r, i) => (
+                  <div
+                    key={i}
+                    className="space-y-3 rounded-lg border border-outline-variant/15 bg-surface-container-lowest p-4"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                        Resolution {i + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setResolutions((prev) => prev.filter((_, j) => j !== i))}
+                        className="text-[11px] font-semibold text-error hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <Input
+                      value={r.title}
+                      onChange={(e) =>
+                        setResolutions((prev) =>
+                          prev.map((row, j) => (j === i ? { ...row, title: e.target.value } : row)),
+                        )
+                      }
+                      placeholder="Title (e.g. Feature focus)"
+                    />
+                    <Textarea
+                      value={r.description}
+                      onChange={(e) =>
+                        setResolutions((prev) =>
+                          prev.map((row, j) => (j === i ? { ...row, description: e.target.value } : row)),
+                        )
+                      }
+                      placeholder="Description"
+                      rows={3}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full sm:w-auto"
+              onClick={() => setResolutions((prev) => [...prev, { title: "", description: "" }])}
+            >
+              Add resolution
             </Button>
           </section>
 
@@ -544,10 +613,7 @@ export function ProjectForm({ project }: { project?: Project }) {
               Features (one per line)
             </label>
             <p className="text-[11px] leading-relaxed text-on-surface-variant">
-              Checklist under <strong className="text-on-surface">Highlights</strong>. If you added{" "}
-              <strong className="text-on-surface">Friction</strong> challenges, the{" "}
-              <strong className="text-on-surface">first N lines</strong> here (same order, N = number of challenges) fill
-              “The Resolution” cards; remaining lines are highlights only.
+              Checklist under <strong className="text-on-surface">Highlights</strong>.
             </p>
             <Textarea value={features} onChange={(e) => setFeatures(e.target.value)} rows={5} />
           </section>

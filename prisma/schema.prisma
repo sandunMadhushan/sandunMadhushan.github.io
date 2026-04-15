@@ -39,6 +39,7 @@ model Project {
   cardIcon     String   @default("code")
   features     String[] @default([])
   challenges   Json?
+  resolutions  Json?
   results      Json?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

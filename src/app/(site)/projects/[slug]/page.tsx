@@ -13,6 +13,7 @@ import { getProjectBySlug, getProjects } from "@/lib/queries";
 export const revalidate = 30;
 
 type Challenge = { title: string; description: string };
+type Resolution = { title: string; description: string };
 type Result = { label: string; value: string };
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -26,7 +27,15 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   const next = idx < all.length - 1 ? all[idx + 1] : null;
 
   const challenges = (project.challenges as Challenge[] | null) ?? [];
+  const resolutionsRaw = ((project as unknown as { resolutions?: unknown }).resolutions as Resolution[] | null) ?? [];
   const results = (project.results as Result[] | null) ?? [];
+  const resolutions =
+    resolutionsRaw.length > 0
+      ? resolutionsRaw
+      : project.features.slice(0, challenges.length).map((f) => ({
+          title: "Feature focus",
+          description: f,
+        }));
   const heroSrc = projectHeroSrc(project, DEFAULT_PORTRAIT_SRC);
   const artifacts = projectGallerySrcs(project);
 
@@ -159,7 +168,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           </section>
         )}
 
-        {challenges.length > 0 && (
+        {(challenges.length > 0 || resolutions.length > 0) && (
           <section className="mx-auto mb-40 max-w-[1440px] px-6 md:px-12">
             <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
               <div className="space-y-8">
@@ -173,10 +182,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               </div>
               <div className="space-y-8">
                 <h2 className="text-[1.75rem] font-semibold tracking-tight text-on-surface">The Resolution</h2>
-                {project.features.slice(0, challenges.length).map((f, i) => (
+                {resolutions.map((r, i) => (
                   <div key={i} className="rounded-r-lg border-l-4 border-primary-container bg-surface-container-low p-8">
-                    <h4 className="mb-3 text-lg font-bold text-primary">Feature focus</h4>
-                    <p className="leading-relaxed text-on-surface-variant">{f}</p>
+                    <h4 className="mb-3 text-lg font-bold text-primary">{r.title}</h4>
+                    <p className="leading-relaxed text-on-surface-variant">{r.description}</p>
                   </div>
                 ))}
               </div>

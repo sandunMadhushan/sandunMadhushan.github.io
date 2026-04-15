@@ -10,6 +10,9 @@ export type ProjectBodyInput = Record<string, unknown>;
 /** Case study “The Friction” cards (stored as JSON on `Project.challenges`). */
 export type ProjectChallenge = { title: string; description: string };
 
+/** Case study “The Resolution” cards (stored as JSON on `Project.resolutions`). */
+export type ProjectResolution = { title: string; description: string };
+
 /** Case study “Impact Driven” stats (stored as JSON on `Project.results`). */
 export type ProjectResult = { label: string; value: string };
 
@@ -31,6 +34,7 @@ export type ValidatedProjectData = {
   cardIcon: string;
   features: string[];
   challenges: ProjectChallenge[];
+  resolutions: ProjectResolution[];
   results: ProjectResult[];
 };
 
@@ -87,6 +91,32 @@ export function parseProjectResults(
       };
     }
     out.push({ label, value });
+  }
+  return { ok: true, value: out };
+}
+
+export function parseProjectResolutions(
+  input: unknown,
+): { ok: true; value: ProjectResolution[] } | { ok: false; error: string } {
+  if (input === null || input === undefined) return { ok: true, value: [] };
+  if (!Array.isArray(input)) return { ok: false, error: "Resolutions must be a list." };
+  const out: ProjectResolution[] = [];
+  for (let i = 0; i < input.length; i++) {
+    const row = input[i];
+    if (row === null || typeof row !== "object" || Array.isArray(row)) {
+      return { ok: false, error: `Resolution ${i + 1}: invalid entry.` };
+    }
+    const o = row as Record<string, unknown>;
+    const title = typeof o.title === "string" ? o.title.trim() : "";
+    const description = typeof o.description === "string" ? o.description.trim() : "";
+    if (!title && !description) continue;
+    if (!title || !description) {
+      return {
+        ok: false,
+        error: `Resolution ${i + 1}: enter both a title and a description, or clear the row.`,
+      };
+    }
+    out.push({ title, description });
   }
   return { ok: true, value: out };
 }
@@ -154,6 +184,8 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
 
   const challengesParsed = parseProjectChallenges(body.challenges);
   if (!challengesParsed.ok) return { ok: false, error: challengesParsed.error };
+  const resolutionsParsed = parseProjectResolutions(body.resolutions);
+  if (!resolutionsParsed.ok) return { ok: false, error: resolutionsParsed.error };
   const resultsParsed = parseProjectResults(body.results);
   if (!resultsParsed.ok) return { ok: false, error: resultsParsed.error };
 
@@ -177,6 +209,7 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
       cardIcon,
       features,
       challenges: challengesParsed.value,
+      resolutions: resolutionsParsed.value,
       results: resultsParsed.value,
     },
   };
@@ -185,6 +218,7 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
 /** Merge PATCH body with an existing row so partial updates (e.g. featured toggle) validate. */
 export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): ProjectBodyInput {
   const mergedChallenges = parseProjectChallenges(existing.challenges);
+  const mergedResolutions = parseProjectResolutions((existing as unknown as { resolutions?: unknown }).resolutions);
   const mergedResults = parseProjectResults(existing.results);
 
   return {
@@ -205,6 +239,8 @@ export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): Pr
     cardIcon: body.cardIcon !== undefined ? body.cardIcon : existing.cardIcon,
     features: body.features !== undefined ? body.features : existing.features,
     challenges: body.challenges !== undefined ? body.challenges : mergedChallenges.ok ? mergedChallenges.value : [],
+    resolutions:
+      body.resolutions !== undefined ? body.resolutions : mergedResolutions.ok ? mergedResolutions.value : [],
     results: body.results !== undefined ? body.results : mergedResults.ok ? mergedResults.value : [],
   };
 }
