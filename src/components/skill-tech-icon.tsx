@@ -139,6 +139,8 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
 
 /** Alternate DB / admin values → canonical `SKILL_ICON_MAP` key */
 const STORED_ICON_ALIASES: Record<string, string> = {
+  aws: "amazonaws",
+  azure: "microsoftazure",
   reactjs: "react",
   "react.js": "react",
   react_native: "reactnative",
@@ -310,14 +312,20 @@ export function resolveSkillIconKey(stored: string | null | undefined, name: str
   const raw = (stored ?? "").trim().toLowerCase();
   const s = STORED_ICON_ALIASES[raw] ?? raw;
   const n = name.toLowerCase();
+  const inferredFromName = inferIconKeyFromName(n);
+
+  // For cloud/deployment brand names, prioritize name match to prevent stale/mis-set icon keys.
+  if (inferredFromName && ["amazonaws", "microsoftazure", "cloudflare", "netlify", "render", "railway", "vercel"].includes(inferredFromName)) {
+    return inferredFromName;
+  }
 
   if (!s || s === "variable") {
-    return inferIconKeyFromName(n) ?? "default";
+    return inferredFromName ?? "default";
   }
 
   // "javascript" is a valid key but is often mis-assigned to React in the DB — trust the name first.
   if (s === "javascript") {
-    return inferIconKeyFromName(n) ?? "javascript";
+    return inferredFromName ?? "javascript";
   }
 
   if (s in SKILL_ICON_MAP && s !== "default") {
@@ -330,7 +338,7 @@ export function resolveSkillIconKey(stored: string | null | undefined, name: str
     return legacy;
   }
 
-  return inferIconKeyFromName(n) ?? "default";
+  return inferredFromName ?? "default";
 }
 
 type SkillTechIconProps = {

@@ -23,6 +23,16 @@ const CATS = [
   "Deployment",
 ];
 
+const SKILL_OPTIONS_BY_CATEGORY: Record<string, string[]> = {
+  Frontend: ["React", "Next.js", "Tailwind CSS", "HTML5", "CSS3", "JavaScript", "TypeScript", "Vue.js", "Angular"],
+  Backend: ["Node.js", "Express", "NestJS", "Flask", "Django", "Spring Boot", "GraphQL", "PHP", "Laravel"],
+  Languages: ["JavaScript", "TypeScript", "Python", "Java", "Go", "C++", "PHP", "Rust", "Kotlin"],
+  Database: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "Prisma", "Supabase"],
+  Mobile: ["React Native", "Android", "Kotlin", "Firebase"],
+  Tools: ["Git", "GitHub", "VS Code", "Figma", "Postman", "Docker", "Linux", "Vite", "Webpack"],
+  Deployment: ["AWS", "Microsoft Azure", "Vercel", "Netlify", "Render", "Railway", "Cloudflare"],
+};
+
 /** Mirrors the public skills page groupings and order. */
 const DASHBOARD_SECTIONS: { title: string; subtitle: string; categories: string[] }[] = [
   {
@@ -38,9 +48,10 @@ const DASHBOARD_SECTIONS: { title: string; subtitle: string; categories: string[
 ];
 
 function emptyForm() {
+  const firstCategory = "Frontend";
   return {
-    name: "",
-    category: "Frontend",
+    name: SKILL_OPTIONS_BY_CATEGORY[firstCategory][0] ?? "",
+    category: firstCategory,
     description: "",
     icon: "",
     proficiency: 90,
@@ -122,6 +133,7 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
       ),
     [description, name, icon],
   );
+  const skillOptions = useMemo(() => SKILL_OPTIONS_BY_CATEGORY[category] ?? [], [category]);
 
   function resetForm() {
     const e = emptyForm();
@@ -226,13 +238,21 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                   >
                     Skill Name
                   </AdminFieldLabel>
-                  <Input
+                  <select
                     id="skill-name"
+                    title="Skill name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. React Native"
+                    className="w-full border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-4 text-on-surface"
                     aria-required
-                  />
+                  >
+                    {skillOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                    {editingId && name && !skillOptions.includes(name) && <option value={name}>{name} (current)</option>}
+                  </select>
                 </div>
                 <div>
                   <label htmlFor="skill-category" className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">
@@ -242,7 +262,14 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                     id="skill-category"
                     title="Skill category"
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    onChange={(e) => {
+                      const nextCategory = e.target.value;
+                      setCategory(nextCategory);
+                      const nextOptions = SKILL_OPTIONS_BY_CATEGORY[nextCategory] ?? [];
+                      if (!nextOptions.includes(name)) {
+                        setName(nextOptions[0] ?? "");
+                      }
+                    }}
                     className="w-full border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-4 text-on-surface"
                   >
                     {CATS.map((c) => (
