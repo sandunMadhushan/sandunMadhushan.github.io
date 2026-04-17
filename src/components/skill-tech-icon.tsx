@@ -1,12 +1,12 @@
 import type { IconType } from "react-icons";
 import { FaJava } from "react-icons/fa6";
+import { FaAws, FaMicrosoft } from "react-icons/fa";
 import { TbBrandReactNative } from "react-icons/tb";
 import { VscVscode } from "react-icons/vsc";
 import { cn } from "@/lib/utils";
 import {
   SiAndroid,
   SiAngular,
-  SiAmazonaws,
   SiAstro,
   SiBootstrap,
   SiCloudflare,
@@ -33,7 +33,6 @@ import {
   SiKubernetes,
   SiLinux,
   SiMongodb,
-  SiMicrosoftazure,
   SiMysql,
   SiNestjs,
   SiNetlify,
@@ -71,7 +70,7 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   default: SiCodesandbox,
   android: SiAndroid,
   angular: SiAngular,
-  amazonaws: SiAmazonaws,
+  amazonaws: FaAws,
   astro: SiAstro,
   bootstrap: SiBootstrap,
   cloudflare: SiCloudflare,
@@ -103,7 +102,7 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   laravel: SiLaravel,
   linux: SiLinux,
   mongodb: SiMongodb,
-  microsoftazure: SiMicrosoftazure,
+  microsoftazure: FaMicrosoft,
   mysql: SiMysql,
   nestjs: SiNestjs,
   netlify: SiNetlify,
