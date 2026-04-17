@@ -23,6 +23,17 @@ function isDividerParagraph(text: string): boolean {
   return /^[\u2500\u2501\-_*=~·•]{6,}$/.test(t);
 }
 
+function paragraphToBullets(text: string): string[] | null {
+  const lines = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length === 0) return null;
+  const bulletLines = lines.filter((line) => /^[-*]\s+/.test(line));
+  if (bulletLines.length < 2 || bulletLines.length !== lines.length) return null;
+  return bulletLines.map((line) => line.replace(/^[-*]\s+/, "").trim()).filter(Boolean);
+}
+
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
@@ -117,8 +128,16 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               {project.content.split("\n\n").map((para, i) =>
                 isDividerParagraph(para) ? (
                   <hr key={i} className="my-2 border-outline-variant/25" />
+                ) : paragraphToBullets(para) ? (
+                  <ul key={i} className="list-disc space-y-2 pl-6">
+                    {paragraphToBullets(para)!.map((item, idx) => (
+                      <li key={`${i}-${idx}`}>{item}</li>
+                    ))}
+                  </ul>
                 ) : (
-                  <p key={i}>{para}</p>
+                  <p key={i} className="whitespace-pre-line">
+                    {para}
+                  </p>
                 ),
               )}
             </div>
