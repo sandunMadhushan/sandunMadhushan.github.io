@@ -231,30 +231,6 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
             <form onSubmit={onSubmit} className="grid grid-cols-1 gap-10 md:grid-cols-2">
               <div className="space-y-8">
                 <div>
-                  <AdminFieldLabel
-                    htmlFor="skill-name"
-                    required
-                    className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary"
-                  >
-                    Skill Name
-                  </AdminFieldLabel>
-                  <select
-                    id="skill-name"
-                    title="Skill name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-4 text-on-surface"
-                    aria-required
-                  >
-                    {skillOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                    {editingId && name && !skillOptions.includes(name) && <option value={name}>{name} (current)</option>}
-                  </select>
-                </div>
-                <div>
                   <label htmlFor="skill-category" className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary">
                     Category
                   </label>
@@ -277,6 +253,30 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                         {c}
                       </option>
                     ))}
+                  </select>
+                </div>
+                <div>
+                  <AdminFieldLabel
+                    htmlFor="skill-name"
+                    required
+                    className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-primary"
+                  >
+                    Skill Name
+                  </AdminFieldLabel>
+                  <select
+                    id="skill-name"
+                    title="Skill name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-4 text-on-surface"
+                    aria-required
+                  >
+                    {skillOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                    {editingId && name && !skillOptions.includes(name) && <option value={name}>{name} (current)</option>}
                   </select>
                 </div>
                 <div>

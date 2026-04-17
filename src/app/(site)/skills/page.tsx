@@ -204,21 +204,23 @@ export default async function SkillsPage() {
                 </div>
                 <MIcon name="cloud_done" className="text-4xl text-primary/40" />
               </div>
-              <div className="flex flex-wrap gap-4">
+              <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
                 {deployment.length === 0 && (
-                  <p className="w-full text-sm text-on-surface-variant/70">
+                  <p className="col-span-full text-sm text-on-surface-variant/70">
                     No deployment skills listed yet — add them in the admin.
                   </p>
                 )}
                 {deployment.map((s) => (
-                  <div
-                    key={s.id}
-                    className="flex cursor-default items-center gap-3 rounded-lg border border-outline-variant/10 bg-surface-container-highest px-6 py-3 transition-colors hover:border-primary-container/50"
-                  >
-                    <span className="text-primary">
-                      <SkillTechIcon name={s.name} iconKey={s.icon} size={22} />
+                  <div key={s.id} className="flex items-center gap-6">
+                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
+                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
                     </span>
-                    <span className="text-sm font-medium">{s.name}</span>
+                    <div>
+                      <p className="font-semibold">{s.name}</p>
+                      <p className="text-sm text-on-surface-variant">
+                        {resolveSkillDescription(s.description, s.name, s.icon)}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
