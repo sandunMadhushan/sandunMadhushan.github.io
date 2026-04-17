@@ -73,7 +73,7 @@ const AzureIcon: IconType = ({ className, size, title }) => (
     className={className}
     width={typeof size === "number" ? size : undefined}
     height={typeof size === "number" ? size : undefined}
-    title={title}
+    aria-label={title}
   />
 );
 
