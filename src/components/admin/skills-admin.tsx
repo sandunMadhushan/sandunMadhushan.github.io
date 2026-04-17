@@ -215,9 +215,9 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
         </div>
       </div>
 
-      <div ref={formRef} className="mb-16 max-w-4xl scroll-mt-24">
+      <div ref={formRef} className="mb-12 max-w-4xl scroll-mt-24 md:mb-16">
         <div className="overflow-hidden rounded-2xl bg-surface-container-low shadow-2xl">
-          <div className="p-12">
+          <div className="p-5 sm:p-8 md:p-12">
             <div className="mb-8 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <h2 className="text-3xl font-bold text-[#e5e2e3]">
                 {editingId ? "Edit skill" : "Add or update a skill"}

@@ -12,7 +12,7 @@ export default async function AdminProjectsPage() {
   return (
     <>
       <AdminTopbar title="System Overview" />
-      <section className="mx-auto max-w-[1440px] p-12">
+      <section className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 md:p-12">
         <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-primary">
@@ -41,7 +41,7 @@ export default async function AdminProjectsPage() {
         </div>
         <AdminProjectsPanel projects={projects} />
       </section>
-      <footer className="w-full border-t border-[#e5e2e3]/10 bg-[#131314] px-12 py-20">
+      <footer className="w-full border-t border-[#e5e2e3]/10 bg-[#131314] px-4 py-12 sm:px-6 md:px-12 md:py-20">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-8 md:flex-row">
           <div className="text-sm text-on-surface-variant/40">
             © {new Date().getFullYear()} The Digital Curator.

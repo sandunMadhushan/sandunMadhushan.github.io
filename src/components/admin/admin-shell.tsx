@@ -17,7 +17,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <AdminNavContext.Provider value={{ openMobileNav }}>
-      <div className="min-h-screen overflow-x-hidden bg-surface text-on-surface">
+      <div className="min-h-screen overflow-x-auto bg-surface text-on-surface">
         <AdminSidebar mobileOpen={mobileOpen} onNavigate={closeMobileNav} />
         <button
           type="button"

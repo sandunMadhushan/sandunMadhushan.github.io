@@ -14,7 +14,7 @@ export default async function AdminDashboardPage() {
   return (
     <>
       <AdminTopbar title="System Overview" />
-      <section className="px-8 pb-12">
+      <section className="px-4 pb-8 sm:px-6 md:px-8 md:pb-12">
         <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <div className="group rounded-lg bg-surface-container-low p-6 transition-all duration-300 hover:bg-surface-container">
             <div className="mb-4 flex items-start justify-between">
@@ -182,7 +182,7 @@ export default async function AdminDashboardPage() {
           </p>
         </div>
       </section>
-      <footer className="mt-12 w-full border-t border-outline-variant/10 bg-surface px-6 py-12 md:px-12 md:py-16">
+      <footer className="mt-10 w-full border-t border-outline-variant/10 bg-surface px-4 py-10 sm:px-6 md:mt-12 md:px-12 md:py-16">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-6 text-sm text-on-surface-variant/50 md:flex-row">
           <p>© {new Date().getFullYear()} The Digital Curator.</p>
           <div className="flex flex-wrap justify-center gap-8">

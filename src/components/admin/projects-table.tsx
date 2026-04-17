@@ -339,7 +339,8 @@ export function ProjectsTable({
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => void handleDragEnd(e)}>
       <div className="overflow-hidden rounded-xl bg-surface-container shadow-2xl">
-        <table className="w-full border-collapse text-left">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[760px] border-collapse text-left">
           <thead>
             <tr className="bg-surface-container-high/50">
               <th className="px-4 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant/70 md:px-6">
@@ -395,6 +396,7 @@ export function ProjectsTable({
             )}
           </tbody>
         </table>
+        </div>
         <div className="flex flex-col gap-1 bg-surface-container-high/20 px-6 py-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
           <span className="text-[11px] font-medium text-on-surface-variant/60">
             {portfolioStats ? portfolioStats.total : projects.length} projects ·{" "}

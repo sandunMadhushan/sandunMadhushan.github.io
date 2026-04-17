@@ -10,10 +10,10 @@ export default async function AdminSkillsPage() {
   return (
     <>
       <AdminTopbar title="Skills Management" />
-      <section className="max-w-[1440px] p-12">
+      <section className="max-w-[1440px] px-4 py-6 sm:px-6 md:p-12">
         <SkillsAdmin skills={skills} />
       </section>
-      <footer className="mt-24 w-full border-t border-[#e5e2e3]/10 bg-[#131314] px-12 py-20">
+      <footer className="mt-16 w-full border-t border-[#e5e2e3]/10 bg-[#131314] px-4 py-12 sm:px-6 md:mt-24 md:px-12 md:py-20">
         <div className="mx-auto flex max-w-[1440px] flex-col items-center justify-between gap-8 md:flex-row">
           <p className="text-lg leading-relaxed text-[#e5e2e3]/40">
             © {new Date().getFullYear()} The Digital Curator.

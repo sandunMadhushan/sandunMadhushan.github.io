@@ -147,25 +147,25 @@ export function ProjectForm({ project }: { project?: Project }) {
   }
 
   return (
-    <div className="max-w-6xl px-6 py-12 md:px-12">
+    <div className="max-w-6xl px-4 py-8 sm:px-6 md:px-12 md:py-12">
       <div className="mb-12 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h2 className="mb-2 text-4xl font-bold tracking-tight text-on-surface">
+          <h2 className="mb-2 text-3xl font-bold tracking-tight text-on-surface sm:text-4xl">
             {isEdit ? "Edit Project" : "New Project"}
           </h2>
           <p className="font-medium text-on-surface-variant">Refine metadata and case study content.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex w-full flex-wrap items-center gap-3 md:w-auto">
           {isEdit && (
-            <Button type="button" variant="destructive" className="gap-2" onClick={() => setDeleteOpen(true)}>
+            <Button type="button" variant="destructive" className="w-full gap-2 sm:w-auto" onClick={() => setDeleteOpen(true)}>
               <MIcon name="delete" className="text-[20px]" />
               Delete
             </Button>
           )}
-          <Button type="button" variant="secondary" onClick={() => router.push("/admin/projects")}>
+          <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={() => router.push("/admin/projects")}>
             Cancel
           </Button>
-          <Button type="button" onClick={save} disabled={saving}>
+          <Button type="button" className="w-full sm:w-auto" onClick={save} disabled={saving}>
             {saving ? "Saving…" : "Save Changes"}
           </Button>
         </div>
@@ -173,8 +173,8 @@ export function ProjectForm({ project }: { project?: Project }) {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
-          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
-            <div className="grid grid-cols-2 gap-6">
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-5 sm:p-8">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="col-span-2 space-y-2 sm:col-span-1">
                 <AdminFieldLabel
                   htmlFor="project-title"
@@ -235,6 +235,7 @@ export function ProjectForm({ project }: { project?: Project }) {
                   Category
                 </label>
                 <select
+                  title="Project category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="w-full rounded-md border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-3 text-on-surface"
@@ -251,6 +252,7 @@ export function ProjectForm({ project }: { project?: Project }) {
                   Card icon (Material)
                 </label>
                 <select
+                  title="Project card icon"
                   value={cardIcon}
                   onChange={(e) => setCardIcon(e.target.value)}
                   className="w-full rounded-md border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-3 text-on-surface"
@@ -265,7 +267,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             </div>
           </section>
 
-          <section className="rounded-xl bg-surface-container-low p-8">
+          <section className="rounded-xl bg-surface-container-low p-5 sm:p-8">
             <AdminFieldLabel
               htmlFor="project-content"
               required
@@ -283,7 +285,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             />
           </section>
 
-          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <div>
               <h3 className="text-sm font-semibold text-on-surface">The Friction</h3>
               <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
@@ -344,7 +346,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             </Button>
           </section>
 
-          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <div>
               <h3 className="text-sm font-semibold text-on-surface">The Resolution</h3>
               <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
@@ -405,7 +407,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             </Button>
           </section>
 
-          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <div>
               <h3 className="text-sm font-semibold text-on-surface">Impact Driven banner</h3>
               <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
@@ -466,7 +468,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             </Button>
           </section>
 
-          <section className="grid grid-cols-2 gap-6 rounded-xl bg-surface-container-low p-8">
+          <section className="grid grid-cols-1 gap-6 rounded-xl bg-surface-container-low p-5 sm:grid-cols-2 sm:p-8">
             <div className="space-y-2">
               <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
                 GitHub Repository
@@ -489,7 +491,7 @@ export function ProjectForm({ project }: { project?: Project }) {
         </div>
 
         <div className="space-y-8">
-          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <AdminFieldLabel
               htmlFor="project-cover-image"
               className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
@@ -521,7 +523,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             />
           </section>
 
-          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <AdminFieldLabel
               htmlFor="project-hero-image"
               className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
@@ -553,7 +555,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             />
           </section>
 
-          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <AdminFieldLabel
               htmlFor="project-gallery-images"
               className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
@@ -591,7 +593,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             />
           </section>
 
-          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <AdminFieldLabel
               htmlFor="project-technologies"
               required
@@ -608,7 +610,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             />
           </section>
 
-          <section className="space-y-4 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-4 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <label className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
               Features (one per line)
             </label>
@@ -618,7 +620,7 @@ export function ProjectForm({ project }: { project?: Project }) {
             <Textarea value={features} onChange={(e) => setFeatures(e.target.value)} rows={5} />
           </section>
 
-          <section className="space-y-6 rounded-xl bg-surface-container-low p-8">
+          <section className="space-y-6 rounded-xl bg-surface-container-low p-5 sm:p-8">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h3 className="text-sm font-semibold text-on-surface">Published on site</h3>

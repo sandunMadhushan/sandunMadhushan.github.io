@@ -15,7 +15,7 @@ export default async function AdminAboutPage() {
   return (
     <>
       <AdminTopbar title="About" />
-      <section className="p-12">
+      <section className="px-4 py-6 sm:px-6 md:p-12">
         <AboutEditor about={about} adminProjects={projectOptions} />
       </section>
     </>

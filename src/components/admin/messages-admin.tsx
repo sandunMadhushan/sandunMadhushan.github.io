@@ -152,16 +152,16 @@ export function MessagesAdmin({ messages: initialMessages }: { messages: Message
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <p className="border-b border-outline-variant/10 bg-surface-container-lowest px-6 py-3 text-xs leading-relaxed text-on-surface-variant md:px-8">
+      <p className="border-b border-outline-variant/10 bg-surface-container-lowest px-4 py-3 text-xs leading-relaxed text-on-surface-variant sm:px-6 md:px-8">
         Inbox syncs every {POLL_MS / 1000}s while this page is open (and when you return to the tab). Replies are
         sent with Resend to the visitor’s email.{" "}
         {unreadCount > 0 && (
           <span className="font-semibold text-primary">{unreadCount} unread</span>
         )}
       </p>
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <section className="flex w-full max-w-sm flex-col border-r border-outline-variant/10 bg-surface-container-low md:max-w-md">
-          <div className="p-6">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
+        <section className="flex w-full flex-col border-b border-outline-variant/10 bg-surface-container-low md:max-w-md md:border-b-0 md:border-r">
+          <div className="p-4 sm:p-6">
             <div className="relative">
               <span className="material-symbols-outlined pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant/50">
                 search
@@ -174,7 +174,7 @@ export function MessagesAdmin({ messages: initialMessages }: { messages: Message
               />
             </div>
           </div>
-          <div className="custom-scrollbar flex-1 overflow-y-auto">
+          <div className="custom-scrollbar max-h-[38dvh] overflow-y-auto md:max-h-none md:flex-1">
             {filtered.length === 0 && (
               <p className="px-6 py-8 text-sm text-on-surface-variant/70">No messages match your search.</p>
             )}
@@ -183,7 +183,7 @@ export function MessagesAdmin({ messages: initialMessages }: { messages: Message
                 key={m.id}
                 type="button"
                 onClick={() => selectMessage(m)}
-                className={`relative w-full cursor-pointer px-6 py-5 text-left transition-all ${
+                className={`relative w-full cursor-pointer px-4 py-4 text-left transition-all sm:px-6 sm:py-5 ${
                   selectedId === m.id
                     ? "bg-surface-container-high"
                     : "border-b border-outline-variant/5 hover:bg-surface-container"
@@ -214,7 +214,7 @@ export function MessagesAdmin({ messages: initialMessages }: { messages: Message
         <section className="flex flex-1 flex-col overflow-hidden bg-surface">
           {selected ? (
             <>
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-outline-variant/10 bg-surface-container-low/30 px-6 py-4 md:px-10">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-outline-variant/10 bg-surface-container-low/30 px-4 py-4 sm:px-6 md:px-10">
                 <div className="flex flex-wrap items-center gap-2">
                   {selected.read ? (
                     <Button
@@ -249,7 +249,7 @@ export function MessagesAdmin({ messages: initialMessages }: { messages: Message
                   Delete
                 </button>
               </div>
-              <div className="custom-scrollbar flex-1 overflow-y-auto p-8 md:p-12">
+              <div className="custom-scrollbar flex-1 overflow-y-auto p-4 sm:p-6 md:p-12">
                 <div className="mx-auto max-w-3xl">
                   <div className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-center">
                     <div className="h-16 w-16 shrink-0 rounded-full bg-surface-container-high ring-2 ring-primary/20" />
@@ -266,11 +266,11 @@ export function MessagesAdmin({ messages: initialMessages }: { messages: Message
                       </span>
                     </div>
                   </div>
-                  <div className="mb-10">
+                  <div className="mb-8 md:mb-10">
                     <span className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-primary">
                       Subject
                     </span>
-                    <h3 className="text-3xl font-extrabold leading-tight tracking-tighter text-on-surface">
+                    <h3 className="text-2xl font-extrabold leading-tight tracking-tighter text-on-surface sm:text-3xl">
                       {selected.subject ?? "Message"}
                     </h3>
                   </div>
