@@ -1,7 +1,7 @@
 import type { IconType } from "react-icons";
 import { FaJava } from "react-icons/fa6";
-import { FaAws, FaMicrosoft } from "react-icons/fa";
-import { TbBrandReactNative } from "react-icons/tb";
+import { FaAws } from "react-icons/fa";
+import { TbBrandAzure, TbBrandReactNative } from "react-icons/tb";
 import { VscVscode } from "react-icons/vsc";
 import { cn } from "@/lib/utils";
 import {
@@ -102,7 +102,7 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   laravel: SiLaravel,
   linux: SiLinux,
   mongodb: SiMongodb,
-  microsoftazure: FaMicrosoft,
+  microsoftazure: TbBrandAzure,
   mysql: SiMysql,
   nestjs: SiNestjs,
   netlify: SiNetlify,
