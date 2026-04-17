@@ -9,6 +9,7 @@ const DESCRIPTION_BY_ICON_KEY: Record<string, string> = {
   angular: "Structured SPAs, dependency injection, and Rx-style patterns.",
   astro: "Content-focused sites with partial hydration and islands.",
   bootstrap: "Rapid layout and components with a consistent design system.",
+  cloudflare: "Edge delivery, DNS, security, and performance optimization at scale.",
   cplusplus: "Systems-style code, performance-sensitive logic, and tooling.",
   css3: "Layout, responsive rules, and maintainable stylesheets.",
   django: "Batteries-included web apps, ORM-backed models, and admin.",
@@ -56,6 +57,11 @@ const DESCRIPTION_BY_ICON_KEY: Record<string, string> = {
   terraform: "Infrastructure as code and repeatable provisioning.",
   threedotjs: "WebGL scenes, shaders, and 3D in the browser.",
   typescript: "Typed JavaScript, safer refactors, and editor tooling.",
+  amazonaws: "AWS services for scalable cloud hosting, compute, and storage.",
+  microsoftazure: "Azure cloud tooling, managed services, and deployment workflows.",
+  netlify: "Static and Jamstack deployment workflows with previews and edge delivery.",
+  render: "Managed app hosting with easy service/database deployments.",
+  railway: "Rapid service deployment with developer-friendly cloud workflows.",
   vercel: "Preview deploys, edge functions, and serverless hosting.",
   vite: "Fast dev server, HMR, and optimized front-end builds.",
   vscode: "Editing, debugging, extensions, and integrated Git.",
@@ -97,6 +103,7 @@ export const SKILL_CATEGORY_WEB_ORDER = [
   "Mobile",
   "Database",
   "Tools",
+  "Deployment",
 ] as const;
 
 export function sortSkillsLikeWebsite<T extends { category: string; name: string }>(items: T[]): T[] {

@@ -16,6 +16,13 @@ type Challenge = { title: string; description: string };
 type Resolution = { title: string; description: string };
 type Result = { label: string; value: string };
 
+function isDividerParagraph(text: string): boolean {
+  const t = text.trim();
+  if (!t) return false;
+  // Treat repeated separator glyphs as a visual divider, not content text.
+  return /^[\u2500\u2501\-_*=~·•]{6,}$/.test(t);
+}
+
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const project = await getProjectBySlug(slug);
@@ -107,9 +114,13 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <div className="md:col-span-7">
             <h2 className="mb-8 text-[1.75rem] font-semibold tracking-tight text-on-surface">The Vision &amp; Overview</h2>
             <div className="space-y-6 text-lg leading-[1.6] text-on-surface-variant">
-              {project.content.split("\n\n").map((para, i) => (
-                <p key={i}>{para}</p>
-              ))}
+              {project.content.split("\n\n").map((para, i) =>
+                isDividerParagraph(para) ? (
+                  <hr key={i} className="my-2 border-outline-variant/25" />
+                ) : (
+                  <p key={i}>{para}</p>
+                ),
+              )}
             </div>
           </div>
           <div className="space-y-12 md:col-span-5">

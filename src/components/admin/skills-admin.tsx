@@ -20,6 +20,7 @@ const CATS = [
   "Database",
   "Mobile",
   "Tools",
+  "Deployment",
 ];
 
 /** Mirrors the public skills page groupings and order. */
@@ -33,6 +34,7 @@ const DASHBOARD_SECTIONS: { title: string; subtitle: string; categories: string[
   { title: "03 · Native & Mobile", subtitle: "Platforms & devices", categories: ["Mobile"] },
   { title: "04 · Database Systems", subtitle: "Persistence", categories: ["Database"] },
   { title: "05 · Digital Workbench", subtitle: "Infrastructure & workflow", categories: ["Tools"] },
+  { title: "06 · Deployment Platforms", subtitle: "Hosting & cloud delivery", categories: ["Deployment"] },
 ];
 
 function emptyForm() {
@@ -238,6 +240,7 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                   </label>
                   <select
                     id="skill-category"
+                    title="Skill category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     className="w-full border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-4 text-on-surface"
@@ -258,6 +261,7 @@ export function SkillsAdmin({ skills }: { skills: Skill[] }) {
                   </AdminFieldLabel>
                   <select
                     id="skill-icon"
+                    title="Skill icon"
                     value={icon}
                     onChange={(e) => setIcon(e.target.value)}
                     className="w-full border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-4 text-on-surface"

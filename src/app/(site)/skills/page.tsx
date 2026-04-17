@@ -23,6 +23,7 @@ export default async function SkillsPage() {
   const mobile = skills.filter((s) => s.category === "Mobile");
   const database = skills.filter((s) => s.category === "Database");
   const tools = skills.filter((s) => s.category === "Tools");
+  const deployment = skills.filter((s) => s.category === "Deployment");
 
   return (
     <PageFade>
@@ -166,13 +167,43 @@ export default async function SkillsPage() {
               </ul>
             </section>
 
-            <section className="glass-card rounded-xl p-8 md:col-span-8">
+            <section className="group rounded-xl bg-surface-container-low p-8 transition-colors duration-300 hover:bg-surface-container md:col-span-12">
+              <div className="mb-8 flex items-center justify-between">
+                <div>
+                  <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
+                    05 / Hosting &amp; Cloud Delivery
+                  </span>
+                  <h2 className="text-2xl font-bold tracking-tight">Deployment Platforms</h2>
+                </div>
+                <MIcon name="cloud_done" className="text-4xl text-primary/40" />
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {deployment.length === 0 && (
+                  <p className="w-full text-sm text-on-surface-variant/70">
+                    No deployment skills listed yet — add them in the admin.
+                  </p>
+                )}
+                {deployment.map((s) => (
+                  <div
+                    key={s.id}
+                    className="flex cursor-default items-center gap-3 rounded-lg border border-outline-variant/10 bg-surface-container-highest px-6 py-3 transition-colors hover:border-primary-container/50"
+                  >
+                    <span className="text-primary">
+                      <SkillTechIcon name={s.name} iconKey={s.icon} size={22} />
+                    </span>
+                    <span className="text-sm font-medium">{s.name}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="glass-card rounded-xl p-8 md:col-span-12">
               <div className="mb-8 flex items-center justify-between">
                 <h2 className="text-xl font-bold tracking-tight">
                   The Digital Workbench
                 </h2>
                 <span className="font-mono text-sm text-on-surface-variant">
-                  05 / Infrastructure &amp; Workflow
+                  06 / Infrastructure &amp; Workflow
                 </span>
               </div>
               <div className="flex flex-wrap gap-4">
