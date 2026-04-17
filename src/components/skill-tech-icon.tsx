@@ -1,7 +1,9 @@
 import type { IconType } from "react-icons";
+import { Icon } from "@iconify/react";
+import microsoftazureIcon from "@iconify-icons/simple-icons/microsoftazure";
 import { FaJava } from "react-icons/fa6";
 import { FaAws } from "react-icons/fa";
-import { TbBrandAzure, TbBrandReactNative } from "react-icons/tb";
+import { TbBrandReactNative } from "react-icons/tb";
 import { VscVscode } from "react-icons/vsc";
 import { cn } from "@/lib/utils";
 import {
@@ -65,6 +67,16 @@ import {
   SiZod,
 } from "react-icons/si";
 
+const AzureIcon: IconType = ({ className, size, title }) => (
+  <Icon
+    icon={microsoftazureIcon}
+    className={className}
+    width={typeof size === "number" ? size : undefined}
+    height={typeof size === "number" ? size : undefined}
+    title={title}
+  />
+);
+
 /** Simple Icons keys → component. `default` is the fallback glyph. */
 export const SKILL_ICON_MAP: Record<string, IconType> = {
   default: SiCodesandbox,
@@ -102,7 +114,7 @@ export const SKILL_ICON_MAP: Record<string, IconType> = {
   laravel: SiLaravel,
   linux: SiLinux,
   mongodb: SiMongodb,
-  microsoftazure: TbBrandAzure,
+  microsoftazure: AzureIcon,
   mysql: SiMysql,
   nestjs: SiNestjs,
   netlify: SiNetlify,
