@@ -12,11 +12,12 @@ type Props = {
   title: string;
   githubLink: string | null;
   liveLink: string | null;
+  blogLink: string | null;
   header: ReactNode;
   children: ReactNode;
 };
 
-export function ProjectDetailLayout({ title, githubLink, liveLink, header, children }: Props) {
+export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, header, children }: Props) {
   const headerWrapRef = useRef<HTMLDivElement>(null);
   const [showSticky, setShowSticky] = useState(false);
 
@@ -36,7 +37,7 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, header, child
     };
   }, [updateSticky]);
 
-  const hasActions = Boolean(githubLink || liveLink);
+  const hasActions = Boolean(githubLink || liveLink || blogLink);
 
   return (
     <>
@@ -80,6 +81,18 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, header, child
                 >
                   <MIcon name="code" className="text-base" />
                   <span className="hidden sm:inline">GitHub</span>
+                </a>
+              ) : null}
+              {blogLink ? (
+                <a
+                  href={blogLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  tabIndex={showSticky ? undefined : -1}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-outline-variant/20 bg-surface-container-high px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-on-surface transition-colors hover:bg-surface-bright md:px-3.5 md:text-xs"
+                >
+                  <MIcon name="article" className="text-base" />
+                  <span className="hidden sm:inline">Blog</span>
                 </a>
               ) : null}
             </div>

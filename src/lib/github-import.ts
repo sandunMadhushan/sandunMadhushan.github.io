@@ -246,6 +246,7 @@ export async function importGithubRepoAsProject(
     galleryImages: [] as string[],
     githubLink: htmlUrl,
     liveLink: meta.homepage?.trim() || null,
+    blogLink: null,
     featured: false,
     published: false,
     category: "Web",

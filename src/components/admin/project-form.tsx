@@ -49,6 +49,7 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [content, setContent] = useState(project?.content ?? "");
   const [githubLink, setGithubLink] = useState(project?.githubLink ?? "");
   const [liveLink, setLiveLink] = useState(project?.liveLink ?? "");
+  const [blogLink, setBlogLink] = useState(project?.blogLink ?? "");
   const [featured, setFeatured] = useState(project?.featured ?? false);
   const [published, setPublished] = useState(project?.published ?? true);
   const [category, setCategory] = useState(project?.category ?? "Web");
@@ -88,6 +89,7 @@ export function ProjectForm({ project }: { project?: Project }) {
       content,
       githubLink: githubLink || null,
       liveLink: liveLink || null,
+      blogLink: blogLink || null,
       featured,
       category,
       cardIcon,
@@ -485,6 +487,23 @@ export function ProjectForm({ project }: { project?: Project }) {
               <div className="flex items-center border-b border-outline-variant/30 bg-surface-container-lowest px-3 py-1">
                 <MIcon name="language" className="mr-3 text-on-surface-variant" />
                 <Input value={liveLink} onChange={(e) => setLiveLink(e.target.value)} placeholder="https://..." className="border-0 bg-transparent" />
+              </div>
+            </div>
+            <div className="space-y-2 sm:col-span-2">
+              <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
+                Blog post (optional)
+              </label>
+              <p className="text-[11px] leading-relaxed text-on-surface-variant">
+                Shown on the public case study under the short description and in the sticky bar when set.
+              </p>
+              <div className="flex items-center border-b border-outline-variant/30 bg-surface-container-lowest px-3 py-1">
+                <MIcon name="article" className="mr-3 text-on-surface-variant" />
+                <Input
+                  value={blogLink}
+                  onChange={(e) => setBlogLink(e.target.value)}
+                  placeholder="https://your-blog.com/post/…"
+                  className="border-0 bg-transparent"
+                />
               </div>
             </div>
           </section>

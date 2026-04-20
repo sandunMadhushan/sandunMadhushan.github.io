@@ -65,6 +65,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           title={project.title}
           githubLink={project.githubLink}
           liveLink={project.liveLink}
+          blogLink={project.blogLink}
           header={
             <header className="mx-auto mb-24 max-w-[1440px] px-6 md:px-12">
               <div className="grid grid-cols-1 items-end gap-12 md:grid-cols-12">
@@ -78,6 +79,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                   <p className="max-w-2xl text-xl font-medium leading-relaxed text-on-surface-variant">
                     {project.description}
                   </p>
+                  {project.blogLink ? (
+                    <a
+                      href={project.blogLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-5 inline-flex items-center gap-2 text-base font-bold text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary/90"
+                    >
+                      <MIcon name="article" className="text-xl" />
+                      Read the blog post
+                    </a>
+                  ) : null}
                 </div>
                 <div className="flex flex-col gap-4 md:col-span-4">
                   {project.liveLink && (
@@ -100,6 +112,17 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                     >
                       <MIcon name="code" />
                       View GitHub
+                    </a>
+                  )}
+                  {project.blogLink && (
+                    <a
+                      href={project.blogLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high py-4 text-lg font-bold text-on-surface transition-all hover:bg-surface-bright"
+                    >
+                      <MIcon name="article" />
+                      Blog post
                     </a>
                   )}
                 </div>

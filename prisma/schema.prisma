@@ -30,6 +30,8 @@ model Project {
   galleryImages String[] @default([])
   githubLink   String?
   liveLink     String?
+  /// Optional deep-dive / write-up (e.g. personal blog post about this project).
+  blogLink     String?
   featured     Boolean  @default(false)
   /// When false, hidden from the public site, sitemap, and listings (admin-only).
   published    Boolean  @default(true)

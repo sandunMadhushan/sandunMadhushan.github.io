@@ -27,6 +27,7 @@ export type ValidatedProjectData = {
   galleryImages: string[];
   githubLink: string | null;
   liveLink: string | null;
+  blogLink: string | null;
   featured: boolean;
   published: boolean;
   sortOrder: number;
@@ -178,6 +179,7 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
   const githubLink =
     typeof body.githubLink === "string" && body.githubLink.trim() ? body.githubLink.trim() : null;
   const liveLink = typeof body.liveLink === "string" && body.liveLink.trim() ? body.liveLink.trim() : null;
+  const blogLink = typeof body.blogLink === "string" && body.blogLink.trim() ? body.blogLink.trim() : null;
   const featured = Boolean(body.featured);
   const published = typeof body.published === "boolean" ? body.published : true;
   const sortOrder = parseSortOrder(body.sortOrder, 0);
@@ -202,6 +204,7 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
       galleryImages: galleryNorm.urls,
       githubLink,
       liveLink,
+      blogLink,
       featured,
       published,
       sortOrder,
@@ -232,6 +235,7 @@ export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): Pr
     galleryImages: body.galleryImages !== undefined ? body.galleryImages : existing.galleryImages,
     githubLink: body.githubLink !== undefined ? body.githubLink : existing.githubLink,
     liveLink: body.liveLink !== undefined ? body.liveLink : existing.liveLink,
+    blogLink: body.blogLink !== undefined ? body.blogLink : existing.blogLink,
     featured: body.featured !== undefined ? body.featured : existing.featured,
     published: body.published !== undefined ? body.published : existing.published,
     sortOrder: body.sortOrder !== undefined ? body.sortOrder : existing.sortOrder,
