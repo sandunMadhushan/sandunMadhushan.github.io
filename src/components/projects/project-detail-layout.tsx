@@ -2,6 +2,8 @@
 
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Newspaper } from "lucide-react";
+import { SiGithub } from "react-icons/si";
 import { MIcon } from "@/components/m-icon";
 import { cn } from "@/lib/utils";
 
@@ -79,7 +81,7 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, hea
                   tabIndex={showSticky ? undefined : -1}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-outline-variant/20 bg-surface-container-high px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-on-surface transition-colors hover:bg-surface-bright md:px-3.5 md:text-xs"
                 >
-                  <MIcon name="code" className="text-base" />
+                  <SiGithub className="size-4 shrink-0" aria-hidden />
                   <span className="hidden sm:inline">GitHub</span>
                 </a>
               ) : null}
@@ -91,7 +93,7 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, hea
                   tabIndex={showSticky ? undefined : -1}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-outline-variant/20 bg-surface-container-high px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-on-surface transition-colors hover:bg-surface-bright md:px-3.5 md:text-xs"
                 >
-                  <MIcon name="article" className="text-base" />
+                  <Newspaper className="size-4 shrink-0" aria-hidden />
                   <span className="hidden sm:inline">Blog</span>
                 </a>
               ) : null}

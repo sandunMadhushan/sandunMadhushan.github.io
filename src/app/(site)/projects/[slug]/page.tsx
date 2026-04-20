@@ -1,6 +1,8 @@
 import NextImage from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Newspaper } from "lucide-react";
+import { SiGithub } from "react-icons/si";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
 import { ProjectDetailLayout } from "@/components/projects/project-detail-layout";
@@ -86,7 +88,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                       rel="noreferrer"
                       className="mt-5 inline-flex items-center gap-2 text-base font-bold text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary/90"
                     >
-                      <MIcon name="article" className="text-xl" />
+                      <Newspaper className="size-5 shrink-0" aria-hidden />
                       Read the blog post
                     </a>
                   ) : null}
@@ -110,7 +112,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                       rel="noreferrer"
                       className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high py-4 text-lg font-bold text-on-surface transition-all hover:bg-surface-bright"
                     >
-                      <MIcon name="code" />
+                      <SiGithub className="size-6 shrink-0" aria-hidden />
                       View GitHub
                     </a>
                   )}
@@ -121,7 +123,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                       rel="noreferrer"
                       className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high py-4 text-lg font-bold text-on-surface transition-all hover:bg-surface-bright"
                     >
-                      <MIcon name="article" />
+                      <Newspaper className="size-6 shrink-0" aria-hidden />
                       Blog post
                     </a>
                   )}
