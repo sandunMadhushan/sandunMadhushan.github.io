@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export function DisableContextMenu() {
+  const pathname = usePathname();
+
   useEffect(() => {
+    if (pathname?.startsWith("/admin")) {
+      return;
+    }
+
     const canPasteAtTarget = (target: EventTarget | null) => {
       if (!(target instanceof Element)) return false;
 
@@ -74,7 +81,7 @@ export function DisableContextMenu() {
       document.removeEventListener("paste", preventPasteOutsideAllowedZones);
       document.removeEventListener("keydown", preventCopyShortcuts);
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }
