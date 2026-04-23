@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppToaster } from "@/components/app-toaster";
+import { DisableContextMenu } from "@/components/disable-context-menu";
 import { ScrollToTopOnRoute } from "@/components/motion/scroll-to-top";
 import { SiteJsonLd } from "@/components/seo/site-json-ld";
 import { getSiteUrl } from "@/lib/site-url";
@@ -114,6 +115,7 @@ export default function RootLayout({
         className={`${inter.variable} min-h-screen font-sans`}
         suppressHydrationWarning
       >
+        <DisableContextMenu />
         <SiteJsonLd />
         <ScrollToTopOnRoute />
         {children}
