@@ -12,7 +12,7 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-const siteTitle = "Sandun Madhushan | Full-Stack Developer Portfolio";
+const siteTitle = "Sandun Madhushan | Aspiring Software Engineer";
 const siteDescription =
   "Full-Stack Developer from Sri Lanka. React, TypeScript & Node.js — portfolio, projects, and contact.";
 
