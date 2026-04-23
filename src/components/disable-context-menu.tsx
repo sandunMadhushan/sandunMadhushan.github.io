@@ -4,6 +4,12 @@ import { useEffect } from "react";
 
 export function DisableContextMenu() {
   useEffect(() => {
+    const canPasteAtTarget = (target: EventTarget | null) => {
+      if (!(target instanceof Element)) return false;
+
+      return target.closest('[data-allow-paste="true"]') !== null;
+    };
+
     const preventContextMenu = (event: MouseEvent) => {
       event.preventDefault();
     };
@@ -14,6 +20,10 @@ export function DisableContextMenu() {
       event.preventDefault();
     };
     const preventClipboard = (event: ClipboardEvent) => {
+      event.preventDefault();
+    };
+    const preventPasteOutsideAllowedZones = (event: ClipboardEvent) => {
+      if (canPasteAtTarget(event.target)) return;
       event.preventDefault();
     };
     const preventCopyShortcuts = (event: KeyboardEvent) => {
@@ -27,6 +37,11 @@ export function DisableContextMenu() {
       }
 
       if (!isCtrlOrMetaPressed) return;
+
+      if (key === "v" && !canPasteAtTarget(event.target)) {
+        event.preventDefault();
+        return;
+      }
 
       if (key === "a" || key === "c" || key === "x" || key === "s" || key === "p") {
         event.preventDefault();
@@ -47,6 +62,7 @@ export function DisableContextMenu() {
     document.addEventListener("selectstart", preventSelectStart);
     document.addEventListener("copy", preventClipboard);
     document.addEventListener("cut", preventClipboard);
+    document.addEventListener("paste", preventPasteOutsideAllowedZones);
     document.addEventListener("keydown", preventCopyShortcuts);
 
     return () => {
@@ -55,6 +71,7 @@ export function DisableContextMenu() {
       document.removeEventListener("selectstart", preventSelectStart);
       document.removeEventListener("copy", preventClipboard);
       document.removeEventListener("cut", preventClipboard);
+      document.removeEventListener("paste", preventPasteOutsideAllowedZones);
       document.removeEventListener("keydown", preventCopyShortcuts);
     };
   }, []);

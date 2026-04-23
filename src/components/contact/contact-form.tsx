@@ -49,7 +49,11 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="relative z-10 space-y-6">
+    <form
+      onSubmit={onSubmit}
+      className="relative z-10 space-y-6"
+      data-allow-paste="true"
+    >
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 md:items-start">
         <div className="flex min-w-0 flex-col gap-2">
           <label htmlFor="contact-name" className={labelClass}>

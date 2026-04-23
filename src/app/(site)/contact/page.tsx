@@ -37,8 +37,9 @@ export default async function ContactPage() {
             <div className="relative overflow-hidden rounded-xl bg-surface-container-low p-8 md:p-12">
               <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary-container/10 blur-[100px]" />
               <p className="relative z-10 mb-8 text-sm leading-relaxed text-on-surface-variant/85">
-                I read every message. Your note is delivered to my inbox and kept in my admin archive—
-                I&apos;ll reply at the email you provide.
+                I read every message. Your note is delivered to my inbox and
+                kept in my admin archive— I&apos;ll reply at the email you
+                provide.
               </p>
               <ContactForm />
             </div>
@@ -57,7 +58,12 @@ export default async function ContactPage() {
                     <p className="mb-1 text-sm text-on-surface-variant">
                       Email
                     </p>
-                    <p className="text-lg font-medium">hello@madhushan.me</p>
+                    <a
+                      href="mailto:hello@madhushan.me"
+                      className="inline-block text-lg font-medium transition-transform duration-200 hover:scale-[1.03] focus-visible:scale-[1.03]"
+                    >
+                      hello@madhushan.me
+                    </a>
                   </div>
                 </div>
                 <div className="group flex items-start gap-4">
@@ -68,7 +74,12 @@ export default async function ContactPage() {
                     <p className="mb-1 text-sm text-on-surface-variant">
                       Phone
                     </p>
-                    <p className="text-lg font-medium">+94 71 134 9060</p>
+                    <a
+                      href="tel:+94711349060"
+                      className="inline-block text-lg font-medium transition-transform duration-200 hover:scale-[1.03] focus-visible:scale-[1.03]"
+                    >
+                      +94 71 134 9060
+                    </a>
                   </div>
                 </div>
               </div>
