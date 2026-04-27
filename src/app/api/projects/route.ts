@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/api-auth";
 import { validateProjectBody } from "@/lib/project-validation";
@@ -24,5 +25,8 @@ export async function POST(req: Request) {
       sortOrder: nextSort,
     },
   });
+  revalidatePath("/");
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${project.slug}`);
   return NextResponse.json(project);
 }

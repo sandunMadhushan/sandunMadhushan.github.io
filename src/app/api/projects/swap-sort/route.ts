@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/api-auth";
 
@@ -25,5 +26,7 @@ export async function POST(req: Request) {
     prisma.project.update({ where: { id: b.id }, data: { sortOrder: a.sortOrder } }),
   ]);
 
+  revalidatePath("/");
+  revalidatePath("/projects");
   return NextResponse.json({ ok: true });
 }
