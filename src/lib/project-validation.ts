@@ -1,6 +1,7 @@
 /** Shared rules for admin project create/update (client + API). */
 
 import { normalizeProjectImageUrl, normalizeProjectImageUrls } from "@/lib/image-url";
+import { parseProjectCategories, serializeProjectCategories } from "@/lib/project-categories";
 import type { Project } from "@prisma/client";
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -174,7 +175,11 @@ export function validateProjectBody(body: ProjectBodyInput): { ok: true; data: V
   const galleryNorm = normalizeProjectImageUrls(galleryRaw);
   if (!galleryNorm.ok) return { ok: false, error: galleryNorm.error };
 
-  const category = typeof body.category === "string" && body.category.trim() ? body.category.trim() : "Web";
+  const categories =
+    Array.isArray(body.categories)
+      ? body.categories.filter((x): x is string => typeof x === "string")
+      : parseProjectCategories(typeof body.category === "string" ? body.category : undefined);
+  const category = serializeProjectCategories(categories);
   const cardIcon = typeof body.cardIcon === "string" && body.cardIcon.trim() ? body.cardIcon.trim() : "code";
   const githubLink =
     typeof body.githubLink === "string" && body.githubLink.trim() ? body.githubLink.trim() : null;
@@ -240,6 +245,7 @@ export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): Pr
     published: body.published !== undefined ? body.published : existing.published,
     sortOrder: body.sortOrder !== undefined ? body.sortOrder : existing.sortOrder,
     category: body.category !== undefined ? body.category : existing.category,
+    categories: body.categories !== undefined ? body.categories : parseProjectCategories(existing.category),
     cardIcon: body.cardIcon !== undefined ? body.cardIcon : existing.cardIcon,
     features: body.features !== undefined ? body.features : existing.features,
     challenges: body.challenges !== undefined ? body.challenges : mergedChallenges.ok ? mergedChallenges.value : [],

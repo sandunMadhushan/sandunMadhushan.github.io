@@ -13,6 +13,7 @@ import { resolvePortraitSrc } from "@/lib/site-constants";
 import { isRemoteImageSrc } from "@/lib/image-url";
 import { projectCardSrc } from "@/lib/project-media";
 import { resolveHomeShowcaseProjects } from "@/lib/home-showcase";
+import { parseProjectCategories } from "@/lib/project-categories";
 import { getAbout, getProjects } from "@/lib/queries";
 
 /** Cache page shell so prefetched routes feel instant; refresh every 30s. */
@@ -130,6 +131,7 @@ export default async function HomePage() {
               <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
                 {showcase.map((p) => {
                   const cover = projectCardSrc(p, profileImage);
+                  const categories = parseProjectCategories(p.category);
                   return (
                   <LinkNext
                     key={p.id}
@@ -148,7 +150,7 @@ export default async function HomePage() {
                     </div>
                     <div className="space-y-4 p-8">
                       <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-primary-fixed-dim">
-                        {p.category}
+                        {categories.join(" · ")}
                       </span>
                       <h4 className="text-2xl font-bold">{p.title}</h4>
                       <p className="text-sm leading-relaxed text-on-surface-variant">

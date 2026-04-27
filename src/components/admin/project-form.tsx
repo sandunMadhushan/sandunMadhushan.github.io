@@ -19,10 +19,26 @@ import {
   type ProjectResolution,
   type ProjectResult,
 } from "@/lib/project-validation";
+import {
+  DEFAULT_PROJECT_CATEGORIES,
+  parseProjectCategories,
+} from "@/lib/project-categories";
 import { toast } from "sonner";
 
-const CATEGORIES = ["Web", "Mobile", "AI"];
-const ICONS = ["code", "smartphone", "psychology", "analytics", "restaurant", "calendar_month", "description"];
+const ICONS = [
+  "code",
+  "web",
+  "language",
+  "smartphone",
+  "phonelink",
+  "psychology",
+  "robot_2",
+  "analytics",
+  "insights",
+  "cloud",
+  "data_object",
+  "description",
+];
 
 function challengesFromDb(p?: Project): ProjectChallenge[] {
   const r = parseProjectChallenges(p?.challenges ?? undefined);
@@ -52,7 +68,10 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [blogLink, setBlogLink] = useState(project?.blogLink ?? "");
   const [featured, setFeatured] = useState(project?.featured ?? false);
   const [published, setPublished] = useState(project?.published ?? true);
-  const [category, setCategory] = useState(project?.category ?? "Web");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    () => parseProjectCategories(project?.category),
+  );
+  const [customCategory, setCustomCategory] = useState("");
   const [cardIcon, setCardIcon] = useState(project?.cardIcon ?? "code");
   const [technologies, setTechnologies] = useState((project?.technologies ?? []).join(", "));
   const [coverImage, setCoverImage] = useState(project?.coverImage ?? "");
@@ -91,7 +110,7 @@ export function ProjectForm({ project }: { project?: Project }) {
       liveLink: liveLink || null,
       blogLink: blogLink || null,
       featured,
-      category,
+      categories: selectedCategories,
       cardIcon,
       technologies: technologies
         .split(",")
@@ -234,37 +253,87 @@ export function ProjectForm({ project }: { project?: Project }) {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
-                  Category
+                  Categories
                 </label>
-                <select
-                  title="Project category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded-md border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-3 text-on-surface"
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                <p className="text-[11px] text-on-surface-variant">
+                  Select one or more categories. Add new ones if needed.
+                </p>
+                <div className="flex flex-wrap gap-2 rounded-md border border-outline-variant/20 bg-surface-container-lowest p-3">
+                  {Array.from(
+                    new Set([...DEFAULT_PROJECT_CATEGORIES, ...selectedCategories]),
+                  ).map((c) => {
+                    const active = selectedCategories.includes(c);
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() =>
+                          setSelectedCategories((prev) => {
+                            if (prev.includes(c)) {
+                              const next = prev.filter((x) => x !== c);
+                              return next.length > 0 ? next : ["Web"];
+                            }
+                            return [...prev, c];
+                          })
+                        }
+                        className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
+                          active
+                            ? "border-primary bg-primary/20 text-primary"
+                            : "border-outline-variant/25 text-on-surface-variant hover:border-primary/50"
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
+                    placeholder="Add custom category"
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      const next = customCategory.trim();
+                      if (!next) return;
+                      setSelectedCategories((prev) =>
+                        prev.includes(next) ? prev : [...prev, next],
+                      );
+                      setCustomCategory("");
+                    }}
+                  >
+                    Add
+                  </Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
                   Card icon (Material)
                 </label>
-                <select
-                  title="Project card icon"
-                  value={cardIcon}
-                  onChange={(e) => setCardIcon(e.target.value)}
-                  className="w-full rounded-md border-0 border-b border-outline-variant/30 bg-surface-container-lowest py-3 text-on-surface"
-                >
-                  {ICONS.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
+                <div className="grid grid-cols-3 gap-2 rounded-md border border-outline-variant/20 bg-surface-container-lowest p-3">
+                  {ICONS.map((c) => {
+                    const active = cardIcon === c;
+                    return (
+                      <button
+                        key={c}
+                        type="button"
+                        title={c}
+                        onClick={() => setCardIcon(c)}
+                        className={`flex flex-col items-center gap-1 rounded-md border px-2 py-2 text-xs transition-colors ${
+                          active
+                            ? "border-primary bg-primary/20 text-primary"
+                            : "border-outline-variant/25 text-on-surface-variant hover:border-primary/50"
+                        }`}
+                      >
+                        <MIcon name={c} className="text-xl" />
+                        <span className="truncate">{c}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </section>

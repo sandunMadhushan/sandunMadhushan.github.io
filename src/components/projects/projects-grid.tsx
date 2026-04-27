@@ -9,15 +9,21 @@ import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
-
-const TABS = ["All", "Web", "Mobile", "AI"] as const;
+import { parseProjectCategories } from "@/lib/project-categories";
 
 /** Grid cards only (featured hero is always shown separately). */
 const INITIAL_GRID_VISIBLE = 6;
 const LOAD_MORE_STEP = 6;
 
 export function ProjectsGrid({ projects }: { projects: Project[] }) {
-  const [tab, setTab] = useState<(typeof TABS)[number]>("All");
+  const tabs = useMemo(() => {
+    const set = new Set<string>(["All"]);
+    for (const project of projects) {
+      for (const c of parseProjectCategories(project.category)) set.add(c);
+    }
+    return Array.from(set);
+  }, [projects]);
+  const [tab, setTab] = useState("All");
   const [visibleGridCount, setVisibleGridCount] = useState(INITIAL_GRID_VISIBLE);
   const gridStartRef = useRef<HTMLDivElement | null>(null);
   const cardRefs = useRef<Array<HTMLElement | null>>([]);
@@ -28,7 +34,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
   >(null);
   const filtered = useMemo(() => {
     if (tab === "All") return projects;
-    return projects.filter((p) => p.category === tab);
+    return projects.filter((p) => parseProjectCategories(p.category).includes(tab));
   }, [projects, tab]);
 
   const featured = projects.find((p) => p.featured) ?? projects[0];
@@ -50,6 +56,10 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
     setVisibleGridCount(INITIAL_GRID_VISIBLE);
     pendingScrollRef.current = null;
   }, [tab]);
+
+  useEffect(() => {
+    if (!tabs.includes(tab)) setTab("All");
+  }, [tab, tabs]);
 
   useEffect(() => {
     const pending = pendingScrollRef.current;
@@ -115,7 +125,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
 
       <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <div className="flex w-fit gap-2 rounded-xl bg-surface-container-lowest p-1.5">
-          {TABS.map((t) => (
+          {tabs.map((t) => (
             <button
               key={t}
               type="button"
@@ -126,7 +136,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                   : "text-on-surface/45 hover:bg-surface-container-high hover:text-on-surface"
               }`}
             >
-              {t}
+                  {t}
             </button>
           ))}
         </div>

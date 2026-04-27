@@ -249,7 +249,7 @@ export async function importGithubRepoAsProject(
     blogLink: null,
     featured: false,
     published: false,
-    category: "Web",
+    categories: ["Web"],
     cardIcon: "code",
     features,
   };

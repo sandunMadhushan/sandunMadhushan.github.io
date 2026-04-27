@@ -29,6 +29,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import { parseProjectCategories } from "@/lib/project-categories";
 
 function sortProjects(projects: Project[]): Project[] {
   return [...projects].sort((a, b) => {
@@ -133,7 +134,7 @@ function SortableProjectRow({
           </div>
           <div className="min-w-0">
             <div className="text-sm font-bold text-on-surface transition-colors group-hover:text-primary">{p.title}</div>
-            <div className="text-[11px] text-on-surface-variant">{p.category}</div>
+            <div className="text-[11px] text-on-surface-variant">{parseProjectCategories(p.category).join(", ")}</div>
           </div>
         </div>
       </td>
