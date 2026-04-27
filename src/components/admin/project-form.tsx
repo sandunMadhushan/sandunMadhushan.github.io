@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
 import { Input } from "@/components/ui/input";
@@ -72,6 +72,7 @@ export function ProjectForm({ project }: { project?: Project }) {
     () => parseProjectCategories(project?.category),
   );
   const [customCategory, setCustomCategory] = useState("");
+  const [allCategories, setAllCategories] = useState<string[]>([]);
   const [cardIcon, setCardIcon] = useState(project?.cardIcon ?? "code");
   const [technologies, setTechnologies] = useState((project?.technologies ?? []).join(", "));
   const [coverImage, setCoverImage] = useState(project?.coverImage ?? "");
@@ -84,6 +85,44 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const res = await fetch("/api/projects/categories", { cache: "no-store" });
+      const data = (await res.json().catch(() => ({}))) as { categories?: unknown };
+      if (!res.ok) return;
+      if (!Array.isArray(data.categories)) return;
+      const next = data.categories.filter((x): x is string => typeof x === "string").map((s) => s.trim()).filter(Boolean);
+      if (!cancelled) setAllCategories(next);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const categoryOptions = useMemo(() => {
+    return Array.from(new Set([...DEFAULT_PROJECT_CATEGORIES, ...allCategories, ...selectedCategories]));
+  }, [allCategories, selectedCategories]);
+
+  function toggleCategory(c: string) {
+    setSelectedCategories((prev) => {
+      const active = prev.includes(c);
+      if (active) {
+        const next = prev.filter((x) => x !== c);
+        return next.length > 0 ? next : ["Web"];
+      }
+      return [...prev, c];
+    });
+  }
+
+  function addCustomCategory() {
+    const next = customCategory.trim();
+    if (!next) return;
+    setSelectedCategories((prev) => (prev.includes(next) ? prev : [...prev, next]));
+    setCustomCategory("");
+    setAllCategories((prev) => (prev.includes(next) ? prev : [...prev, next]));
+  }
 
   async function uploadFile(file: File, onUrl: (url: string) => void) {
     const fd = new FormData();
@@ -260,23 +299,13 @@ export function ProjectForm({ project }: { project?: Project }) {
                   Select one or more categories. Add new ones if needed.
                 </p>
                 <div className="flex flex-wrap gap-2 rounded-md border border-outline-variant/20 bg-surface-container-lowest p-3">
-                  {Array.from(
-                    new Set([...DEFAULT_PROJECT_CATEGORIES, ...selectedCategories]),
-                  ).map((c) => {
+                  {categoryOptions.map((c) => {
                     const active = selectedCategories.includes(c);
                     return (
                       <button
                         key={c}
                         type="button"
-                        onClick={() =>
-                          setSelectedCategories((prev) => {
-                            if (prev.includes(c)) {
-                              const next = prev.filter((x) => x !== c);
-                              return next.length > 0 ? next : ["Web"];
-                            }
-                            return [...prev, c];
-                          })
-                        }
+                        onClick={() => toggleCategory(c)}
                         className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors ${
                           active
                             ? "border-primary bg-primary/20 text-primary"
@@ -297,14 +326,7 @@ export function ProjectForm({ project }: { project?: Project }) {
                   <Button
                     type="button"
                     variant="secondary"
-                    onClick={() => {
-                      const next = customCategory.trim();
-                      if (!next) return;
-                      setSelectedCategories((prev) =>
-                        prev.includes(next) ? prev : [...prev, next],
-                      );
-                      setCustomCategory("");
-                    }}
+                    onClick={addCustomCategory}
                   >
                     Add
                   </Button>
