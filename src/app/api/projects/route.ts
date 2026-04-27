@@ -19,14 +19,19 @@ export async function POST(req: Request) {
   if (!v.ok) return NextResponse.json({ error: v.error }, { status: 400 });
   const maxSo = await prisma.project.aggregate({ _max: { sortOrder: true } });
   const nextSort = (maxSo._max.sortOrder ?? 0) + 10;
-  const project = await prisma.project.create({
-    data: {
-      ...v.data,
-      sortOrder: nextSort,
-    },
-  });
-  revalidatePath("/");
-  revalidatePath("/projects");
-  revalidatePath(`/projects/${project.slug}`);
-  return NextResponse.json(project);
+  try {
+    const project = await prisma.project.create({
+      data: {
+        ...v.data,
+        sortOrder: nextSort,
+      },
+    });
+    revalidatePath("/");
+    revalidatePath("/projects");
+    revalidatePath(`/projects/${project.slug}`);
+    return NextResponse.json(project);
+  } catch (e) {
+    const message = e instanceof Error && e.message ? e.message : "Create failed";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
 }

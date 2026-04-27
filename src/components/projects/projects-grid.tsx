@@ -32,10 +32,11 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
     | { type: "less" }
     | null
   >(null);
+  const activeTab = tabs.includes(tab) ? tab : "All";
   const filtered = useMemo(() => {
-    if (tab === "All") return projects;
-    return projects.filter((p) => parseProjectCategories(p.category).includes(tab));
-  }, [projects, tab]);
+    if (activeTab === "All") return projects;
+    return projects.filter((p) => parseProjectCategories(p.category).includes(activeTab));
+  }, [projects, activeTab]);
 
   const featured = projects.find((p) => p.featured) ?? projects[0];
   const rest = filtered.filter((p) => p.id !== featured?.id);
@@ -52,14 +53,11 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
   const hasMoreInGrid = visibleGridCount < rest.length;
   const canCollapseGrid = rest.length > INITIAL_GRID_VISIBLE && visibleGridCount > INITIAL_GRID_VISIBLE;
 
-  useEffect(() => {
+  function pickTab(next: string) {
+    setTab(next);
     setVisibleGridCount(INITIAL_GRID_VISIBLE);
     pendingScrollRef.current = null;
-  }, [tab]);
-
-  useEffect(() => {
-    if (!tabs.includes(tab)) setTab("All");
-  }, [tab, tabs]);
+  }
 
   useEffect(() => {
     const pending = pendingScrollRef.current;
@@ -129,9 +127,9 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             <button
               key={t}
               type="button"
-              onClick={() => setTab(t)}
+              onClick={() => pickTab(t)}
               className={`rounded-lg px-6 py-2 text-sm font-bold shadow-lg transition-all ${
-                tab === t
+                activeTab === t
                   ? "bg-primary-container text-on-primary-container"
                   : "text-on-surface/45 hover:bg-surface-container-high hover:text-on-surface"
               }`}

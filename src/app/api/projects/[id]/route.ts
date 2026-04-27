@@ -31,8 +31,9 @@ export async function PATCH(req: Request, ctx: Ctx) {
     revalidatePath("/projects");
     revalidatePath(`/projects/${project.slug}`);
     return NextResponse.json(project);
-  } catch {
-    return NextResponse.json({ error: "Update failed" }, { status: 400 });
+  } catch (e) {
+    const message = e instanceof Error && e.message ? e.message : "Update failed";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
 }
 

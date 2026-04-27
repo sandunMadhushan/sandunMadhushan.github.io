@@ -146,7 +146,8 @@ export function ProjectForm({ project }: { project?: Project }) {
     });
     setSaving(false);
     if (!res.ok) {
-      toast.error("Could not save project");
+      const data = await res.json().catch(() => ({}));
+      toast.error(typeof data.error === "string" ? data.error : "Could not save project");
       return;
     }
     toast.success(isEdit ? "Project saved" : "Project created");
