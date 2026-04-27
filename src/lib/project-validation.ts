@@ -245,7 +245,12 @@ export function mergeProjectPatch(existing: Project, body: ProjectBodyInput): Pr
     published: body.published !== undefined ? body.published : existing.published,
     sortOrder: body.sortOrder !== undefined ? body.sortOrder : existing.sortOrder,
     category: body.category !== undefined ? body.category : existing.category,
-    categories: body.categories !== undefined ? body.categories : parseProjectCategories(existing.category),
+    categories:
+      body.categories !== undefined
+        ? body.categories
+        : body.category !== undefined
+          ? parseProjectCategories(typeof body.category === "string" ? body.category : undefined)
+          : parseProjectCategories(existing.category),
     cardIcon: body.cardIcon !== undefined ? body.cardIcon : existing.cardIcon,
     features: body.features !== undefined ? body.features : existing.features,
     challenges: body.challenges !== undefined ? body.challenges : mergedChallenges.ok ? mergedChallenges.value : [],
