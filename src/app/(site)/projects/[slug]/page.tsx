@@ -1,6 +1,6 @@
 import NextImage from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Newspaper } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { SiteNav } from "@/components/public/site-nav";
@@ -11,6 +11,9 @@ import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import { isRemoteImageSrc } from "@/lib/image-url";
 import { projectGallerySrcs, projectHeroSrc } from "@/lib/project-media";
 import { getProjectBySlug, getProjects } from "@/lib/queries";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { ProjectPreviewTopbar } from "@/components/admin/project-preview-topbar";
 
 export const revalidate = 30;
 
@@ -36,15 +39,29 @@ function paragraphToBullets(text: string): string[] | null {
   return bulletLines.map((line) => line.replace(/^[-*]\s+/, "").trim()).filter(Boolean);
 }
 
-export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProjectDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const sp = (await searchParams) ?? {};
+  const preview = sp.preview === "1";
+
+  const project = preview ? await prisma.project.findFirst({ where: { slug } }) : await getProjectBySlug(slug);
   if (!project) notFound();
 
-  const all = await getProjects();
-  const idx = all.findIndex((p) => p.id === project.id);
+  if (preview) {
+    const session = await auth();
+    if (!session?.user?.email) redirect("/admin/login");
+  }
+
+  const all = preview ? [] : await getProjects();
+  const idx = preview ? -1 : all.findIndex((p) => p.id === project.id);
   const prev = idx > 0 ? all[idx - 1] : null;
-  const next = idx < all.length - 1 ? all[idx + 1] : null;
+  const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 
   const challenges = (project.challenges as Challenge[] | null) ?? [];
   const resolutionsRaw = ((project as unknown as { resolutions?: unknown }).resolutions as Resolution[] | null) ?? [];
@@ -62,6 +79,14 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
   return (
     <PageFade>
       <SiteNav active="/projects" />
+      {preview ? (
+        <ProjectPreviewTopbar
+          projectId={project.id}
+          projectTitle={project.title}
+          published={project.published}
+          topClassName="top-[72px]"
+        />
+      ) : null}
       <main className="pb-24 pt-32">
         <ProjectDetailLayout
           title={project.title}
@@ -73,7 +98,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
               <div className="grid grid-cols-1 items-end gap-12 md:grid-cols-12">
                 <div className="md:col-span-8">
                   <span className="label-md mb-4 block font-bold uppercase tracking-widest text-primary">
-                    Case Study
+                    {preview ? "Preview" : "Case Study"}
                   </span>
                   <h1 className="mb-6 text-[2.5rem] font-extrabold leading-[0.95] tracking-tighter md:max-w-3xl md:text-[3.5rem]">
                     {project.title}
@@ -133,7 +158,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           }
         >
         <section className="mx-auto mb-32 max-w-[1440px] px-6 md:px-12">
-          <div className="relative aspect-[16/10] w-full min-h-[200px] max-h-[min(80dvh,520px)] overflow-hidden rounded-xl bg-surface-container sm:aspect-video sm:min-h-[220px] md:aspect-auto md:h-[min(520px,calc(100vw-6rem))] md:max-h-none lg:h-[600px]">
+          <div className="relative aspect-16/10 w-full min-h-[200px] max-h-[min(80dvh,520px)] overflow-hidden rounded-xl bg-surface-container sm:aspect-video sm:min-h-[220px] md:aspect-auto md:h-[min(520px,calc(100vw-6rem))] md:max-h-none lg:h-[600px]">
             <NextImage
               src={heroSrc}
               alt={project.title}
@@ -202,10 +227,7 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
             <h2 className="mb-12 text-[1.75rem] font-semibold tracking-tight text-on-surface">Project Artifacts</h2>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {artifacts.map((src, i) => (
-                <div
-                  key={src + i}
-                  className="group relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-container"
-                >
+                <div key={src + i} className="group relative aspect-4/3 overflow-hidden rounded-xl bg-surface-container">
                   <NextImage
                     src={src}
                     alt=""

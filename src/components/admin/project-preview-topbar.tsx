@@ -11,10 +11,13 @@ export function ProjectPreviewTopbar({
   projectId,
   projectTitle,
   published,
+  topClassName,
 }: {
   projectId: string;
   projectTitle: string;
   published: boolean;
+  /** Override sticky top position to account for other fixed headers (e.g. public SiteNav). */
+  topClassName?: string;
 }) {
   const router = useRouter();
   const [publishing, setPublishing] = useState(false);
@@ -39,7 +42,12 @@ export function ProjectPreviewTopbar({
   }
 
   return (
-    <div className="sticky top-0 z-40 border-b border-outline-variant/15 bg-surface/80 backdrop-blur">
+    <div
+      className={cn(
+        "sticky z-40 border-b border-outline-variant/15 bg-surface/80 backdrop-blur",
+        topClassName ?? "top-0",
+      )}
+    >
       <div className="mx-auto flex max-w-[1440px] flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 md:px-12">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">

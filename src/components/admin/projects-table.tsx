@@ -189,7 +189,9 @@ function SortableProjectRow({
       <td className="px-4 py-6 text-right align-middle md:px-8">
         <div className="flex justify-end gap-3">
           <Link
-            href={`/admin/projects/preview/${p.id}`}
+            href={`/projects/${p.slug}?preview=1`}
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-md p-1.5 text-on-surface/75 transition-colors hover:bg-surface-container-high hover:text-primary"
             title="Preview project"
           >
