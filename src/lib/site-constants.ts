@@ -1,5 +1,5 @@
 /** Public folder portrait (filename has a space — encoded for URLs). */
-export const DEFAULT_PORTRAIT_SRC = "/sandun-madhushan.png";
+export const DEFAULT_PORTRAIT_SRC = "/sandun-madhushan.webp";
 
 /** Seeded when `SocialLink` is empty; edit URLs in Admin → Social links (footer + contact read from DB). */
 export const DEFAULT_SOCIAL_LINKS = [

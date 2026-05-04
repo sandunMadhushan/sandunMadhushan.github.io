@@ -13,7 +13,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Googlebot-Image",
-        allow: ["/", "/sandun-madhushan.png", "/icon", "/apple-icon"],
+        allow: ["/", "/sandun-madhushan.webp", "/icon", "/apple-icon"],
       },
       {
         userAgent: "Google-Extended",

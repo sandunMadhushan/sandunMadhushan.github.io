@@ -6,7 +6,7 @@ import { getSiteUrl } from "@/lib/site-url";
  */
 export function SiteJsonLd() {
   const base = getSiteUrl();
-  const profileImage = `${base}/sandun-madhushan.png`;
+  const profileImage = `${base}/sandun-madhushan.webp`;
 
   const graph = [
     {

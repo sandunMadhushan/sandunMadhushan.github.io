@@ -65,7 +65,7 @@ export const metadata: Metadata = {
     description: siteDescription,
     images: [
       {
-        url: "/sandun-madhushan.png",
+        url: "/sandun-madhushan.webp",
         width: 1200,
         height: 1200,
         alt: "Sandun Madhushan — Full-Stack Developer from Sri Lanka",
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Sandun Madhushan | Full-Stack Developer",
     description: siteDescription,
-    images: ["/sandun-madhushan.png"],
+    images: ["/sandun-madhushan.webp"],
     site: "@sandunMadhushan",
     creator: "@sandunMadhushan",
   },
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
     "DC.coverage.spatial": "Matale, Central Province, Sri Lanka",
     "geo.region": "LK-2",
     "geo.placename": "Matale, Central Province, Sri Lanka",
-    thumbnail: `${getSiteUrl()}/sandun-madhushan.png`,
+    thumbnail: `${getSiteUrl()}/sandun-madhushan.webp`,
   },
 };
 

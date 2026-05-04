@@ -12,7 +12,7 @@ import { DEFAULT_HERO_TECH_CHIPS } from "../src/lib/hero-tech-chips";
 const prisma = new PrismaClient();
 
 /** Local hero / about portrait — `public/Sandun Madhushan.png` */
-const LOCAL_PORTRAIT = "/sandun-madhushan.png";
+const LOCAL_PORTRAIT = "/sandun-madhushan.webp";
 
 const IMG = {
   hero: LOCAL_PORTRAIT,
