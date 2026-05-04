@@ -115,7 +115,7 @@ export default async function AboutPage() {
                     fill
                     sizes="(max-width: 768px) 90vw, 420px"
                     unoptimized
-                    className="object-cover object-[center_24%] scale-105"
+                    className="object-cover object-[center_24%] scale-105 transition-transform duration-700 [@media(hover:hover)]:hover:scale-110"
                     priority
                   />
                 </div>
