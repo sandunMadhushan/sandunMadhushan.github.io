@@ -31,3 +31,7 @@ public/uploads/*
 !public/uploads/.gitkeep
 
 ui_screen_of_pages/*
+# local scratch / backups (not part of the project)
+_to_delete/
+*.tar.gz
+push-to-new-repo.ps1

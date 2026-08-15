@@ -1,119 +1,121 @@
-import NextImage from "next/image";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
+import { RevealText } from "@/components/motion/reveal-text";
 import { ContactForm } from "@/components/contact/contact-form";
-import { MIcon } from "@/components/m-icon";
-import { resolvePortraitSrc } from "@/lib/site-constants";
-import { isRemoteImageSrc } from "@/lib/image-url";
-import { getAbout, getSocialLinks } from "@/lib/queries";
+import { CopyValue, LocalTime } from "@/components/contact/contact-aside";
 import { ContactSocialRow } from "@/components/public/public-social-blocks";
+import { Container, Eyebrow, Rule } from "@/components/ui/primitives";
+import { getAbout, getSocialLinks } from "@/lib/queries";
 
 export const revalidate = 30;
 
+const EMAIL = "hello@madhushan.me";
+const PHONE_DISPLAY = "+94 71 134 9060";
+const PHONE_HREF = "+94711349060";
+
 export default async function ContactPage() {
-  const [about, socialLinks] = await Promise.all([
-    getAbout(),
-    getSocialLinks(),
-  ]);
-  const stats = (about?.stats as Record<string, unknown>) ?? {};
-  const profile = resolvePortraitSrc(stats.profileImage as string | undefined);
+  const [, socialLinks] = await Promise.all([getAbout(), getSocialLinks()]);
 
   return (
     <PageFade>
       <SiteNav active="/contact" />
-      <main className="mx-auto min-h-screen max-w-[1440px] px-6 pb-20 pt-32 md:px-12">
-        <div className="mb-8 lg:col-span-12">
-          <span className="mb-4 block text-[0.75rem] font-bold uppercase tracking-[0.2em] text-primary">
-            Get in touch
-          </span>
-          <h1 className="max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
-            Let&apos;s talk{" "}
-            <span className="text-primary">code, coursework,</span> and
-            what&apos;s next.
-          </h1>
-        </div>
-        <div className="grid grid-cols-1 items-start gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <div className="relative overflow-hidden rounded-xl bg-surface-container-low p-8 md:p-12">
-              <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-primary-container/10 blur-[100px]" />
-              <p className="relative z-10 mb-8 text-sm leading-relaxed text-on-surface-variant/85">
-                I read every message. Your note is delivered to my inbox and
-                kept in my admin archive— I&apos;ll reply at the email you
-                provide.
-              </p>
-              <ContactForm />
+      <main id="main" className="pb-28 pt-32 md:pt-40">
+        <Container>
+          <header className="mb-20 md:mb-28">
+            <Rule />
+            <div className="flex flex-wrap items-baseline justify-between gap-4 pt-4">
+              <Eyebrow>
+                <span className="pulse-dot mr-1 inline-block size-1.5 rounded-full bg-primary-container align-middle" />
+                Usually replies within a day
+              </Eyebrow>
+              <span className="type-mono-sm text-on-surface-variant">
+                Matale, LK — <LocalTime />
+              </span>
             </div>
-          </div>
-          <div className="space-y-12 lg:col-span-5">
-            <div>
-              <h3 className="mb-6 text-lg font-semibold">
-                Contact Information
-              </h3>
-              <div className="space-y-6">
-                <div className="group flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-container-high text-primary transition-transform duration-300 group-hover:scale-110">
-                    <MIcon name="alternate_email" />
-                  </div>
-                  <div>
-                    <p className="mb-1 text-sm text-on-surface-variant">
-                      Email
-                    </p>
-                    <a
-                      href="mailto:hello@madhushan.me"
-                      className="inline-block text-lg font-medium transition-transform duration-200 hover:scale-[1.03] focus-visible:scale-[1.03]"
-                    >
-                      hello@madhushan.me
-                    </a>
-                  </div>
-                </div>
-                <div className="group flex items-start gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-container-high text-primary transition-transform duration-300 group-hover:scale-110">
-                    <MIcon name="call" />
-                  </div>
-                  <div>
-                    <p className="mb-1 text-sm text-on-surface-variant">
-                      Phone
-                    </p>
-                    <a
-                      href="tel:+94711349060"
-                      className="inline-block text-lg font-medium transition-transform duration-200 hover:scale-[1.03] focus-visible:scale-[1.03]"
-                    >
-                      +94 71 134 9060
-                    </a>
-                  </div>
-                </div>
+
+            <h1 className="type-mega mt-10 text-on-surface md:mt-14">
+              <RevealText text="Let's" as="span" onLoad delay={0.08} />
+              <br />
+              <span className="text-primary">
+                <RevealText text="talk." as="span" onLoad delay={0.18} />
+              </span>
+            </h1>
+
+            <p className="type-lead mt-10 max-w-2xl text-on-surface-variant">
+              Internships, academic collaborations, code review, or just a
+              thoughtful technical conversation — I read every message, and
+              I&apos;ll reply at the address you provide.
+            </p>
+          </header>
+
+          <div className="grid grid-cols-12 gap-y-20 md:gap-8">
+            {/* ---------- FORM ---------- */}
+            <div className="col-span-12 md:col-span-7">
+              <Rule />
+              <div className="pt-4">
+                <Eyebrow index="01">Send a message</Eyebrow>
+              </div>
+              <div className="mt-10">
+                <ContactForm />
               </div>
             </div>
-            <ContactSocialRow links={socialLinks} />
-            <div className="rounded-xl border-l-2 border-primary-container bg-surface-container-lowest p-6">
-              <p className="text-sm italic leading-relaxed text-on-surface-variant/80">
-                &quot;I&apos;m always up for a thoughtful technical
-                conversation—whether it&apos;s an internship, a team project, or
-                feedback on something I&apos;ve shipped.&quot;
-              </p>
-              <div className="mt-4 flex items-center gap-3">
-                <div className="h-8 w-8 overflow-hidden rounded-full bg-surface-container">
-                  <NextImage
-                    src={profile}
-                    alt="Sandun Madhushan"
-                    width={32}
-                    height={32}
-                    className="h-full w-full object-cover object-[center_22%]"
-                    unoptimized={isRemoteImageSrc(profile)}
-                  />
-                </div>
-                <div>
-                  <span className="block text-sm font-semibold text-on-surface">
-                    Sandun Madhushan
-                  </span>
-                  <span className="text-[0.7rem] font-bold tracking-wide text-primary">
-                    Aspiring Software Engineer
-                  </span>
-                </div>
+
+            {/* ---------- DIRECT + SOCIAL ---------- */}
+            <aside className="col-span-12 md:col-span-4 md:col-start-9">
+              <Rule />
+              <div className="pt-4">
+                <Eyebrow index="02">Direct</Eyebrow>
               </div>
-            </div>
+
+              <dl className="mt-10">
+                <div className="border-t border-outline-variant py-5">
+                  <dt className="type-mono-sm text-on-surface-variant">
+                    Email
+                  </dt>
+                  <dd className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                    <a
+                      href={`mailto:${EMAIL}`}
+                      className="link-wipe text-lg font-medium text-on-surface"
+                    >
+                      {EMAIL}
+                    </a>
+                    <CopyValue value={EMAIL} label="email address" />
+                  </dd>
+                </div>
+
+                <div className="border-y border-outline-variant py-5">
+                  <dt className="type-mono-sm text-on-surface-variant">
+                    Phone
+                  </dt>
+                  <dd className="mt-2 flex flex-wrap items-center justify-between gap-3">
+                    <a
+                      href={`tel:${PHONE_HREF}`}
+                      className="link-wipe text-lg font-medium text-on-surface"
+                    >
+                      {PHONE_DISPLAY}
+                    </a>
+                    <CopyValue value={PHONE_DISPLAY} label="phone number" />
+                  </dd>
+                </div>
+              </dl>
+
+              <div className="mt-12">
+                <ContactSocialRow links={socialLinks} />
+              </div>
+
+              <figure className="mt-12 border-l-2 border-primary-container pl-6">
+                <blockquote className="font-display text-xl leading-snug text-on-surface">
+                  &ldquo;I&apos;m always up for a thoughtful technical
+                  conversation—whether it&apos;s an internship, a team project,
+                  or feedback on something I&apos;ve shipped.&rdquo;
+                </blockquote>
+                <figcaption className="type-mono-sm mt-4 text-on-surface-variant">
+                  Sandun Madhushan
+                </figcaption>
+              </figure>
+            </aside>
           </div>
-        </div>
+        </Container>
       </main>
     </PageFade>
   );

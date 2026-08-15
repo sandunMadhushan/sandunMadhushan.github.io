@@ -1,124 +1,450 @@
 @import "tailwindcss";
 
+/* ============================================================
+   DESIGN TOKENS — Editorial Brutalist-Tech
+   Palette: Signal Lime on true-neutral. Dark-first, light supported.
+   Token NAMES are preserved from the previous system so every
+   existing component keeps compiling; only the VALUES changed.
+   ============================================================ */
+
 @theme inline {
-  --color-background: #131314;
-  --color-foreground: #e5e2e3;
-  --color-surface: #131314;
-  --color-surface-dim: #131314;
-  --color-surface-container-low: #1c1b1c;
-  --color-surface-container: #201f20;
-  --color-surface-container-high: #2a2a2b;
-  --color-surface-container-highest: #353436;
-  --color-surface-container-lowest: #0e0e0f;
-  --color-surface-bright: #3a393a;
-  --color-surface-variant: #353436;
-  --color-on-surface: #e5e2e3;
-  --color-on-surface-variant: #c7c4d8;
-  --color-on-background: #e5e2e3;
-  --color-primary: #c3c0ff;
-  --color-primary-container: #4f46e5;
-  --color-on-primary: #1d00a5;
-  --color-on-primary-container: #dad7ff;
-  --color-primary-fixed-dim: #c3c0ff;
-  --color-outline: #918fa1;
-  --color-outline-variant: #464555;
-  --color-error: #ffb4ab;
-  --color-error-container: #93000a;
-  --color-tertiary: #ffb695;
-  --color-tertiary-container: #a44100;
-  --color-secondary: #c3c0ff;
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-surface: var(--bg);
+  --color-surface-dim: var(--bg);
+  --color-surface-container-lowest: var(--s-lowest);
+  --color-surface-container-low: var(--s-low);
+  --color-surface-container: var(--s-base);
+  --color-surface-container-high: var(--s-high);
+  --color-surface-container-highest: var(--s-highest);
+  --color-surface-bright: var(--s-bright);
+  --color-surface-variant: var(--s-highest);
+  --color-on-surface: var(--fg);
+  --color-on-surface-variant: var(--fg-dim);
+  --color-on-background: var(--fg);
+
+  --color-primary: var(--accent-text);
+  --color-primary-container: var(--accent);
+  --color-on-primary: var(--accent-on);
+  --color-on-primary-container: var(--accent-on);
+  --color-primary-fixed-dim: var(--accent-dim);
+  --color-secondary: var(--ember);
+  --color-tertiary: var(--ember);
+  --color-tertiary-container: var(--ember);
+
+  --color-outline: var(--line-strong);
+  --color-outline-variant: var(--line);
+  --color-error: var(--danger);
+  --color-error-container: var(--danger-bg);
+
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ---------- DARK (default) ---------- */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #08090a;
+  --fg: #f2f1ee;
+  --fg-dim: #96968f;
+  --s-lowest: #050506;
+  --s-low: #0e0f10;
+  --s-base: #141516;
+  --s-high: #1c1d1e;
+  --s-highest: #26282a;
+  --s-bright: #313335;
+  --line: #232527;
+  --line-strong: #4a4c4e;
+
+  --accent: #c8ff3d;
+  --accent-text: #c8ff3d;
+  --accent-dim: #a3d128;
+  --accent-on: #0a0b08;
+  --accent-soft: rgba(200, 255, 61, 0.12);
+
+  --ember: #ff5c2b;
+  --danger: #ff6b5e;
+  --danger-bg: #4a1410;
+
+  --grid-line: rgba(242, 241, 238, 0.06);
+  --noise-opacity: 0.028;
+}
+
+/* ---------- LIGHT ---------- */
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #fafaf8;
+  --fg: #0d0e0f;
+  --fg-dim: #5a5b5e;
+  --s-lowest: #ffffff;
+  --s-low: #f3f3f0;
+  --s-base: #ececE8;
+  --s-high: #e3e3dd;
+  --s-highest: #d7d7d0;
+  --s-bright: #ffffff;
+  --line: #dedbd2;
+  --line-strong: #a5a49c;
+
+  --accent: #c8ff3d;
+  --accent-text: #4d6b00;
+  --accent-dim: #6f8f10;
+  --accent-on: #0a0b08;
+  --accent-soft: rgba(140, 180, 20, 0.14);
+
+  --ember: #d63d10;
+  --danger: #c0231a;
+  --danger-bg: #ffdad5;
+
+  --grid-line: rgba(13, 14, 15, 0.07);
+  --noise-opacity: 0.02;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
 
 @layer base {
-  body {
-    @apply bg-background text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container;
+  * {
+    border-color: var(--line);
   }
 
-  * {
-    -webkit-user-select: none;
+  html {
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "cv11", "ss01";
+    font-variant-ligatures: contextual;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-on);
+  }
+
+  /* Accessible focus ring on every interactive element. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Only images are drag/select-guarded — text stays copyable
+     so recruiters can grab an email address. */
+  img,
+  svg,
+  video {
+    -webkit-user-drag: none;
     user-select: none;
-    -webkit-touch-callout: none;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 }
+
+/* ============================================================
+   TYPOGRAPHY SYSTEM
+   ============================================================ */
 
 @layer components {
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  /* Display scale — fluid, clamps at both ends. */
+  .type-mega {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 13vw, 11rem);
+    line-height: 0.86;
+    letter-spacing: -0.035em;
+    font-weight: 400;
+  }
+  .type-display {
+    font-family: var(--font-display);
+    font-size: clamp(2.75rem, 8vw, 6.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    font-weight: 400;
+  }
+  .type-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5.5vw, 4.25rem);
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    font-weight: 400;
+  }
+  .type-h2 {
+    font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 600;
+  }
+  .type-h3 {
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  /* Monospace metadata — the counterweight to the display type. */
+  .type-mono {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .type-mono-sm {
+    font-family: var(--font-mono);
+    font-size: 0.625rem;
+    line-height: 1.4;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .type-num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .type-body {
+    font-size: clamp(1rem, 1.05vw, 1.125rem);
+    line-height: 1.65;
+    letter-spacing: -0.011em;
+  }
+  .type-lead {
+    font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+    line-height: 1.5;
+    letter-spacing: -0.018em;
+  }
+
+  /* Legacy aliases kept so untouched files still compile. */
   .label-md {
-    @apply text-[0.75rem] font-bold uppercase tracking-widest;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 500;
   }
   .body-lg {
-    @apply text-lg leading-relaxed md:text-xl;
+    font-size: clamp(1.125rem, 1.5vw, 1.375rem);
+    line-height: 1.5;
+    letter-spacing: -0.018em;
   }
 }
 
-.glass-panel {
-  background: rgba(53, 52, 54, 0.6);
-  backdrop-filter: blur(24px);
+/* ============================================================
+   STRUCTURAL UTILITIES — hairlines, grids, texture
+   ============================================================ */
+
+.rule {
+  height: 1px;
+  width: 100%;
+  background-color: var(--line);
 }
 
-/* Hero portrait floating skill chips — darker glass, stronger blur */
-.hero-badge {
-  background: rgba(22, 22, 24, 0.72);
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+.rule-strong {
+  height: 1px;
+  width: 100%;
+  background-color: var(--line-strong);
 }
 
+/* Faint blueprint grid for hero sections. */
+.grid-overlay {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 88px 88px;
+}
+
+/* Film-grain texture — replaces the old blur glows. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Duotone portrait treatment — accent + ink, screen-print feel. */
+.duotone {
+  filter: grayscale(1) contrast(1.18) brightness(0.92);
+  transition: filter 700ms var(--ease-out-expo);
+}
+.duotone-wrap {
+  position: relative;
+  isolation: isolate;
+}
+.duotone-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(150deg, var(--accent) 0%, transparent 55%),
+    linear-gradient(320deg, var(--ember) 0%, transparent 60%);
+  mix-blend-mode: color;
+  opacity: 0.85;
+  transition: opacity 700ms var(--ease-out-expo);
+}
+@media (hover: hover) {
+  .duotone-wrap:hover::after {
+    opacity: 0;
+  }
+  .duotone-wrap:hover .duotone {
+    filter: grayscale(0) contrast(1) brightness(1);
+  }
+}
+
+/* Load-triggered variant: the portrait develops from duotone to full colour
+   on its own once the page settles — like a print coming up in the tray.
+   `forwards` holds the final state, so the hover rules above become no-ops
+   after it finishes. Under reduced-motion the global override collapses the
+   duration, landing straight on the colour state. */
+@keyframes duotone-develop-tint {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes duotone-develop-image {
+  to {
+    filter: grayscale(0) contrast(1) brightness(1);
+  }
+}
+
+.duotone-onload::after {
+  animation: duotone-develop-tint 1600ms var(--ease-out-expo) 700ms forwards;
+}
+
+.duotone-onload .duotone {
+  animation: duotone-develop-image 1600ms var(--ease-out-expo) 700ms forwards;
+}
+
+/* Subtle entrance for a portrait panel: the frame uncovers from the top edge
+   while lifting into place. Pairs with `.duotone-onload` so the panel arrives
+   first and the colour develops after. */
+@keyframes panel-rise {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    clip-path: inset(14% 0 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.panel-rise {
+  animation: panel-rise 1100ms var(--ease-out-expo) both;
+}
+
+/* Link with an underline that wipes in from the left. */
+.link-wipe {
+  position: relative;
+  display: inline-block;
+}
+.link-wipe::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 1px;
+  width: 100%;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 420ms var(--ease-out-expo);
+}
+.link-wipe:hover::after,
+.link-wipe:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Panel: structural, square-ish, hairline — no glow. */
+.panel {
+  background-color: var(--s-low);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+
+.panel-flush {
+  background-color: var(--s-low);
+  border: 1px solid var(--line);
+  border-radius: 0;
+}
+
+/* Legacy glass classes remapped onto the flat system. */
+.glass-panel,
 .glass-card {
-  background: rgba(53, 52, 54, 0.4);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+  background-color: var(--s-low);
+  border: 1px solid var(--line);
+  backdrop-filter: none;
 }
-
-.material-symbols-outlined {
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 400,
-    "GRAD" 0,
-    "opsz" 24;
+.hero-badge {
+  background-color: var(--s-high);
+  border: 1px solid var(--line);
 }
-
 .ghost-border {
-  border: 1px solid rgba(70, 69, 85, 0.15);
+  border: 1px solid var(--line);
 }
-
-.primary-glow {
-  box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
-}
-
+.primary-glow,
 .primary-glow:hover {
-  box-shadow: 0 0 30px rgba(79, 70, 229, 0.6);
+  box-shadow: none;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #2a2a2b;
-  border-radius: 10px;
+  background: var(--line-strong);
+  border-radius: 0;
 }
 
-/* Keep route navigation instant; avoid smooth page-to-page scroll motion. */
-html {
-  scroll-behavior: auto;
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
+
+/* ============================================================
+   MOTION
+   ============================================================ */
 
 @keyframes skeleton-shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .skeleton-shimmer {
   position: relative;
   overflow: hidden;
 }
-
 .skeleton-shimmer::after {
   content: "";
   position: absolute;
@@ -126,11 +452,59 @@ html {
   background: linear-gradient(
     100deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.08) 45%,
-    rgba(255, 255, 255, 0.18) 50%,
-    rgba(255, 255, 255, 0.08) 55%,
+    var(--accent-soft) 45%,
+    var(--accent-soft) 55%,
     transparent 100%
   );
   animation: skeleton-shimmer 1.25s infinite;
   pointer-events: none;
+}
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-x var(--marquee-duration, 40s) linear infinite;
+}
+.marquee-host:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+.pulse-dot {
+  animation: pulse-dot 2s var(--ease-out-expo) infinite;
+}
+
+/* Character/word mask reveal, driven by CSS custom props. */
+.reveal-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.reveal-mask > span {
+  display: inline-block;
+  transform: translateY(105%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal-mask > span {
+    transform: none !important;
+  }
+  .marquee-track {
+    animation: none !important;
+  }
 }

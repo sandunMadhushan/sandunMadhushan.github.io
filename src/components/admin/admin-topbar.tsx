@@ -1,37 +1,70 @@
 "use client";
 
-import { MIcon } from "@/components/m-icon";
+import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
 import { useAdminMobileNav } from "@/components/admin/admin-shell";
+
+/** Turns `/admin/projects/edit/abc` into `Admin / Projects / Edit`. */
+function useCrumbs(): string[] {
+  const pathname = usePathname() ?? "";
+  return pathname
+    .split("/")
+    .filter(Boolean)
+    .slice(0, 3)
+    .map((seg) =>
+      seg
+        .replace(/[-_]/g, " ")
+        .replace(/^\w/, (c) => c.toUpperCase())
+        .replace(/^\(|\)$/g, ""),
+    );
+}
 
 export function AdminTopbar({ title }: { title?: string }) {
   const nav = useAdminMobileNav();
+  const crumbs = useCrumbs();
 
   return (
-    <header className="sticky top-0 z-30 flex w-full max-w-full min-w-0 items-center justify-between border-b border-outline-variant/10 bg-surface/95 px-4 py-4 backdrop-blur-md md:px-8 md:py-6">
+    <header className="sticky top-0 z-30 flex w-full min-w-0 max-w-full items-center justify-between gap-4 border-b border-outline-variant bg-background/90 px-5 py-4 backdrop-blur-xl md:px-8">
       <div className="flex min-w-0 items-center gap-3 md:gap-4">
         <button
           type="button"
           aria-label="Open navigation menu"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-on-surface transition-colors hover:bg-surface-container-high hover:text-primary md:hidden"
+          className="flex size-9 shrink-0 items-center justify-center rounded-sm border border-outline-variant text-on-surface transition-colors hover:border-primary hover:text-primary md:hidden"
           onClick={() => nav?.openMobileNav()}
         >
-          <MIcon name="menu" />
+          <Menu className="size-4" aria-hidden />
         </button>
-        <h1 className="truncate text-base font-semibold text-on-surface md:text-lg">
-          {title ?? "System Overview"}
-        </h1>
-      </div>
-      <div className="flex shrink-0 items-center gap-4 md:gap-6">
-        <div className="relative hidden sm:block">
-          <span className="sr-only">Notifications (placeholder)</span>
-          <MIcon name="notifications" className="cursor-default text-on-surface/50" />
-          <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-primary" aria-hidden />
+
+        <div className="min-w-0">
+          <nav aria-label="Breadcrumb" className="hidden md:block">
+            <ol className="type-mono-sm flex items-center gap-2 text-on-surface-variant">
+              {crumbs.map((c, i) => (
+                <li key={`${c}-${i}`} className="flex items-center gap-2">
+                  {i > 0 ? (
+                    <span aria-hidden className="opacity-40">
+                      /
+                    </span>
+                  ) : null}
+                  <span className={i === crumbs.length - 1 ? "text-primary" : ""}>
+                    {c}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <h1 className="type-h3 mt-0.5 truncate text-on-surface">
+            {title ?? "System Overview"}
+          </h1>
         </div>
-        <div
-          className="h-9 w-9 overflow-hidden rounded-full bg-gradient-to-br from-primary-container/40 to-surface-container-high ring-2 ring-primary/25 md:h-10 md:w-10"
-          aria-hidden
-        />
       </div>
+
+      <span className="type-mono-sm hidden shrink-0 items-center gap-2 text-on-surface-variant sm:inline-flex">
+        <span
+          aria-hidden
+          className="pulse-dot size-1.5 rounded-full bg-primary-container"
+        />
+        Live
+      </span>
     </header>
   );
 }

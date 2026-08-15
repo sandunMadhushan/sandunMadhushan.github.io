@@ -1,57 +1,76 @@
 import Link from "next/link";
-import { PageFade } from "@/components/motion/page-fade";
-import { MIcon } from "@/components/m-icon";
+import type { Metadata } from "next";
+import { ArrowUpRight } from "lucide-react";
 import { SiteNav } from "@/components/public/site-nav";
+import { SiteFooter } from "@/components/public/site-footer";
+import { Container, Rule } from "@/components/ui/primitives";
+import { SITE_NAV_LINKS, isNavOffSiteStyle } from "@/lib/site-nav-links";
+
+export const metadata: Metadata = {
+  title: "Page not found",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
+  const routes = SITE_NAV_LINKS.filter((l) => !isNavOffSiteStyle(l));
+
   return (
-    <PageFade>
+    <>
       <SiteNav />
-      <main className="relative flex min-h-screen items-center overflow-hidden px-6 pb-24 pt-32 md:px-12">
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute left-[-12%] top-[-12%] h-[38rem] w-[38rem] rounded-full bg-primary-container/10 blur-[120px]" />
-          <div className="absolute bottom-[-18%] right-[-12%] h-[36rem] w-[36rem] rounded-full bg-primary/10 blur-[140px]" />
-        </div>
+      <main id="main" className="min-h-[100dvh] pb-24 pt-36 md:pt-44">
+        <Container>
+          <Rule />
+          <div className="grid grid-cols-1 gap-12 pt-6 md:grid-cols-12 md:gap-8">
+            <div className="md:col-span-7">
+              <span className="type-mono text-primary">
+                Error — 404
+              </span>
+              <p
+                aria-hidden
+                className="font-display mt-6 text-[clamp(6rem,22vw,18rem)] leading-[0.78] tracking-[-0.05em] text-on-surface"
+              >
+                404
+              </p>
+            </div>
 
-        <section className="relative mx-auto w-full max-w-4xl rounded-2xl border border-outline-variant/15 bg-surface-container-low/70 p-8 shadow-2xl backdrop-blur md:p-12">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-outline-variant/20 bg-surface-container-high px-3 py-1 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
-            <MIcon name="warning" className="text-sm" />
-            404 Error
-          </p>
+            <div className="flex flex-col justify-end md:col-span-4 md:col-start-9">
+              <h1 className="type-h2 text-on-surface">
+                This page doesn&apos;t exist.
+              </h1>
+              <p className="type-body mt-5 text-on-surface-variant">
+                The address may be mistyped, or the page has moved since you
+                last saw it. Everything else is still where you left it.
+              </p>
 
-          <h1 className="mb-5 text-5xl font-black tracking-tighter text-on-surface md:text-7xl">
-            Page Not Found
-          </h1>
-          <p className="mb-10 max-w-2xl text-lg leading-relaxed text-on-surface-variant">
-            This link does not exist anymore, or it may have been moved. Use one of the
-            options below to continue exploring the portfolio.
-          </p>
-
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary-container px-6 py-3 font-semibold text-on-primary-container transition-all hover:brightness-110 active:scale-95"
-            >
-              <MIcon name="home" className="text-lg" />
-              Back to Home
-            </Link>
-            <Link
-              href="/projects"
-              className="inline-flex items-center gap-2 rounded-lg border border-outline-variant/20 bg-surface-container-high px-6 py-3 font-semibold text-on-surface transition-all hover:bg-surface-bright active:scale-95"
-            >
-              <MIcon name="work" className="text-lg" />
-              View Projects
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 rounded-lg border border-outline-variant/20 bg-transparent px-6 py-3 font-semibold text-on-surface-variant transition-all hover:bg-surface-container-high hover:text-on-surface active:scale-95"
-            >
-              <MIcon name="mail" className="text-lg" />
-              Contact Me
-            </Link>
+              <nav aria-label="Site sections" className="mt-10">
+                <Rule />
+                <ul>
+                  {routes.map((l, i) => (
+                    <li key={l.href}>
+                      <Link
+                        href={l.href}
+                        className="group flex items-center justify-between gap-4 border-b border-outline-variant py-4 transition-colors hover:text-primary"
+                      >
+                        <span className="flex items-baseline gap-4">
+                          <span className="type-mono-sm tabular-nums text-on-surface-variant">
+                            {String(i + 1).padStart(2, "0")}
+                          </span>
+                          <span className="text-lg font-medium">{l.label}</span>
+                        </span>
+                        <ArrowUpRight
+                          className="size-4 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+                          aria-hidden
+                        />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
           </div>
-        </section>
+        </Container>
       </main>
-    </PageFade>
+      <SiteFooter />
+    </>
   );
 }

@@ -13,7 +13,7 @@ export function Skeleton({ className, children }: SkeletonProps) {
     <div
       aria-hidden="true"
       className={cn(
-        "skeleton-shimmer rounded-md bg-surface-container-high/70",
+        "skeleton-shimmer rounded-sm bg-surface-container-high",
         className,
       )}
     >

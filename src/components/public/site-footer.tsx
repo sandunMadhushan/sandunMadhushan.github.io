@@ -1,58 +1,60 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { SiteFooterSocialSection } from "@/components/public/public-social-blocks";
-import { MIcon } from "@/components/m-icon";
+import { Container, Rule } from "@/components/ui/primitives";
 import { getSocialLinks } from "@/lib/queries";
 import { SITE_NAV_LINKS, isNavOffSiteStyle } from "@/lib/site-nav-links";
 
 export async function SiteFooter() {
   const year = new Date().getFullYear();
   const socialLinks = await getSocialLinks();
-  const hasSocial = socialLinks.length > 0;
 
   return (
-    <footer className="relative w-full overflow-hidden border-t border-outline-variant/10 bg-surface-container-low">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-container/35 to-transparent"
-      />
-      <div className="pointer-events-none absolute -right-24 top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-primary-container/8 blur-[100px]" />
-
-      <div className="relative mx-auto max-w-[1440px] px-6 py-14 md:px-12 md:py-16">
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-10 lg:gap-y-14">
-          {/* Brand */}
-          <div
-            className={`space-y-5 sm:col-span-2 ${hasSocial ? "lg:col-span-5" : "lg:col-span-6"}`}
-          >
-            <Link
-              href="/"
-              className="inline-flex text-2xl font-black tracking-tighter text-on-surface transition-opacity hover:opacity-90"
-            >
-              S<span className="text-primary-container">M</span>
-            </Link>
-            <p className="max-w-sm text-[0.9375rem] leading-relaxed text-on-surface-variant/85">
-              Sandun Madhushan — aspiring software engineer, always learning and building
-              fast, accessible full-stack web experiences.
+    <footer className="relative overflow-hidden border-t border-outline-variant bg-background">
+      <Container className="pb-8 pt-20 md:pt-28">
+        {/* Top row — availability + columns */}
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
+          <div className="md:col-span-5">
+            <span className="type-mono inline-flex items-center gap-2.5 text-primary">
+              <span
+                aria-hidden
+                className="pulse-dot size-1.5 rounded-full bg-primary-container"
+              />
+              Available for work
+            </span>
+            <p className="type-h3 mt-6 max-w-sm text-on-surface">
+              Building reliable full-stack web software — and looking for the
+              next problem worth solving.
             </p>
-            <div className="inline-flex items-center gap-2 rounded-full border border-outline-variant/15 bg-surface-container-high/50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-primary">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" aria-hidden />
-              Open to collaborations
-            </div>
+            <Link
+              href="/contact"
+              className="type-mono link-wipe mt-8 inline-flex items-center gap-2 text-on-surface"
+            >
+              Start a conversation
+              <ArrowUpRight className="size-3.5" aria-hidden />
+            </Link>
           </div>
 
-          {/* Site map */}
-          <div className={hasSocial ? "lg:col-span-3" : "lg:col-span-6"}>
-            <h2 className="mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-on-surface-variant/50">
-              Explore
+          <div className="md:col-span-3 md:col-start-7">
+            <h2 className="type-mono-sm mb-6 text-on-surface-variant">
+              Index
             </h2>
-            <ul className="flex flex-col gap-3">
-              {SITE_NAV_LINKS.map((l) => {
+            <ul className="flex flex-col gap-3.5">
+              {SITE_NAV_LINKS.map((l, i) => {
                 const offSite = isNavOffSiteStyle(l);
+                const cls =
+                  "group flex items-baseline gap-3 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface";
                 const inner = (
                   <>
-                    <span className="h-px w-0 bg-primary-container transition-all duration-300 group-hover:w-4" />
-                    {l.label}
+                    <span className="type-mono-sm text-on-surface-variant/60 tabular-nums">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="link-wipe">{l.label}</span>
                     {offSite ? (
-                      <MIcon name="open_in_new" className="!text-base opacity-60" aria-hidden />
+                      <ArrowUpRight
+                        className="size-3 opacity-50"
+                        aria-hidden
+                      />
                     ) : null}
                   </>
                 );
@@ -63,15 +65,12 @@ export async function SiteFooter() {
                         href={l.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface"
+                        className={cls}
                       >
                         {inner}
                       </a>
                     ) : (
-                      <Link
-                        href={l.href}
-                        className="group inline-flex items-center gap-2 text-sm font-medium text-on-surface-variant transition-colors hover:text-on-surface"
-                      >
+                      <Link href={l.href} className={cls}>
                         {inner}
                       </Link>
                     )}
@@ -84,15 +83,24 @@ export async function SiteFooter() {
           <SiteFooterSocialSection links={socialLinks} />
         </div>
 
-        <div className="mt-14 flex flex-col gap-4 border-t border-outline-variant/10 pt-8 md:flex-row md:items-center md:justify-between md:pt-10">
-          <p className="text-center text-xs text-on-surface-variant/55 md:text-left">
-            © {year} Sandun Madhushan. All rights reserved.
-          </p>
-          <p className="text-center text-xs text-on-surface-variant/40 md:text-right">
-            Designed &amp; built with care — Next.js &amp; Tailwind CSS
+        {/* Oversized wordmark band — the footer's whole visual weight. */}
+        <div className="mt-24 select-none md:mt-32" aria-hidden>
+          <Rule className="mb-6" />
+          <p className="font-display text-[clamp(2.75rem,13.2vw,13rem)] leading-[0.82] tracking-[-0.04em] text-on-surface">
+            Sandun Madhushan
           </p>
         </div>
-      </div>
+
+        <Rule className="mt-10" />
+        <div className="flex flex-col gap-3 pt-6 md:flex-row md:items-center md:justify-between">
+          <p className="type-mono-sm text-on-surface-variant">
+            © {year} — All rights reserved
+          </p>
+          <p className="type-mono-sm text-on-surface-variant">
+            Matale, Sri Lanka · Next.js &amp; Tailwind
+          </p>
+        </div>
+      </Container>
     </footer>
   );
 }

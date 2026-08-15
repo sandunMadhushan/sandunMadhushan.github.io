@@ -4,22 +4,26 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-sm font-mono text-[0.6875rem] font-medium uppercase tracking-[0.14em] transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary-container text-on-primary-container shadow-[0_0_15px_rgba(79,70,229,0.3)] hover:brightness-110 active:scale-95",
+        default:
+          "bg-primary-container text-on-primary-container hover:scale-[1.02] active:scale-95",
         secondary:
-          "border border-outline-variant/30 bg-transparent text-on-surface hover:bg-surface-bright active:scale-95",
-        ghost: "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface",
-        destructive: "text-error hover:bg-error-container/20",
-        outline: "border border-outline-variant/20 bg-surface-container-high text-on-surface hover:bg-surface-bright",
+          "border border-outline-variant bg-transparent text-on-surface hover:border-primary hover:text-primary active:scale-95",
+        ghost:
+          "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface",
+        destructive:
+          "border border-transparent text-error hover:border-error/40 hover:bg-error-container/20",
+        outline:
+          "border border-outline-variant bg-transparent text-on-surface hover:border-primary hover:text-primary",
       },
       size: {
-        default: "h-11 px-6 py-2",
-        sm: "h-9 px-4 text-xs",
-        lg: "h-12 px-8 text-base",
-        icon: "h-10 w-10",
+        default: "h-10 px-5",
+        sm: "h-8 px-3.5 text-[0.625rem]",
+        lg: "h-12 px-8",
+        icon: "size-10",
       },
     },
     defaultVariants: { variant: "default", size: "default" },

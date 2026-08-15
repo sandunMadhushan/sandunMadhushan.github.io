@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SiteLoading() {
   return (
-    <div className="w-full max-w-full overflow-x-hidden px-6 pb-16 pt-28 md:px-12">
+    <div className="w-full max-w-full overflow-x-hidden px-6 pb-16 pt-32 md:pt-40 lg:px-12">
       <div className="mx-auto max-w-[1440px] space-y-10">
         <div className="space-y-4">
           <Skeleton className="h-4 w-28" />
@@ -15,7 +15,7 @@ export default function SiteLoading() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="overflow-hidden rounded-xl border border-outline-variant/15 bg-surface-container-low"
+              className="overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low"
             >
               <Skeleton className="h-56 w-full rounded-none" />
               <div className="space-y-3 p-6">

@@ -2,10 +2,11 @@ import type { ReactNode } from "react";
 import NextImage from "next/image";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
-import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { StaggerIn } from "@/components/motion/stagger-in";
+import { TimelineLine } from "@/components/motion/timeline-line";
 import { CountUpOnView } from "@/components/motion/count-up-on-view";
-import { MIcon } from "@/components/m-icon";
 import { SkillTechIcon } from "@/components/skill-tech-icon";
+import { Container, Eyebrow, Rule } from "@/components/ui/primitives";
 import {
   ABOUT_HEADLINE_ACCENT,
   DEFAULT_ABOUT_HEADLINE,
@@ -17,9 +18,6 @@ import { resolvePortraitSrc } from "@/lib/site-constants";
 import { getAbout } from "@/lib/queries";
 
 export const revalidate = 30;
-
-const headlineAccentClass =
-  "text-primary-container drop-shadow-[0_0_15px_rgba(79,70,229,0.3)]";
 
 /** Highlights `ABOUT_HEADLINE_ACCENT` in the headline when present (case-insensitive match). */
 function formatAboutHeadline(headline: string): ReactNode {
@@ -40,7 +38,7 @@ function formatAboutHeadline(headline: string): ReactNode {
   return (
     <>
       {before}
-      <span className={headlineAccentClass}>{word}</span>
+      <span className="text-primary">{word}</span>
       {after}
     </>
   );
@@ -90,181 +88,161 @@ export default async function AboutPage() {
   return (
     <PageFade>
       <SiteNav active="/about" />
-      <main className="pb-20 pt-0">
-        <section className="box-border mb-24 flex min-h-[100dvh] flex-col justify-center overflow-x-clip pt-28 pb-10 md:mb-32 md:pt-28 md:pb-12 lg:pt-24">
-          <div className="mx-auto grid w-full min-h-0 max-w-[1440px] grid-cols-1 items-center gap-10 px-6 md:grid-cols-2 md:gap-12 md:px-12 lg:gap-16">
-            <div className="min-h-0">
-              <span className="mb-4 block max-w-xl text-[0.8125rem] font-semibold leading-snug tracking-wide text-primary md:mb-6">
-                Aspiring Software Engineer
-              </span>
-              <h1 className="mb-6 max-w-3xl text-[2rem] font-extrabold leading-[1.12] tracking-tighter text-on-surface sm:text-[2.5rem] md:mb-8 md:text-[3rem] lg:text-[3.25rem]">
+      <main id="main" className="pb-28 pt-32 md:pt-40">
+        {/* ---------- INTRO ---------- */}
+        <Container>
+          <Rule />
+          <div className="flex flex-wrap items-baseline justify-between gap-4 pt-4">
+            <Eyebrow>Aspiring Software Engineer</Eyebrow>
+            <span className="type-mono-sm text-on-surface-variant">
+              Matale, Sri Lanka
+            </span>
+          </div>
+
+          <div className="mt-12 grid grid-cols-12 gap-y-12 md:mt-16 md:gap-8">
+            <div className="col-span-12 md:col-span-7">
+              <h1 className="type-display text-on-surface">
                 {formatAboutHeadline(headline)}
               </h1>
-              <div className="max-w-xl space-y-4 text-base leading-[1.75] text-on-surface-variant md:space-y-5 md:text-[1.0625rem] md:leading-[1.8]">
+              <div className="type-body mt-10 max-w-xl space-y-5 text-on-surface-variant">
                 {intro.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}
               </div>
             </div>
-            <div className="relative flex min-h-0 w-full justify-center md:justify-end">
-              <div className="glass-card relative z-10 aspect-square w-[min(100%,min(420px,min(85vw,min(46dvh,calc(100dvh-15rem)))))] max-w-full shrink-0 overflow-hidden rounded-xl shadow-lg md:ml-auto md:w-[min(420px,min(54dvh,calc(100dvh-10.5rem)))]">
-                <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
+
+            <div className="col-span-12 md:col-span-4 md:col-start-9">
+              <div className="mx-auto w-full max-w-[260px] sm:max-w-[300px] md:ml-auto md:mr-0 md:max-w-[340px]">
+                <div className="duotone-wrap duotone-onload panel-rise relative aspect-[3/4] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low">
                   <NextImage
                     src={portrait}
-                    alt="Portrait"
+                    alt="Sandun Madhushan"
                     fill
-                    sizes="(max-width: 768px) 90vw, 420px"
+                    sizes="(max-width: 640px) 260px, (max-width: 768px) 300px, 340px"
                     unoptimized
-                    className="object-cover object-[center_24%] scale-105 transition-transform duration-700 [@media(hover:hover)]:hover:scale-110"
+                    className="duotone object-cover object-[center_22%]"
                     priority
                   />
                 </div>
-              </div>
-              <div className="pointer-events-none absolute -bottom-8 -right-4 -z-10 h-48 w-48 rounded-full bg-primary-container/20 blur-[80px] md:-bottom-10 md:-right-10 md:h-64 md:w-64 md:blur-[100px]" />
-            </div>
-          </div>
-        </section>
-
-        <ScrollReveal>
-          <section className="mx-auto mb-40 max-w-[1440px] px-6 md:px-12">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {statCards.map((s) => (
-                <div
-                  key={s.label}
-                  className="group flex h-64 flex-col justify-between rounded-xl bg-surface-container-low p-10 transition-colors duration-500 hover:bg-surface-container"
-                >
-                  <MIcon
-                    name={s.icon}
-                    className="text-4xl text-primary"
-                    filled
-                  />
-                  <div>
-                    <h3 className="mb-2 text-5xl font-black tracking-tighter">
-                      <CountUpOnView value={s.value} />
-                    </h3>
-                    <p className="font-medium tracking-tight text-on-surface-variant">
-                      {s.label}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </ScrollReveal>
-
-        <ScrollReveal>
-          <section className="mx-auto max-w-[1440px] px-6 md:px-12">
-            <div className="mb-16 flex flex-col items-end gap-12 md:flex-row">
-              <div className="md:w-1/3">
-                <h2 className="text-[2.5rem] font-bold leading-none tracking-tighter">
-                  Journey &amp; <br />
-                  <span className="text-primary-container">Evolution</span>
-                </h2>
-              </div>
-              <div className="md:w-2/3">
-                <div className="mb-2 h-px w-full bg-outline-variant/30" />
-              </div>
-            </div>
-            <div className="relative py-12">
-              {timeline.length === 0 ? (
-                <p className="pl-6 text-on-surface-variant/70 md:pl-0 md:text-center">
-                  Timeline entries can be added from the admin About section.
-                </p>
-              ) : (
-                <>
-                  <div className="absolute bottom-0 left-0 top-0 w-[2px] bg-surface-container-highest md:left-1/2 md:-translate-x-1/2" />
-                  {timeline.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="relative mb-32 grid grid-cols-1 items-center gap-12 md:grid-cols-2"
-                    >
-                      {item.align === "right" ? (
-                        <>
-                          <div className="hidden md:block">
-                            {item.image && (
-                              <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
-                                <NextImage
-                                  src={resolveDisplayImageSrc(item.image)}
-                                  alt=""
-                                  width={640}
-                                  height={360}
-                                  className="h-full w-full rounded object-cover shadow-lg"
-                                  unoptimized
-                                />
-                              </div>
-                            )}
-                          </div>
-                          <div>
-                            <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                              {item.period}
-                            </span>
-                            <h4 className="mb-4 text-2xl font-bold">
-                              {item.title}
-                            </h4>
-                            <p className="max-w-md leading-relaxed text-on-surface-variant">
-                              {item.body}
-                            </p>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className={item.image ? "md:text-right" : ""}>
-                            <span className="mb-4 inline-block rounded-full bg-surface-container-highest px-4 py-1 text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                              {item.period}
-                            </span>
-                            <h4 className="mb-4 text-2xl font-bold">
-                              {item.title}
-                            </h4>
-                            <p
-                              className={`max-w-md leading-relaxed text-on-surface-variant ${item.image ? "md:ml-auto" : ""}`}
-                            >
-                              {item.body}
-                            </p>
-                          </div>
-                          <div className="hidden md:block">
-                            {item.image && (
-                              <div className="glass-card aspect-video overflow-hidden rounded-lg bg-surface-container-low p-2">
-                                <NextImage
-                                  src={resolveDisplayImageSrc(item.image)}
-                                  alt=""
-                                  width={640}
-                                  height={360}
-                                  className="h-full w-full rounded object-cover shadow-lg"
-                                  unoptimized
-                                />
-                              </div>
-                            )}
-                          </div>
-                        </>
-                      )}
-                      <div className="absolute left-[-5px] top-0 h-3 w-3 rounded-full bg-primary-container shadow-[0_0_15px_rgba(79,70,229,0.5)] md:left-1/2 md:-translate-x-1/2" />
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
-          </section>
-        </ScrollReveal>
-
-        <ScrollReveal>
-          <section className="mx-auto mt-48 max-w-[1440px] px-6 md:px-12">
-            <h3 className="label-md mb-16 text-center text-[0.75rem] uppercase tracking-[0.2em] text-on-surface-variant/50">
-              Selected Skill Artifacts
-            </h3>
-            <div className="flex flex-wrap justify-center gap-12 opacity-70">
-              {skillArtifacts.map((s) => (
-                <div key={s.name} className="flex flex-col items-center gap-4">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-lg glass-card text-primary">
-                    <SkillTechIcon name={s.name} iconKey={s.icon} size={36} />
-                  </div>
-                  <span className="text-[0.75rem] font-bold uppercase tracking-widest">
-                    {s.name}
+                <div className="mt-3 flex items-baseline justify-between">
+                  <span className="type-mono-sm text-on-surface-variant">
+                    Fig. 01 — Portrait
                   </span>
                 </div>
-              ))}
+              </div>
             </div>
-          </section>
-        </ScrollReveal>
+          </div>
+        </Container>
+
+        {/* ---------- STAT RAIL ---------- */}
+        <Container className="mt-24 md:mt-36">
+          <Rule />
+          <dl className="grid grid-cols-1 sm:grid-cols-3">
+            {statCards.map((s, i) => (
+              <div
+                key={s.label}
+                className={`border-b border-outline-variant py-10 sm:border-b-0 ${
+                  i > 0 ? "sm:border-l sm:border-outline-variant sm:pl-8" : ""
+                }`}
+              >
+                <dd className="type-num font-display text-[clamp(3rem,7vw,5.5rem)] leading-[0.9] text-on-surface">
+                  <CountUpOnView value={s.value} />
+                </dd>
+                <dt className="type-mono-sm mt-3 text-on-surface-variant">
+                  {s.label}
+                </dt>
+              </div>
+            ))}
+          </dl>
+          <Rule className="hidden sm:block" />
+        </Container>
+
+        {/* ---------- TIMELINE ---------- */}
+        <Container className="mt-28 md:mt-44">
+          <Rule />
+          <div className="pt-4">
+            <Eyebrow index="02">Journey &amp; Evolution</Eyebrow>
+          </div>
+
+          {timeline.length === 0 ? (
+            <p className="type-mono mt-12 border border-dashed border-outline-variant py-16 text-center text-on-surface-variant">
+              Timeline entries can be added from the admin About section.
+            </p>
+          ) : (
+            <div className="relative mt-16 pl-8 md:mt-24 md:pl-0">
+              <TimelineLine className="left-0 md:left-[16.6667%]" />
+
+              <StaggerIn selector="[data-entry]" stagger={0.12}>
+                {timeline.map((item, idx) => (
+                  <article
+                    key={idx}
+                    data-entry
+                    className="relative grid grid-cols-12 gap-y-5 pb-16 last:pb-0 md:gap-8 md:pb-24"
+                  >
+                    {/* Node on the spine */}
+                    <span
+                      aria-hidden
+                      className="absolute -left-8 top-1.5 size-2 bg-primary-container md:left-[16.6667%] md:-translate-x-1/2"
+                    />
+
+                    <div className="col-span-12 md:col-span-2">
+                      <span className="type-mono tabular-nums text-primary">
+                        {item.period}
+                      </span>
+                    </div>
+
+                    <div className="col-span-12 md:col-span-5 md:col-start-4">
+                      <h3 className="type-h2 text-on-surface">{item.title}</h3>
+                      <p className="type-body mt-4 text-on-surface-variant">
+                        {item.body}
+                      </p>
+                    </div>
+
+                    {item.image ? (
+                      <div className="col-span-12 md:col-span-3 md:col-start-10">
+                        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low">
+                          <NextImage
+                            src={resolveDisplayImageSrc(item.image)}
+                            alt=""
+                            fill
+                            sizes="(max-width: 768px) 100vw, 280px"
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+                  </article>
+                ))}
+              </StaggerIn>
+            </div>
+          )}
+        </Container>
+
+        {/* ---------- ARTIFACTS ---------- */}
+        <Container className="mt-28 md:mt-40">
+          <Rule />
+          <div className="pt-4">
+            <Eyebrow index="03">Selected Skill Artifacts</Eyebrow>
+          </div>
+          <StaggerIn
+            selector="[data-artifact]"
+            className="mt-12 flex flex-wrap gap-x-12 gap-y-10"
+          >
+            {skillArtifacts.map((s) => (
+              <div
+                key={s.name}
+                data-artifact
+                className="group flex items-center gap-4"
+              >
+                <span className="flex size-14 items-center justify-center rounded-sm border border-outline-variant text-on-surface-variant transition-colors duration-300 group-hover:border-primary group-hover:text-primary">
+                  <SkillTechIcon name={s.name} iconKey={s.icon} size={28} />
+                </span>
+                <span className="type-mono text-on-surface">{s.name}</span>
+              </div>
+            ))}
+          </StaggerIn>
+        </Container>
       </main>
     </PageFade>
   );

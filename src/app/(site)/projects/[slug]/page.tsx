@@ -1,15 +1,18 @@
 import NextImage from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { Newspaper } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Newspaper } from "lucide-react";
 import { SiGithub } from "react-icons/si";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
+import { StaggerIn } from "@/components/motion/stagger-in";
+import { RevealText } from "@/components/motion/reveal-text";
 import { ProjectDetailLayout } from "@/components/projects/project-detail-layout";
-import { MIcon } from "@/components/m-icon";
+import { Container, Eyebrow, Rule } from "@/components/ui/primitives";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import { isRemoteImageSrc } from "@/lib/image-url";
 import { projectGallerySrcs, projectHeroSrc } from "@/lib/project-media";
+import { parseProjectCategories } from "@/lib/project-categories";
 import { getProjectBySlug, getProjects } from "@/lib/queries";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -25,7 +28,7 @@ function isDividerParagraph(text: string): boolean {
   const t = text.trim();
   if (!t) return false;
   // Treat repeated separator glyphs as a visual divider, not content text.
-  return /^[\u2500\u2501\-_*=~·•]{6,}$/.test(t);
+  return /^[─━\-_*=~·•]{6,}$/.test(t);
 }
 
 function paragraphToBullets(text: string): string[] | null {
@@ -50,7 +53,9 @@ export default async function ProjectDetailPage({
   const sp = (await searchParams) ?? {};
   const preview = sp.preview === "1";
 
-  const project = preview ? await prisma.project.findFirst({ where: { slug } }) : await getProjectBySlug(slug);
+  const project = preview
+    ? await prisma.project.findFirst({ where: { slug } })
+    : await getProjectBySlug(slug);
   if (!project) notFound();
 
   if (preview) {
@@ -64,7 +69,10 @@ export default async function ProjectDetailPage({
   const next = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : null;
 
   const challenges = (project.challenges as Challenge[] | null) ?? [];
-  const resolutionsRaw = ((project as unknown as { resolutions?: unknown }).resolutions as Resolution[] | null) ?? [];
+  const resolutionsRaw =
+    ((project as unknown as { resolutions?: unknown }).resolutions as
+      | Resolution[]
+      | null) ?? [];
   const results = (project.results as Result[] | null) ?? [];
   const resolutions =
     resolutionsRaw.length > 0
@@ -75,6 +83,19 @@ export default async function ProjectDetailPage({
         }));
   const heroSrc = projectHeroSrc(project, DEFAULT_PORTRAIT_SRC);
   const artifacts = projectGallerySrcs(project);
+  const categories = parseProjectCategories(project.category);
+
+  const links = [
+    project.liveLink
+      ? { href: project.liveLink, label: "Live demo", Icon: ArrowUpRight }
+      : null,
+    project.githubLink
+      ? { href: project.githubLink, label: "Source", Icon: SiGithub }
+      : null,
+    project.blogLink
+      ? { href: project.blogLink, label: "Blog post", Icon: Newspaper }
+      : null,
+  ].filter(Boolean) as { href: string; label: string; Icon: typeof ArrowUpRight }[];
 
   return (
     <PageFade>
@@ -84,268 +105,352 @@ export default async function ProjectDetailPage({
           projectId={project.id}
           projectTitle={project.title}
           published={project.published}
-          topClassName="top-[72px]"
+          topClassName="top-[68px]"
         />
       ) : null}
-      <main className="pb-24 pt-32">
+
+      <main id="main" className="pb-28 pt-32 md:pt-40">
         <ProjectDetailLayout
           title={project.title}
           githubLink={project.githubLink}
           liveLink={project.liveLink}
           blogLink={project.blogLink}
           header={
-            <header className="mx-auto mb-24 max-w-[1440px] px-6 md:px-12">
-              <div className="grid grid-cols-1 items-end gap-12 md:grid-cols-12">
-                <div className="md:col-span-8">
-                  <span className="label-md mb-4 block font-bold uppercase tracking-widest text-primary">
-                    {preview ? "Preview" : "Case Study"}
+            <Container>
+              <header className="mb-16 md:mb-24">
+                <Rule />
+                <div className="flex flex-wrap items-baseline justify-between gap-4 pt-4">
+                  <Eyebrow>{preview ? "Preview" : "Case Study"}</Eyebrow>
+                  <span className="type-mono-sm text-on-surface-variant">
+                    {categories.join(" · ")}
                   </span>
-                  <h1 className="mb-6 text-[2.5rem] font-extrabold leading-[0.95] tracking-tighter md:max-w-3xl md:text-[3.5rem]">
-                    {project.title}
-                  </h1>
-                  <p className="max-w-2xl text-xl font-medium leading-relaxed text-on-surface-variant">
-                    {project.description}
-                  </p>
-                  {project.blogLink ? (
-                    <a
-                      href={project.blogLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-5 inline-flex items-center gap-2 text-base font-bold text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary/90"
-                    >
-                      <Newspaper className="size-5 shrink-0" aria-hidden />
-                      Read the blog post
-                    </a>
-                  ) : null}
                 </div>
-                <div className="flex flex-col gap-4 md:col-span-4">
-                  {project.liveLink && (
-                    <a
-                      href={project.liveLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex w-full items-center justify-center gap-3 rounded-lg bg-primary-container py-4 text-lg font-bold text-on-primary-container shadow-[0_0_15px_rgba(79,70,229,0.3)] transition-all hover:opacity-90"
-                    >
-                      <MIcon name="launch" />
-                      Live Demo
-                    </a>
-                  )}
-                  {project.githubLink && (
-                    <a
-                      href={project.githubLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high py-4 text-lg font-bold text-on-surface transition-all hover:bg-surface-bright"
-                    >
-                      <SiGithub className="size-6 shrink-0" aria-hidden />
-                      View GitHub
-                    </a>
-                  )}
-                  {project.blogLink && (
-                    <a
-                      href={project.blogLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex w-full items-center justify-center gap-3 rounded-lg border border-outline-variant/15 bg-surface-container-high py-4 text-lg font-bold text-on-surface transition-all hover:bg-surface-bright"
-                    >
-                      <Newspaper className="size-6 shrink-0" aria-hidden />
-                      Blog post
-                    </a>
-                  )}
-                </div>
-              </div>
-            </header>
+
+                <h1 className="type-display mt-10 max-w-4xl text-on-surface md:mt-14">
+                  <RevealText text={project.title} as="span" onLoad delay={0.08} />
+                </h1>
+
+                <p className="type-lead mt-8 max-w-2xl text-on-surface-variant">
+                  {project.description}
+                </p>
+
+                {links.length > 0 ? (
+                  <div className="mt-10 flex flex-wrap gap-3">
+                    {links.map(({ href, label, Icon }) => (
+                      <a
+                        key={href}
+                        href={href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="type-mono group inline-flex items-center gap-2.5 rounded-sm border border-outline-variant px-6 py-3.5 text-on-surface transition-colors hover:border-primary hover:text-primary"
+                      >
+                        <Icon className="size-4 shrink-0" aria-hidden />
+                        {label}
+                      </a>
+                    ))}
+                  </div>
+                ) : null}
+              </header>
+            </Container>
           }
         >
-        <section className="mx-auto mb-32 max-w-[1440px] px-6 md:px-12">
-          <div className="relative aspect-16/10 w-full min-h-[200px] max-h-[min(80dvh,520px)] overflow-hidden rounded-xl bg-surface-container sm:aspect-video sm:min-h-[220px] md:aspect-auto md:h-[min(520px,calc(100vw-6rem))] md:max-h-none lg:h-[600px]">
-            <NextImage
-              src={heroSrc}
-              alt={project.title}
-              fill
-              className="object-cover"
-              priority
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) min(100vw, 900px), min(1320px, 90vw)"
-              unoptimized={isRemoteImageSrc(heroSrc)}
-            />
-          </div>
-        </section>
+          {/* ---------- HERO IMAGE ---------- */}
+          <Container>
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low md:aspect-[21/9]">
+              <NextImage
+                src={heroSrc}
+                alt={project.title}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+                unoptimized={isRemoteImageSrc(heroSrc)}
+              />
+            </div>
+          </Container>
 
-        <section className="mx-auto mb-40 grid max-w-[1440px] grid-cols-1 gap-16 px-6 md:grid-cols-12 md:px-12">
-          <div className="md:col-span-7">
-            <h2 className="mb-8 text-[1.75rem] font-semibold tracking-tight text-on-surface">The Vision &amp; Overview</h2>
-            <div className="space-y-6 text-lg leading-[1.6] text-on-surface-variant">
-              {project.content.split("\n\n").map((para, i) =>
-                isDividerParagraph(para) ? (
-                  <hr key={i} className="my-2 border-outline-variant/25" />
-                ) : paragraphToBullets(para) ? (
-                  <ul key={i} className="list-disc space-y-2 pl-6">
-                    {paragraphToBullets(para)!.map((item, idx) => (
-                      <li key={`${i}-${idx}`}>{item}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p key={i} className="whitespace-pre-line">
-                    {para}
-                  </p>
-                ),
-              )}
-            </div>
-          </div>
-          <div className="space-y-12 md:col-span-5">
-            <div className="relative overflow-hidden rounded-xl bg-surface-container-low p-10">
-              <div className="absolute left-0 top-0 h-full w-1 bg-primary-container" />
-              <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-primary">Highlights</h3>
-              <p className="mb-6 text-xl font-medium">Core deliverables</p>
-              <ul className="space-y-3 text-on-surface-variant">
-                {project.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <MIcon name="check_circle" className="mt-1 text-sm text-primary" />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Tech Stack</h3>
-              <div className="flex flex-wrap gap-3">
-                {project.technologies.map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-outline-variant/15 bg-surface-container-high px-4 py-2 text-sm font-semibold text-primary"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
+          {/* ---------- OVERVIEW + STICKY META RAIL ---------- */}
+          <Container className="mt-24 md:mt-36">
+            <div className="grid grid-cols-12 gap-y-14 md:gap-8">
+              {/* Sticky metadata */}
+              <aside className="col-span-12 md:col-span-3">
+                <div className="md:sticky md:top-28">
+                  <Rule />
+                  <dl className="pt-5">
+                    <dt className="type-mono-sm text-on-surface-variant">
+                      Stack
+                    </dt>
+                    <dd className="mt-3 flex flex-wrap gap-x-3 gap-y-2">
+                      {project.technologies.map((t) => (
+                        <span
+                          key={t}
+                          className="type-mono-sm text-on-surface"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </dd>
 
-        {artifacts.length > 0 && (
-          <section className="mx-auto mb-40 max-w-[1440px] px-6 md:px-12">
-            <h2 className="mb-12 text-[1.75rem] font-semibold tracking-tight text-on-surface">Project Artifacts</h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {artifacts.map((src, i) => (
-                <div key={src + i} className="group relative aspect-4/3 overflow-hidden rounded-xl bg-surface-container">
-                  <NextImage
-                    src={src}
-                    alt=""
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                    unoptimized={isRemoteImageSrc(src)}
-                  />
-                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-primary-container/20 opacity-0 transition-opacity group-hover:opacity-100">
-                    <MIcon name="zoom_in" className="text-4xl text-white" />
-                  </div>
+                    <dt className="type-mono-sm mt-8 text-on-surface-variant">
+                      Category
+                    </dt>
+                    <dd className="type-mono-sm mt-3 text-on-surface">
+                      {categories.join(" · ")}
+                    </dd>
+
+                    {project.features.length > 0 ? (
+                      <>
+                        <dt className="type-mono-sm mt-8 text-on-surface-variant">
+                          Deliverables
+                        </dt>
+                        <dd className="mt-3">
+                          <ul className="flex flex-col gap-2.5">
+                            {project.features.map((f) => (
+                              <li
+                                key={f}
+                                className="flex gap-2.5 text-sm leading-relaxed text-on-surface-variant"
+                              >
+                                <span
+                                  aria-hidden
+                                  className="mt-2 size-1 shrink-0 bg-primary-container"
+                                />
+                                {f}
+                              </li>
+                            ))}
+                          </ul>
+                        </dd>
+                      </>
+                    ) : null}
+                  </dl>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              </aside>
 
-        {(challenges.length > 0 || resolutions.length > 0) && (
-          <section className="mx-auto mb-40 max-w-[1440px] px-6 md:px-12">
-            <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-              <div className="space-y-8">
-                <h2 className="text-[1.75rem] font-semibold tracking-tight text-on-surface">The Friction</h2>
-                {challenges.map((c, i) => (
-                  <div key={i} className="rounded-r-lg border-l-4 border-error/50 bg-surface-container-lowest p-8">
-                    <h4 className="mb-3 text-lg font-bold text-on-surface">{c.title}</h4>
-                    <p className="leading-relaxed text-on-surface-variant">{c.description}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="space-y-8">
-                <h2 className="text-[1.75rem] font-semibold tracking-tight text-on-surface">The Resolution</h2>
-                {resolutions.map((r, i) => (
-                  <div key={i} className="rounded-r-lg border-l-4 border-primary-container bg-surface-container-low p-8">
-                    <h4 className="mb-3 text-lg font-bold text-primary">{r.title}</h4>
-                    <p className="leading-relaxed text-on-surface-variant">{r.description}</p>
-                  </div>
-                ))}
+              {/* Long-form content */}
+              <div className="col-span-12 md:col-span-8 md:col-start-5">
+                <Rule />
+                <div className="pt-5">
+                  <Eyebrow index="01">Overview</Eyebrow>
+                </div>
+                <div className="type-body mt-10 space-y-6 text-on-surface-variant">
+                  {project.content.split("\n\n").map((para, i) =>
+                    isDividerParagraph(para) ? (
+                      <Rule key={i} className="my-10" />
+                    ) : paragraphToBullets(para) ? (
+                      <ul key={i} className="space-y-3">
+                        {paragraphToBullets(para)!.map((item, idx) => (
+                          <li key={`${i}-${idx}`} className="flex gap-3">
+                            <span
+                              aria-hidden
+                              className="mt-2.5 size-1 shrink-0 bg-primary-container"
+                            />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p key={i} className="whitespace-pre-line">
+                        {para}
+                      </p>
+                    ),
+                  )}
+                </div>
               </div>
             </div>
-          </section>
-        )}
+          </Container>
 
-        {results.length > 0 && (
-          <section className="mx-auto mb-40 max-w-[1440px] px-6 md:px-12">
-            <div className="relative flex flex-col items-center justify-between gap-12 overflow-hidden rounded-2xl bg-primary-container p-16 md:flex-row">
-              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,#3323cc,transparent_70%)] opacity-50" />
-              <div className="relative z-10 text-center md:text-left">
-                <h2 className="mb-4 text-4xl font-black text-on-primary-container">Impact Driven.</h2>
-                <p className="max-w-md text-xl text-on-primary-container/80">Outcomes from shipping this build.</p>
+          {/* ---------- ARTIFACTS ---------- */}
+          {artifacts.length > 0 && (
+            <Container className="mt-28 md:mt-40">
+              <Rule />
+              <div className="flex items-baseline justify-between pt-4">
+                <Eyebrow index="02">Artifacts</Eyebrow>
+                <span className="type-mono-sm tabular-nums text-on-surface-variant">
+                  {String(artifacts.length).padStart(2, "0")}
+                </span>
               </div>
-              <div className="relative z-10 flex flex-wrap justify-center gap-12">
-                {results.map((r) => (
-                  <div key={r.label} className="text-center">
-                    <div className="mb-2 text-6xl font-black text-white">{r.value}</div>
-                    <div className="text-xs font-bold uppercase tracking-[0.2em] text-on-primary-container/60">
-                      {r.label}
+              <StaggerIn
+                selector="figure"
+                className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+              >
+                {artifacts.map((src, i) => (
+                  <figure
+                    key={src + i}
+                    className="group relative aspect-[4/3] overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low"
+                  >
+                    <NextImage
+                      src={src}
+                      alt=""
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
+                      unoptimized={isRemoteImageSrc(src)}
+                    />
+                    <figcaption className="type-mono-sm absolute bottom-0 left-0 bg-background/85 px-3 py-1.5 text-on-surface-variant backdrop-blur-sm">
+                      Fig. {String(i + 1).padStart(2, "0")}
+                    </figcaption>
+                  </figure>
+                ))}
+              </StaggerIn>
+            </Container>
+          )}
+
+          {/* ---------- FRICTION ↔ RESOLUTION LEDGER ---------- */}
+          {(challenges.length > 0 || resolutions.length > 0) && (
+            <Container className="mt-28 md:mt-40">
+              <Rule />
+              <div className="pt-4">
+                <Eyebrow index="03">Problems &amp; Resolutions</Eyebrow>
+              </div>
+
+              <div className="mt-12 md:mt-16">
+                {challenges.map((c, i) => {
+                  const r = resolutions[i];
+                  return (
+                    <div
+                      key={i}
+                      className="grid grid-cols-12 gap-y-6 border-t border-outline-variant py-10 last:border-b md:gap-8 md:py-14"
+                    >
+                      <span className="type-mono col-span-12 tabular-nums text-on-surface-variant md:col-span-1">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+
+                      <div className="col-span-12 md:col-span-5">
+                        <span className="type-mono-sm text-[color:var(--ember)]">
+                          Friction
+                        </span>
+                        <h3 className="type-h3 mt-3 text-on-surface">
+                          {c.title}
+                        </h3>
+                        <p className="mt-3 leading-relaxed text-on-surface-variant">
+                          {c.description}
+                        </p>
+                      </div>
+
+                      {r ? (
+                        <div className="col-span-12 md:col-span-5 md:col-start-8">
+                          <span className="type-mono-sm text-primary">
+                            Resolution
+                          </span>
+                          <h3 className="type-h3 mt-3 text-on-surface">
+                            {r.title}
+                          </h3>
+                          <p className="mt-3 leading-relaxed text-on-surface-variant">
+                            {r.description}
+                          </p>
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+
+                {/* Resolutions with no paired challenge still get shown. */}
+                {resolutions.slice(challenges.length).map((r, i) => (
+                  <div
+                    key={`extra-${i}`}
+                    className="grid grid-cols-12 gap-y-6 border-t border-outline-variant py-10 last:border-b md:gap-8 md:py-14"
+                  >
+                    <span className="type-mono col-span-12 tabular-nums text-on-surface-variant md:col-span-1">
+                      {String(challenges.length + i + 1).padStart(2, "0")}
+                    </span>
+                    <div className="col-span-12 md:col-span-5 md:col-start-8">
+                      <span className="type-mono-sm text-primary">
+                        Resolution
+                      </span>
+                      <h3 className="type-h3 mt-3 text-on-surface">{r.title}</h3>
+                      <p className="mt-3 leading-relaxed text-on-surface-variant">
+                        {r.description}
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-          </section>
-        )}
-
-        <section className="mx-auto mb-32 flex max-w-[1440px] flex-col items-center justify-between gap-8 border-t border-outline-variant/10 px-6 pt-20 md:flex-row md:px-12">
-          {prev ? (
-            <Link
-              href={`/projects/${prev.slug}`}
-              className="group flex items-center gap-4 text-on-surface-variant transition-colors hover:text-on-surface"
-            >
-              <MIcon name="arrow_back" className="transition-transform group-hover:-translate-x-2" />
-              <div>
-                <span className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant/45">
-                  Previous
-                </span>
-                <span className="text-xl font-bold">{prev.title}</span>
-              </div>
-            </Link>
-          ) : (
-            <div />
+            </Container>
           )}
-          <Link
-            href="/projects"
-            className="rounded-full border border-outline-variant/15 bg-surface-container-high px-10 py-5 font-bold transition-all hover:bg-surface-bright"
-          >
-            Back to Projects
-          </Link>
-          {next ? (
-            <Link
-              href={`/projects/${next.slug}`}
-              className="group flex items-center gap-4 text-right text-on-surface-variant transition-colors hover:text-on-surface"
-            >
-              <div>
-                <span className="block text-xs font-bold uppercase tracking-widest text-on-surface-variant/45">
-                  Next Project
-                </span>
-                <span className="text-xl font-bold">{next.title}</span>
-              </div>
-              <MIcon name="arrow_forward" className="transition-transform group-hover:translate-x-2" />
-            </Link>
-          ) : (
-            <div />
-          )}
-        </section>
 
-        <div className="fixed bottom-8 left-8 z-40 hidden max-w-[280px] lg:block">
-          <div className="relative overflow-hidden rounded-lg border border-outline-variant/15 bg-surface-container-lowest p-4 shadow-lg">
-            <div className="absolute left-0 top-0 h-full w-1 bg-primary" />
-            <div className="mb-2 font-mono text-[10px] text-primary/60">// deploy_status.sh</div>
-            <div className="font-mono text-[11px] leading-tight text-on-surface-variant">
-              system.status == &quot;optimized&quot;
-              <br />
-              metrics.load &lt; 0.04
-              <br />
-              env.sync(&quot;active&quot;)
+          {/* ---------- RESULTS ---------- */}
+          {results.length > 0 && (
+            <Container className="mt-28 md:mt-40">
+              <Rule />
+              <div className="pt-4">
+                <Eyebrow index="04">Outcomes</Eyebrow>
+              </div>
+              <dl className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+                {results.map((r, i) => (
+                  <div
+                    key={r.label}
+                    className={`border-t border-outline-variant py-10 ${
+                      i % 3 !== 0 ? "lg:border-l lg:pl-8" : ""
+                    }`}
+                  >
+                    <dd className="type-num font-display text-[clamp(3rem,7vw,5.5rem)] leading-[0.9] text-primary">
+                      {r.value}
+                    </dd>
+                    <dt className="type-mono-sm mt-3 text-on-surface-variant">
+                      {r.label}
+                    </dt>
+                  </div>
+                ))}
+              </dl>
+              <Rule />
+            </Container>
+          )}
+
+          {/* ---------- PREV / NEXT ---------- */}
+          <Container className="mt-28 md:mt-40">
+            <Rule />
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              {prev ? (
+                <Link
+                  href={`/projects/${prev.slug}`}
+                  className="group flex flex-col gap-2 border-b border-outline-variant py-10 transition-colors hover:bg-surface-container-lowest md:border-b-0 md:border-r md:pr-8"
+                >
+                  <span className="type-mono-sm flex items-center gap-2 text-on-surface-variant">
+                    <ArrowLeft
+                      className="size-3.5 transition-transform duration-300 group-hover:-translate-x-1"
+                      aria-hidden
+                    />
+                    Previous
+                  </span>
+                  <span className="type-h3 text-on-surface transition-colors group-hover:text-primary">
+                    {prev.title}
+                  </span>
+                </Link>
+              ) : (
+                <div className="hidden md:block" />
+              )}
+
+              {next ? (
+                <Link
+                  href={`/projects/${next.slug}`}
+                  className="group flex flex-col items-start gap-2 border-b border-outline-variant py-10 transition-colors hover:bg-surface-container-lowest md:items-end md:border-b-0 md:pl-8 md:text-right"
+                >
+                  <span className="type-mono-sm flex items-center gap-2 text-on-surface-variant">
+                    Next
+                    <ArrowRight
+                      className="size-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                      aria-hidden
+                    />
+                  </span>
+                  <span className="type-h3 text-on-surface transition-colors group-hover:text-primary">
+                    {next.title}
+                  </span>
+                </Link>
+              ) : (
+                <div className="hidden md:block" />
+              )}
             </div>
-          </div>
-        </div>
+            <Rule />
+
+            <div className="mt-10 flex justify-center">
+              <Link
+                href="/projects"
+                className="type-mono link-wipe inline-flex items-center gap-2 text-on-surface-variant transition-colors hover:text-primary"
+              >
+                <ArrowLeft className="size-3.5" aria-hidden />
+                All projects
+              </Link>
+            </div>
+          </Container>
         </ProjectDetailLayout>
       </main>
     </PageFade>

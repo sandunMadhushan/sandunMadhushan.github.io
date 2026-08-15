@@ -1,15 +1,33 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter_Tight, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppToaster } from "@/components/app-toaster";
 import { DisableContextMenu } from "@/components/disable-context-menu";
 import { ScrollToTopOnRoute } from "@/components/motion/scroll-to-top";
 import { SiteJsonLd } from "@/components/seo/site-json-ld";
 import { getSiteUrl } from "@/lib/site-url";
+import { ThemeProvider, themeInitScript } from "@/components/theme/theme-provider";
 
-const inter = Inter({
+/* Body — tight grotesk, variable weight. */
+const interTight = Inter_Tight({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-inter-tight",
+  display: "swap",
+});
+
+/* Display — editorial serif carrying every oversized headline. */
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-instrument-serif",
+  display: "swap",
+});
+
+/* Metadata, labels and numerals. */
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains-mono",
+  display: "swap",
 });
 
 const siteTitle = "Sandun Madhushan | Aspiring Software Engineer";
@@ -108,22 +126,33 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html
+      lang="en"
+      data-theme="dark"
+      className={`${interTight.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
-          rel="stylesheet"
+        {/* Applies the stored theme before first paint — prevents a flash
+            of the wrong palette. Must stay ahead of any styled markup. */}
+        <script
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
         />
       </head>
-      <body
-        className={`${inter.variable} min-h-screen font-sans`}
-        suppressHydrationWarning
-      >
-        <DisableContextMenu />
-        <SiteJsonLd />
-        <ScrollToTopOnRoute />
-        {children}
-        <AppToaster />
+      <body className="grain min-h-screen font-sans" suppressHydrationWarning>
+        <ThemeProvider>
+          <a
+            href="#main"
+            className="sr-only z-[100] rounded-sm bg-primary-container px-4 py-2 text-sm font-semibold text-on-primary-container focus:not-sr-only focus:absolute focus:left-4 focus:top-4"
+          >
+            Skip to content
+          </a>
+          <DisableContextMenu />
+          <SiteJsonLd />
+          <ScrollToTopOnRoute />
+          {children}
+          <AppToaster />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SkillsLoading() {
   return (
-    <main className="mx-auto max-w-[1440px] px-6 pb-20 pt-32 md:px-12">
+    <main className="mx-auto max-w-[1512px] px-5 sm:px-8 pb-20 pt-32 md:pt-40 lg:px-12">
       <header className="mb-24 space-y-4">
         <Skeleton className="h-12 w-full max-w-md" />
         <Skeleton className="h-12 w-full max-w-sm" />
@@ -11,7 +11,7 @@ export default function SkillsLoading() {
       </header>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-        <section className="rounded-xl bg-surface-container-low p-8 md:col-span-8">
+        <section className="rounded-sm bg-surface-container-low p-8 md:col-span-8">
           <div className="mb-12 flex items-end justify-between">
             <div className="space-y-2">
               <Skeleton className="h-3 w-36" />
@@ -32,7 +32,7 @@ export default function SkillsLoading() {
           </div>
         </section>
 
-        <section className="rounded-xl bg-surface-container-low p-8 md:col-span-4">
+        <section className="rounded-sm bg-surface-container-low p-8 md:col-span-4">
           <div className="mb-8 space-y-2">
             <Skeleton className="h-3 w-24" />
             <Skeleton className="h-8 w-40" />
@@ -50,9 +50,9 @@ export default function SkillsLoading() {
           </div>
         </section>
 
-        <Skeleton className="h-52 w-full rounded-xl md:col-span-12" />
-        <Skeleton className="h-64 w-full rounded-xl md:col-span-4" />
-        <Skeleton className="h-64 w-full rounded-xl md:col-span-8" />
+        <Skeleton className="h-52 w-full rounded-sm md:col-span-12" />
+        <Skeleton className="h-64 w-full rounded-sm md:col-span-4" />
+        <Skeleton className="h-64 w-full rounded-sm md:col-span-8" />
       </div>
 
       <Skeleton className="mt-24 h-44 w-full rounded-2xl" />

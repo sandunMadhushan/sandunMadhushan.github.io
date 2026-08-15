@@ -49,14 +49,14 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, hea
         role="navigation"
         aria-label="Project quick actions"
         className={cn(
-          "fixed left-0 right-0 z-40 border-b border-outline-variant/10 bg-surface/90 shadow-sm backdrop-blur-xl transition-[transform,opacity] duration-300 ease-out",
+          "fixed left-0 right-0 z-40 border-b border-outline-variant bg-background/90 backdrop-blur-xl transition-[transform,opacity] duration-300 ease-out",
           showSticky
             ? "top-16 translate-y-0 opacity-100"
             : "top-16 pointer-events-none -translate-y-full opacity-0",
         )}
       >
-        <div className="mx-auto flex max-w-[1440px] items-center gap-3 px-6 py-2.5 md:gap-4 md:px-12">
-          <h2 className="min-w-0 flex-1 truncate text-sm font-bold tracking-tight text-on-surface md:text-[0.9375rem]">
+        <div className="mx-auto flex max-w-[1512px] items-center gap-3 px-5 py-3 sm:px-8 md:gap-4 lg:px-12">
+          <h2 className="type-mono min-w-0 flex-1 truncate text-on-surface">
             {title}
           </h2>
           {hasActions ? (
@@ -67,9 +67,9 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, hea
                   target="_blank"
                   rel="noreferrer"
                   tabIndex={showSticky ? undefined : -1}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary-container px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-on-primary-container transition-opacity hover:opacity-90 md:px-3.5 md:text-xs"
+                  className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm bg-primary-container px-3 py-2 text-on-primary-container transition-opacity hover:opacity-90 md:px-3.5"
                 >
-                  <MIcon name="launch" className="text-base" />
+                  <MIcon name="launch" className="text-sm" />
                   <span className="hidden sm:inline">Live</span>
                 </a>
               ) : null}
@@ -79,9 +79,9 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, hea
                   target="_blank"
                   rel="noreferrer"
                   tabIndex={showSticky ? undefined : -1}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-outline-variant/20 bg-surface-container-high px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-on-surface transition-colors hover:bg-surface-bright md:px-3.5 md:text-xs"
+                  className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm border border-outline-variant px-3 py-2 text-on-surface transition-colors hover:border-primary hover:text-primary md:px-3.5"
                 >
-                  <SiGithub className="size-4 shrink-0" aria-hidden />
+                  <SiGithub className="size-3.5 shrink-0" aria-hidden />
                   <span className="hidden sm:inline">GitHub</span>
                 </a>
               ) : null}
@@ -91,9 +91,9 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, hea
                   target="_blank"
                   rel="noreferrer"
                   tabIndex={showSticky ? undefined : -1}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-outline-variant/20 bg-surface-container-high px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-on-surface transition-colors hover:bg-surface-bright md:px-3.5 md:text-xs"
+                  className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm border border-outline-variant px-3 py-2 text-on-surface transition-colors hover:border-primary hover:text-primary md:px-3.5"
                 >
-                  <Newspaper className="size-4 shrink-0" aria-hidden />
+                  <Newspaper className="size-3.5 shrink-0" aria-hidden />
                   <span className="hidden sm:inline">Blog</span>
                 </a>
               ) : null}

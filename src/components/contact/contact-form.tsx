@@ -4,11 +4,12 @@ import { useState } from "react";
 import { MIcon } from "@/components/m-icon";
 import { toast } from "sonner";
 
-const labelClass =
-  "pl-4 text-[0.75rem] font-bold uppercase tracking-widest text-on-surface-variant/70";
+const labelClass = "type-mono-sm text-on-surface-variant";
 
+/* Underline-only fields: the rule is the input. Focus swaps the hairline
+   to the accent rather than adding a glow. */
 const fieldClass =
-  "w-full rounded-none border-0 border-b border-outline-variant/15 bg-surface-container-lowest px-4 py-3 text-on-surface placeholder:text-on-surface/35 focus:border-primary focus:shadow-[0_4px_12px_-4px_rgba(79,70,229,0.3)] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low";
+  "w-full rounded-none border-0 border-b border-outline-variant bg-transparent px-0 py-3 text-on-surface transition-colors placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none";
 
 export function ContactForm() {
   const [status, setStatus] = useState<"idle" | "loading">("idle");
@@ -51,10 +52,10 @@ export function ContactForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="relative z-10 space-y-6"
+      className="relative z-10 space-y-8"
       data-allow-paste="true"
     >
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-6 md:items-start">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:items-start">
         <div className="flex min-w-0 flex-col gap-2">
           <label htmlFor="contact-name" className={labelClass}>
             Name
@@ -110,10 +111,13 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={status === "loading"}
-        className="flex w-full items-center justify-center gap-3 rounded-lg bg-primary-container px-10 py-4 font-bold text-on-primary-container shadow-[0_0_15px_rgba(79,70,229,0.2)] transition-all hover:shadow-[0_0_25px_rgba(79,70,229,0.4)] hover:brightness-110 active:scale-95 disabled:opacity-60 md:w-auto"
+        className="type-mono group flex w-full items-center justify-center gap-3 rounded-sm bg-primary-container px-10 py-4 text-on-primary-container transition-transform duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-60 md:w-auto"
       >
-        Send Message
-        <MIcon name="arrow_forward" />
+        {status === "loading" ? "Sending…" : "Send message"}
+        <MIcon
+          name={status === "loading" ? "progress_activity" : "arrow_forward"}
+          className="text-base transition-transform duration-300 group-hover:translate-x-0.5"
+        />
       </button>
     </form>
   );

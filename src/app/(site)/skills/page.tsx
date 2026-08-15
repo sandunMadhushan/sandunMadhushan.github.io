@@ -1,13 +1,61 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import type { Skill } from "@prisma/client";
 import { SiteNav } from "@/components/public/site-nav";
 import { PageFade } from "@/components/motion/page-fade";
-import { ScrollReveal } from "@/components/motion/scroll-reveal";
-import { MIcon } from "@/components/m-icon";
+import { RevealText } from "@/components/motion/reveal-text";
+import { StaggerIn } from "@/components/motion/stagger-in";
+import { Magnetic } from "@/components/motion/magnetic";
 import { SkillTechIcon } from "@/components/skill-tech-icon";
-import Link from "next/link";
+import { Container, Eyebrow, Rule } from "@/components/ui/primitives";
 import { resolveSkillDescription } from "@/lib/skill-auto";
 import { getAbout, getSkills } from "@/lib/queries";
 
 export const revalidate = 30;
+
+/**
+ * The page is a single indexed ledger. Each group is a numbered band with a
+ * hairline rule, and every skill is a row — which is what the old `01 /`
+ * numbering promised but the card grid never delivered.
+ */
+const GROUPS: { index: string; label: string; sub: string; match: (s: Skill) => boolean }[] = [
+  {
+    index: "01",
+    label: "Presentation Layer",
+    sub: "Frontend & Languages",
+    match: (s) => s.category === "Frontend" || s.category === "Languages",
+  },
+  {
+    index: "02",
+    label: "Logic",
+    sub: "Backend Core",
+    match: (s) => s.category === "Backend",
+  },
+  {
+    index: "03",
+    label: "Native & Mobile",
+    sub: "Platforms & devices",
+    match: (s) => s.category === "Mobile",
+  },
+  {
+    index: "04",
+    label: "Persistence",
+    sub: "Database systems",
+    match: (s) => s.category === "Database",
+  },
+  {
+    index: "05",
+    label: "Infrastructure & Workflow",
+    sub: "The digital workbench",
+    match: (s) => s.category === "Tools",
+  },
+  {
+    index: "06",
+    label: "Hosting & Cloud Delivery",
+    sub: "Deployment platforms",
+    match: (s) => s.category === "Deployment",
+  },
+];
 
 export default async function SkillsPage() {
   const [skills, about] = await Promise.all([getSkills(), getAbout()]);
@@ -16,245 +64,124 @@ export default async function SkillsPage() {
     (stats.ctaSpecialization as string) ??
     "Full-stack web apps, TypeScript/React, and APIs—always learning deeper.";
 
-  const presentation = skills.filter(
-    (s) => s.category === "Frontend" || s.category === "Languages",
-  );
-  const backend = skills.filter((s) => s.category === "Backend");
-  const mobile = skills.filter((s) => s.category === "Mobile");
-  const database = skills.filter((s) => s.category === "Database");
-  const tools = skills.filter((s) => s.category === "Tools");
-  const deployment = skills.filter((s) => s.category === "Deployment");
+  const groups = GROUPS.map((g) => ({ ...g, items: skills.filter(g.match) }));
 
   return (
     <PageFade>
       <SiteNav active="/skills" />
-      <main className="mx-auto max-w-[1440px] px-6 pb-20 pt-32 md:px-12">
-        <header className="mb-24">
-          <h1 className="mb-6 text-4xl font-black leading-[1.05] tracking-tighter text-on-surface sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
-            Expertise &amp; <br />
-            <span className="text-primary-container">Capabilities</span>
-          </h1>
-          <p className="max-w-2xl text-lg leading-[1.6] text-on-surface-variant">
-            Tools and languages I use in coursework and personal projects as I grow
-            toward a career in software engineering—frontend, backend, and everything
-            in between.
-          </p>
-        </header>
-
-        <ScrollReveal>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
-            <section className="glass-card group rounded-xl p-8 transition-all duration-500 hover:shadow-[0_0_40px_rgba(79,70,229,0.15)] md:col-span-8">
-              <div className="mb-12 flex items-end justify-between">
-                <div>
-                  <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                    01 / Presentation Layer
-                  </span>
-                  <h2 className="text-2xl font-bold tracking-tight">
-                    Frontend &amp; Languages
-                  </h2>
-                </div>
-                <MIcon name="devices" className="text-4xl text-primary/40" />
-              </div>
-              <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2">
-                {presentation.length === 0 && (
-                  <p className="col-span-full text-sm text-on-surface-variant/70">
-                    No frontend or language skills yet — add them in the admin.
-                  </p>
-                )}
-                {presentation.map((s) => (
-                  <div key={s.id} className="flex items-center gap-6">
-                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
-                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
-                    </span>
-                    <div>
-                      <p className="font-semibold">{s.name}</p>
-                      <p className="text-sm text-on-surface-variant">
-                        {resolveSkillDescription(s.description, s.name, s.icon)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="group rounded-xl bg-surface-container-low p-8 transition-colors duration-300 hover:bg-surface-container md:col-span-4">
-              <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                02 / Logic
+      <main id="main" className="pb-28 pt-32 md:pt-40">
+        <Container>
+          <header className="mb-20 md:mb-28">
+            <Rule />
+            <div className="flex flex-wrap items-baseline justify-between gap-4 pt-4">
+              <Eyebrow>Capabilities</Eyebrow>
+              <span className="type-mono-sm tabular-nums text-on-surface-variant">
+                {String(skills.length).padStart(2, "0")} entries
               </span>
-              <h2 className="mb-8 text-2xl font-bold tracking-tight">
-                Backend Core
-              </h2>
-              <div className="space-y-8">
-                {backend.length === 0 && (
-                  <p className="text-sm text-on-surface-variant/70">No backend skills listed.</p>
-                )}
-                {backend.map((s) => (
-                  <div key={s.id} className="flex items-center gap-6">
-                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
-                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
-                    </span>
-                    <div>
-                      <p className="font-semibold">{s.name}</p>
-                      <p className="text-sm text-on-surface-variant">
-                        {resolveSkillDescription(s.description, s.name, s.icon)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            </div>
 
-            <section className="glass-card group rounded-xl p-8 transition-all duration-500 hover:shadow-[0_0_40px_rgba(79,70,229,0.12)] md:col-span-12">
-              <div className="mb-10 flex items-end justify-between">
-                <div>
-                  <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                    03 / Native &amp; Mobile
-                  </span>
-                  <h2 className="text-2xl font-bold tracking-tight">
-                    Platforms &amp; devices
-                  </h2>
-                </div>
-                <MIcon name="smartphone" className="text-4xl text-primary/40" />
-              </div>
-              <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-                {mobile.length === 0 && (
-                  <p className="col-span-full text-sm text-on-surface-variant/70">
-                    No mobile or native platform skills yet — add them in the admin.
-                  </p>
-                )}
-                {mobile.map((s) => (
-                  <div key={s.id} className="flex items-center gap-6">
-                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
-                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
-                    </span>
-                    <div>
-                      <p className="font-semibold">{s.name}</p>
-                      <p className="text-sm text-on-surface-variant">
-                        {resolveSkillDescription(s.description, s.name, s.icon)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="rounded-xl border-l-2 border-primary-container/20 bg-surface-container-low p-8 md:col-span-4">
-              <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                04 / Persistence
+            <h1 className="type-mega mt-10 text-on-surface md:mt-14">
+              <RevealText text="Expertise" as="span" onLoad delay={0.08} />
+              <br />
+              <span className="text-primary">
+                <RevealText text="&amp; Tools" as="span" onLoad delay={0.18} />
               </span>
-              <h2 className="mb-6 text-xl font-bold tracking-tight">
-                Database Systems
-              </h2>
-              <ul className="space-y-4">
-                {database.length === 0 && (
-                  <li className="rounded-lg bg-surface-container p-4 text-sm text-on-surface-variant/70">
-                    No database skills listed.
-                  </li>
-                )}
-                {database.map((s) => (
-                  <li
-                    key={s.id}
-                    className="flex items-center justify-between rounded-lg bg-surface-container p-4"
-                  >
-                    <span className="font-medium text-on-surface">
-                      {s.name}
-                    </span>
-                    <span className="text-primary">
-                      <SkillTechIcon name={s.name} iconKey={s.icon} size={24} />
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            </h1>
 
-            <section className="glass-card rounded-xl p-8 md:col-span-8">
-              <div className="mb-8 flex items-center justify-between">
-                <h2 className="text-xl font-bold tracking-tight">
-                  The Digital Workbench
-                </h2>
-                <span className="font-mono text-sm text-on-surface-variant">
-                  05 / Infrastructure &amp; Workflow
-                </span>
-              </div>
-              <div className="flex flex-wrap gap-4">
-                {tools.length === 0 && (
-                  <p className="w-full text-sm text-on-surface-variant/70">No tools listed.</p>
-                )}
-                {tools.map((s) => (
-                  <div
-                    key={s.id}
-                    className="flex cursor-default items-center gap-3 rounded-lg border border-outline-variant/10 bg-surface-container-highest px-6 py-3 transition-colors hover:border-primary-container/50"
-                  >
-                    <span className="text-primary">
-                      <SkillTechIcon name={s.name} iconKey={s.icon} size={22} />
-                    </span>
-                    <span className="text-sm font-medium">{s.name}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <p className="type-lead mt-10 max-w-2xl text-on-surface-variant">
+              Tools and languages I use in coursework and personal projects as I
+              grow toward a career in software engineering—frontend, backend,
+              and everything in between.
+            </p>
+          </header>
 
-            <section className="group rounded-xl bg-surface-container-low p-8 transition-colors duration-300 hover:bg-surface-container md:col-span-12">
-              <div className="mb-8 flex items-center justify-between">
-                <div>
-                  <span className="label-md mb-2 block text-[0.75rem] font-bold uppercase tracking-widest text-primary">
-                    06 / Hosting &amp; Cloud Delivery
-                  </span>
-                  <h2 className="text-2xl font-bold tracking-tight">Deployment Platforms</h2>
-                </div>
-                <MIcon name="cloud_done" className="text-4xl text-primary/40" />
-              </div>
-              <div className="grid grid-cols-1 gap-x-12 gap-y-8 sm:grid-cols-2 md:grid-cols-3">
-                {deployment.length === 0 && (
-                  <p className="col-span-full text-sm text-on-surface-variant/70">
-                    No deployment skills listed yet — add them in the admin.
-                  </p>
-                )}
-                {deployment.map((s) => (
-                  <div key={s.id} className="flex items-center gap-6">
-                    <span className="text-on-surface-variant transition-colors group-hover:text-primary">
-                      <SkillTechIcon name={s.name} iconKey={s.icon} size={32} />
-                    </span>
-                    <div>
-                      <p className="font-semibold">{s.name}</p>
-                      <p className="text-sm text-on-surface-variant">
-                        {resolveSkillDescription(s.description, s.name, s.icon)}
-                      </p>
+          {/* ---------- LEDGER ---------- */}
+          <div className="flex flex-col gap-20 md:gap-28">
+            {groups.map((g) => (
+              <section key={g.index}>
+                <Rule />
+                <div className="grid grid-cols-12 gap-y-8 pt-5 md:gap-8">
+                  {/* Group heading — sticks while its rows scroll past. */}
+                  <div className="col-span-12 md:col-span-3">
+                    <div className="md:sticky md:top-28">
+                      <Eyebrow index={g.index}>{g.label}</Eyebrow>
+                      <h2 className="type-h3 mt-4 text-on-surface">{g.sub}</h2>
+                      <span className="type-mono-sm mt-3 block tabular-nums text-on-surface-variant">
+                        {String(g.items.length).padStart(2, "0")}
+                      </span>
                     </div>
                   </div>
-                ))}
+
+                  <div className="col-span-12 md:col-span-8 md:col-start-5">
+                    {g.items.length === 0 ? (
+                      <p className="type-mono border border-dashed border-outline-variant py-10 text-center text-on-surface-variant">
+                        Nothing listed yet
+                      </p>
+                    ) : (
+                      <StaggerIn selector="li">
+                        <ul className="flex flex-col">
+                          {g.items.map((s) => (
+                            <li
+                              key={s.id}
+                              className="group flex items-start gap-5 border-b border-outline-variant py-5 transition-colors first:border-t hover:border-primary-container"
+                            >
+                              <span className="mt-0.5 shrink-0 text-on-surface-variant transition-colors duration-300 group-hover:text-primary">
+                                <SkillTechIcon
+                                  name={s.name}
+                                  iconKey={s.icon}
+                                  size={26}
+                                />
+                              </span>
+                              <div className="min-w-0">
+                                <p className="font-medium text-on-surface">
+                                  {s.name}
+                                </p>
+                                <p className="mt-1 text-sm leading-relaxed text-on-surface-variant">
+                                  {resolveSkillDescription(
+                                    s.description,
+                                    s.name,
+                                    s.icon,
+                                  )}
+                                </p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </StaggerIn>
+                    )}
+                  </div>
+                </div>
+              </section>
+            ))}
+          </div>
+
+          {/* ---------- SPECIALIZATION BAND ---------- */}
+          <section className="mt-28 md:mt-40">
+            <div className="rounded-sm bg-primary-container px-8 py-14 md:px-14 md:py-20">
+              <div className="grid grid-cols-12 items-end gap-y-10 md:gap-8">
+                <div className="col-span-12 md:col-span-8">
+                  <span className="type-mono text-on-primary-container/70">
+                    Current specialization
+                  </span>
+                  <p className="font-display mt-6 text-[clamp(2rem,5vw,3.75rem)] leading-[0.95] tracking-[-0.03em] text-on-primary-container">
+                    {cta}
+                  </p>
+                </div>
+                <div className="col-span-12 md:col-span-4 md:flex md:justify-end">
+                  <Magnetic>
+                    <Link
+                      href="/projects"
+                      className="type-mono inline-flex items-center gap-2.5 rounded-sm bg-on-primary-container px-8 py-4 text-primary-container transition-transform duration-300 hover:scale-[1.03] active:scale-95"
+                    >
+                      View case studies
+                      <ArrowUpRight className="size-4" aria-hidden />
+                    </Link>
+                  </Magnetic>
+                </div>
               </div>
-            </section>
-
-          </div>
-        </ScrollReveal>
-
-        <ScrollReveal>
-          <div className="relative mt-24 flex flex-col items-stretch justify-between gap-8 overflow-hidden rounded-2xl bg-primary-container p-10 shadow-[0_40px_80px_rgba(79,70,229,0.28)] md:flex-row md:items-center md:gap-12 md:p-12">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_60%_at_90%_-10%,rgba(255,255,255,0.2),transparent_55%)]"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/10 to-black/25"
-            />
-            <div className="relative z-10 text-center md:min-w-0 md:flex-1 md:text-left">
-              <h3 className="mb-4 text-2xl font-black tracking-tighter text-white drop-shadow-sm md:text-3xl">
-                Current Specialization
-              </h3>
-              <p className="max-w-lg text-base leading-relaxed text-white/90 md:text-lg">{cta}</p>
             </div>
-            <div className="relative z-10 flex w-full shrink-0 justify-center md:w-auto md:justify-end">
-              <Link
-                href="/projects"
-                className="inline-flex w-full min-w-[200px] items-center justify-center rounded-full bg-white px-8 py-4 text-base font-bold text-primary-container shadow-[0_8px_30px_rgba(0,0,0,0.2)] transition-all hover:-translate-y-0.5 hover:bg-zinc-100 hover:text-[#4338ca] hover:shadow-[0_12px_40px_rgba(0,0,0,0.25)] active:translate-y-0 active:scale-[0.98] md:w-auto"
-              >
-                View Case Studies
-              </Link>
-            </div>
-          </div>
-        </ScrollReveal>
+          </section>
+        </Container>
       </main>
     </PageFade>
   );
