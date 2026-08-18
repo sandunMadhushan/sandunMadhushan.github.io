@@ -39,7 +39,7 @@ export function Section({
   return (
     <section
       id={id}
-      className={cn(tight ? "py-16 md:py-24" : "py-24 md:py-36 lg:py-44", className)}
+      className={cn(tight ? "py-14 md:py-20" : "py-20 md:py-28 lg:py-32", className)}
     >
       {children}
     </section>
@@ -114,14 +114,14 @@ export function SectionHeader({
   className?: string;
 }) {
   return (
-    <div className={cn("mb-12 md:mb-20", className)}>
+    <div className={cn("mb-10 md:mb-14", className)}>
       <Rule />
       <div className="flex flex-wrap items-baseline justify-between gap-4 pt-4">
         <Eyebrow index={index}>{eyebrow}</Eyebrow>
         {action}
       </div>
       {title ? (
-        <h2 className="type-h1 mt-8 max-w-4xl text-on-surface md:mt-12">
+        <h2 className="type-h1 mt-6 max-w-4xl text-on-surface md:mt-8">
           {title}
         </h2>
       ) : null}

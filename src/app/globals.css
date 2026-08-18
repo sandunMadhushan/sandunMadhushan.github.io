@@ -255,6 +255,67 @@
    STRUCTURAL UTILITIES — hairlines, grids, texture
    ============================================================ */
 
+/* ============================================================
+   SIGNAL CURSOR
+   A dot glued to the pointer with a trailing ring, both painted with
+   mix-blend-mode: difference so they stay visible against literally any
+   background -- dark, light, an image, the nav's blurred glass -- with no
+   contrast tuning. Never leaves the pointer position (no bounding-box
+   lock), so it can't "disappear" over a large hovered element the way a
+   lock-on reticle can. `has-custom-cursor` is added by JS only once the
+   mark is confirmed drawn.
+   ============================================================ */
+
+.cursor-dot,
+.cursor-ring,
+.cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform;
+  mix-blend-mode: difference;
+}
+
+.cursor-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.cursor-ring {
+  border-radius: 999px;
+  border: 1px solid #fff;
+}
+
+.cursor-label {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* Hide the native cursor only while ours is confirmed drawn. */
+.has-custom-cursor,
+.has-custom-cursor a,
+.has-custom-cursor button,
+.has-custom-cursor [role="button"] {
+  cursor: none;
+}
+
+/* Text fields keep their caret — a dot is useless for typing. */
+.has-custom-cursor input,
+.has-custom-cursor textarea,
+.has-custom-cursor select {
+  cursor: auto;
+}
+
 .rule {
   height: 1px;
   width: 100%;
@@ -324,6 +385,9 @@
 @keyframes duotone-develop-tint {
   to {
     opacity: 0;
+    /* Drop out of the compositor once transparent — a mix-blend-mode layer
+       still costs a re-rasterize of its stacking context at opacity 0. */
+    visibility: hidden;
   }
 }
 
@@ -486,10 +550,16 @@
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
+  /* Buffer so serif ascenders/descenders (esp. Instrument Serif at the tight
+     display line-heights) never get clipped by the mask, mid-reveal or at
+     rest. The negative margin cancels the padding's footprint so nothing
+     shifts in normal flow. */
+  padding-block: 0.14em;
+  margin-block: -0.14em;
 }
 .reveal-mask > span {
   display: inline-block;
-  transform: translateY(105%);
+  transform: translateY(110%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -504,7 +574,33 @@
   .reveal-mask > span {
     transform: none !important;
   }
+  .cursor-dot,
+  .cursor-ring,
+  .cursor-label {
+    display: none !important;
+  }
   .marquee-track {
     animation: none !important;
+  }
+}
+
+/* Left-to-right wash behind an index row on hover. */
+.row-wash {
+  position: relative;
+  isolation: isolate;
+}
+.row-wash::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent-soft);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 620ms var(--ease-out-expo);
+}
+@media (hover: hover) {
+  .row-wash:hover::before {
+    transform: scaleX(1);
   }
 }

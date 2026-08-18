@@ -39,14 +39,14 @@ export function ScrollToTop() {
       aria-label="Scroll to top"
       tabIndex={visible ? 0 : -1}
       {...(!visible ? { "aria-hidden": true } : {})}
-      className={`fixed bottom-6 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-xl border border-outline-variant/20 bg-surface-container-high text-on-surface shadow-lg shadow-primary-container/10 transition-all duration-300 hover:border-primary-container/40 hover:bg-surface-container hover:text-primary md:bottom-10 md:right-8 ${
+      className={`fixed bottom-6 right-5 z-40 flex size-11 items-center justify-center rounded-full border border-outline-variant bg-background/70 text-on-surface-variant backdrop-blur-xl transition-all duration-300 hover:border-primary hover:text-primary md:bottom-10 md:right-8 ${
         visible
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-3 opacity-0"
       }`}
       onClick={goTop}
     >
-      <MIcon name="arrow_upward" className="text-2xl" />
+      <MIcon name="arrow_upward" className="text-lg" />
     </button>
   );
 }

@@ -22,7 +22,14 @@ export type ProjectIndexRow = {
  * contents. On pointer devices a preview panel tracks the cursor and
  * cross-fades between rows; on touch each row shows its own thumbnail.
  */
-export function ProjectIndex({ rows }: { rows: ProjectIndexRow[] }) {
+export function ProjectIndex({
+  rows,
+  startAt = 1,
+}: {
+  rows: ProjectIndexRow[];
+  /** Number the first row starts at — e.g. 2 when a "01" featured item sits above this list. */
+  startAt?: number;
+}) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
@@ -84,14 +91,14 @@ export function ProjectIndex({ rows }: { rows: ProjectIndexRow[] }) {
               href={`/projects/${row.slug}`}
               onMouseEnter={() => setActiveIndex(i)}
               onFocus={() => setActiveIndex(i)}
-              className="group grid grid-cols-12 items-center gap-4 border-t border-outline-variant py-7 transition-colors duration-500 last:border-b hover:border-primary-container md:py-9"
+              className="row-wash group grid grid-cols-12 items-center gap-4 border-t border-outline-variant px-2 py-7 transition-colors duration-500 last:border-b hover:border-primary-container md:px-4 md:py-8"
             >
               <span className="type-mono col-span-2 tabular-nums text-on-surface-variant transition-colors duration-300 group-hover:text-primary md:col-span-1">
-                {String(i + 1).padStart(2, "0")}
+                {String(i + startAt).padStart(2, "0")}
               </span>
 
               <div className="col-span-10 md:col-span-5">
-                <h3 className="type-h3 text-on-surface transition-transform duration-500 md:group-hover:translate-x-2">
+                <h3 className="type-h3 text-on-surface transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:group-hover:translate-x-3">
                   {row.title}
                 </h3>
                 {/* Touch fallback: the description carries the weight. */}

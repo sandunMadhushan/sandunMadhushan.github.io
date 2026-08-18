@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { SiteFooterSocialSection } from "@/components/public/public-social-blocks";
 import { Container, Rule } from "@/components/ui/primitives";
+import { GravityText } from "@/components/motion/gravity-text";
 import { getSocialLinks } from "@/lib/queries";
 import { SITE_NAV_LINKS, isNavOffSiteStyle } from "@/lib/site-nav-links";
 
@@ -83,12 +84,27 @@ export async function SiteFooter() {
           <SiteFooterSocialSection links={socialLinks} />
         </div>
 
-        {/* Oversized wordmark band — the footer's whole visual weight. */}
-        <div className="mt-24 select-none md:mt-32" aria-hidden>
-          <Rule className="mb-6" />
-          <p className="font-display text-[clamp(2.75rem,13.2vw,13rem)] leading-[0.82] tracking-[-0.04em] text-on-surface">
-            Sandun Madhushan
+        {/* Signature band — a quiet ambient glow (soft, layered radial
+            gradients, à la Aura) sits behind a moderately sized name that
+            reacts to pointer proximity instead of announcing itself at full
+            viewport width. Restrained on purpose: a signature, not a shout. */}
+        <div className="relative mt-24 overflow-hidden md:mt-32">
+          <Rule className="mb-10 md:mb-14" />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10"
+          >
+            <div className="absolute left-1/2 top-[55%] h-[26rem] w-[60rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,var(--accent)_0%,transparent_68%)] opacity-[0.12] blur-[80px]" />
+            <div className="absolute left-[18%] top-[85%] h-[18rem] w-[30rem] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,var(--ember)_0%,transparent_72%)] opacity-[0.14] blur-[70px]" />
+          </div>
+
+          <p className="type-mono-sm mb-5 text-on-surface-variant/60">
+            Sign off
           </p>
+          <GravityText
+            text="Sandun Madhushan"
+            className="font-display block select-none text-[clamp(2.5rem,7.5vw,6rem)] leading-[0.96] tracking-[-0.03em] text-on-surface"
+          />
         </div>
 
         <Rule className="mt-10" />

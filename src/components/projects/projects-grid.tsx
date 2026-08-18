@@ -10,9 +10,10 @@ import { projectCardSrc } from "@/lib/project-media";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import { parseProjectCategories } from "@/lib/project-categories";
 import { Eyebrow, Rule } from "@/components/ui/primitives";
+import { Card, CardContent } from "@/components/ui/card";
 
-/** Grid cards only (featured hero is always shown separately). */
-const INITIAL_GRID_VISIBLE = 6;
+/** Cards below the featured spread. */
+const INITIAL_VISIBLE = 6;
 const LOAD_MORE_STEP = 6;
 
 export function ProjectsGrid({ projects }: { projects: Project[] }) {
@@ -24,12 +25,8 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
     return Array.from(set);
   }, [projects]);
   const [tab, setTab] = useState("All");
-  const [visibleGridCount, setVisibleGridCount] = useState(INITIAL_GRID_VISIBLE);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
   const gridStartRef = useRef<HTMLDivElement | null>(null);
-  const cardRefs = useRef<Array<HTMLElement | null>>([]);
-  const pendingScrollRef = useRef<
-    { type: "more"; index: number } | { type: "less" } | null
-  >(null);
   const activeTab = tabs.includes(tab) ? tab : "All";
   const filtered = useMemo(() => {
     if (activeTab === "All") return projects;
@@ -46,34 +43,26 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
   const featuredOutsideFilter = Boolean(
     featured && !filtered.some((p) => p.id === featured.id),
   );
-  const visibleCount = filtered.length + (featuredOutsideFilter ? 1 : 0);
+  const totalCount = filtered.length + (featuredOutsideFilter ? 1 : 0);
 
   const displayedRest = useMemo(
-    () => rest.slice(0, visibleGridCount),
-    [rest, visibleGridCount],
+    () => rest.slice(0, visibleCount),
+    [rest, visibleCount],
   );
-  const hasMoreInGrid = visibleGridCount < rest.length;
-  const canCollapseGrid =
-    rest.length > INITIAL_GRID_VISIBLE && visibleGridCount > INITIAL_GRID_VISIBLE;
+  const hasMore = visibleCount < rest.length;
+  const canCollapse = rest.length > INITIAL_VISIBLE && visibleCount > INITIAL_VISIBLE;
 
   function pickTab(next: string) {
     setTab(next);
-    setVisibleGridCount(INITIAL_GRID_VISIBLE);
-    pendingScrollRef.current = null;
+    setVisibleCount(INITIAL_VISIBLE);
   }
 
+  const wasCollapsedRef = useRef(false);
   useEffect(() => {
-    const pending = pendingScrollRef.current;
-    if (!pending) return;
-    pendingScrollRef.current = null;
-
-    if (pending.type === "more") {
-      const target = cardRefs.current[pending.index];
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-      return;
-    }
+    if (!wasCollapsedRef.current) return;
+    wasCollapsedRef.current = false;
     gridStartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [visibleGridCount]);
+  }, [visibleCount]);
 
   return (
     <>
@@ -87,17 +76,22 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
 
           <Link
             href={`/projects/${featured.slug}`}
+            data-cursor-text="View case"
             className="group mt-8 block md:mt-12"
           >
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low md:aspect-[21/9]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low transition-colors duration-500 group-hover:border-primary-container md:aspect-[21/9]">
               <NextImage
                 src={featuredCover}
                 alt={featured.title}
                 fill
                 priority
                 sizes="100vw"
-                className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+                className="object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                 unoptimized={isRemoteImageSrc(featuredCover)}
+              />
+              <span
+                aria-hidden
+                className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-primary-container transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100"
               />
             </div>
 
@@ -137,7 +131,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
       )}
 
       {/* ---------- FILTERS ---------- */}
-      <div className="mb-10 md:mb-14">
+      <div ref={gridStartRef} className="mb-4 scroll-mt-28">
         <Rule />
         <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 pt-4">
           <div
@@ -172,107 +166,94 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             })}
           </div>
           <span className="type-mono-sm tabular-nums text-on-surface-variant">
-            {String(visibleCount).padStart(2, "0")}{" "}
-            {visibleCount === 1 ? "project" : "projects"}
+            {String(totalCount).padStart(2, "0")}{" "}
+            {totalCount === 1 ? "project" : "projects"}
           </span>
         </div>
       </div>
 
-      {/* ---------- STAGGERED GRID ---------- */}
-      <div ref={gridStartRef} className="grid grid-cols-12 gap-x-8 gap-y-16">
-        {rest.length === 0 && (
-          <p className="type-mono col-span-12 border border-dashed border-outline-variant py-20 text-center text-on-surface-variant">
-            No projects match this filter.
-          </p>
-        )}
+      {/* ---------- GRID ---------- */}
+      {rest.length === 0 ? (
+        <p className="type-mono border border-dashed border-outline-variant py-20 text-center text-on-surface-variant">
+          No projects match this filter.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {displayedRest.map((p, i) => {
+            const cover = projectCardSrc(p, DEFAULT_PORTRAIT_SRC);
+            const categories = parseProjectCategories(p.category);
 
-        {displayedRest.map((p, i) => {
-          const cover = projectCardSrc(p, DEFAULT_PORTRAIT_SRC);
-          const categories = parseProjectCategories(p.category);
-          /* Alternating rhythm: wide, narrow, narrow — breaks the uniform grid. */
-          const inRow = i % 3;
-          const span =
-            inRow === 0
-              ? "md:col-span-12 lg:col-span-6"
-              : "md:col-span-6 lg:col-span-3";
-          const ratio = inRow === 0 ? "aspect-[16/10]" : "aspect-[4/3]";
+            return (
+              <Link
+                key={p.id}
+                href={`/projects/${p.slug}`}
+                data-cursor-text="View"
+                className="group block"
+              >
+                <Card className="h-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5 group-hover:border-primary-container group-hover:shadow-[0_28px_70px_-20px_rgba(0,0,0,0.55)]">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
+                    <NextImage
+                      src={cover}
+                      alt={p.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
+                      unoptimized={isRemoteImageSrc(cover)}
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-black/0 to-black/0" />
+                    <span className="type-mono-sm absolute left-3 top-3 flex size-7 items-center justify-center rounded-full border border-white/25 bg-black/30 tabular-nums text-white backdrop-blur-sm">
+                      {String(i + 2).padStart(2, "0")}
+                    </span>
+                    <span className="absolute right-3 top-3 flex size-7 translate-y-1 items-center justify-center rounded-full border border-white/25 bg-black/30 text-white opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                      <ArrowUpRight className="size-3.5" aria-hidden />
+                    </span>
+                  </div>
 
-          return (
-            <article
-              key={p.id}
-              ref={(el) => {
-                cardRefs.current[i] = el;
-              }}
-              className={`group col-span-12 ${span}`}
-            >
-              <Link href={`/projects/${p.slug}`} className="block">
-                <div
-                  className={`relative ${ratio} w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low`}
-                >
-                  <NextImage
-                    src={cover}
-                    alt={p.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                    className="object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
-                    unoptimized={isRemoteImageSrc(cover)}
-                  />
-                </div>
-
-                <div className="mt-5">
-                  <div className="flex items-baseline justify-between gap-4">
+                  <CardContent className="flex flex-1 flex-col pt-5">
                     <span className="type-mono-sm text-on-surface-variant">
                       {categories.join(" · ")}
                     </span>
-                    <ArrowUpRight
-                      className="size-4 shrink-0 text-on-surface-variant transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
-                      aria-hidden
-                    />
-                  </div>
-                  <h3 className="type-h3 mt-2 text-on-surface transition-colors duration-300 group-hover:text-primary">
-                    {p.title}
-                  </h3>
-                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-on-surface-variant">
-                    {p.description}
-                  </p>
-                  <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5">
-                    {p.technologies.slice(0, 4).map((t) => (
-                      <span
-                        key={t}
-                        className="type-mono-sm text-on-surface-variant/70"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                    <h3 className="type-h3 mt-2 text-on-surface transition-colors duration-300 group-hover:text-primary">
+                      {p.title}
+                    </h3>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-on-surface-variant">
+                      {p.description}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5">
+                      {p.technologies.slice(0, 4).map((t) => (
+                        <span
+                          key={t}
+                          className="type-mono-sm text-on-surface-variant/70"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </Link>
-            </article>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
-      {hasMoreInGrid || canCollapseGrid ? (
-        <div className="mt-20">
-          <Rule />
+      {hasMore || canCollapse ? (
+        <div className="mt-4">
           <button
             type="button"
             onClick={() => {
-              if (hasMoreInGrid) {
-                setVisibleGridCount((n) => {
-                  pendingScrollRef.current = { type: "more", index: n };
-                  return Math.min(n + LOAD_MORE_STEP, rest.length);
-                });
+              if (hasMore) {
+                setVisibleCount((n) => Math.min(n + LOAD_MORE_STEP, rest.length));
                 return;
               }
-              pendingScrollRef.current = { type: "less" };
-              setVisibleGridCount(INITIAL_GRID_VISIBLE);
+              wasCollapsedRef.current = true;
+              setVisibleCount(INITIAL_VISIBLE);
             }}
-            aria-label={hasMoreInGrid ? "Load more projects" : "Show fewer projects"}
+            aria-label={hasMore ? "Load more projects" : "Show fewer projects"}
             className="type-mono group flex w-full items-center justify-center gap-3 py-6 text-on-surface-variant transition-colors hover:text-primary"
           >
-            {hasMoreInGrid ? "Load more" : "Show less"}
-            {hasMoreInGrid ? (
+            {hasMore ? "Load more" : "Show less"}
+            {hasMore ? (
               <ChevronDown
                 className="size-4 transition-transform duration-300 group-hover:translate-y-0.5"
                 aria-hidden

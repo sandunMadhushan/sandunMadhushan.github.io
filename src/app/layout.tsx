@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter_Tight, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AppToaster } from "@/components/app-toaster";
@@ -133,13 +134,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Applies the stored theme before first paint — prevents a flash
-            of the wrong palette. Must stay ahead of any styled markup. */}
-        <script
-          dangerouslySetInnerHTML={{ __html: themeInitScript }}
-        />
+        {/* Applies the stored theme before first paint so there is no flash of
+            the wrong palette. beforeInteractive is emitted into the initial
+            HTML by Next, which is why this is a next/script and not a raw
+            <script> — React will not execute those when it renders. */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
       </head>
-      <body className="grain min-h-screen font-sans" suppressHydrationWarning>
+      <body className="min-h-screen font-sans" suppressHydrationWarning>
         <ThemeProvider>
           <a
             href="#main"
