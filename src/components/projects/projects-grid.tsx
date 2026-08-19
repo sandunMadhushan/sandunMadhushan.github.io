@@ -1,16 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import type { Project } from "@prisma/client";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown, ChevronUp } from "lucide-react";
 import { isRemoteImageSrc } from "@/lib/image-url";
 import { projectCardSrc } from "@/lib/project-media";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import { parseProjectCategories } from "@/lib/project-categories";
 import { Eyebrow, Rule } from "@/components/ui/primitives";
-import { ProjectsMasonry } from "@/components/projects/projects-masonry";
+import { ProjectsWall } from "@/components/projects/projects-wall";
+
+/** Cards below the featured spread, before "Show more" is pressed. */
+const INITIAL_VISIBLE = 6;
 
 export function ProjectsGrid({ projects }: { projects: Project[] }) {
   const tabs = useMemo(() => {
@@ -21,6 +24,8 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
     return Array.from(set);
   }, [projects]);
   const [tab, setTab] = useState("All");
+  const [expanded, setExpanded] = useState(false);
+  const gridStartRef = useRef<HTMLDivElement | null>(null);
   const activeTab = tabs.includes(tab) ? tab : "All";
   const filtered = useMemo(() => {
     if (activeTab === "All") return projects;
@@ -38,10 +43,25 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
   );
   const totalCount = filtered.length + (featuredOutsideFilter ? 1 : 0);
 
-  const visibleRest = useMemo(
+  const rest = useMemo(
     () => filtered.filter((p) => p.id !== featured?.id),
     [filtered, featured],
   );
+  const displayedRest = expanded ? rest : rest.slice(0, INITIAL_VISIBLE);
+  const hasMore = !expanded && rest.length > INITIAL_VISIBLE;
+  const canCollapse = expanded && rest.length > INITIAL_VISIBLE;
+
+  function pickTab(next: string) {
+    setTab(next);
+    setExpanded(false);
+  }
+
+  const wasCollapsedRef = useRef(false);
+  useEffect(() => {
+    if (!wasCollapsedRef.current) return;
+    wasCollapsedRef.current = false;
+    gridStartRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [expanded]);
 
   return (
     <>
@@ -109,7 +129,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
       )}
 
       {/* ---------- FILTERS ---------- */}
-      <div className="mb-4">
+      <div ref={gridStartRef} className="mb-4 scroll-mt-28">
         <Rule />
         <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-4 pt-4">
           <div
@@ -125,7 +145,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
                   type="button"
                   role="tab"
                   aria-selected={on}
-                  onClick={() => setTab(t)}
+                  onClick={() => pickTab(t)}
                   className={`type-mono group relative py-1 transition-colors duration-300 ${
                     on
                       ? "text-primary"
@@ -150,14 +170,46 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
         </div>
       </div>
 
-      {/* ---------- MASONRY WALL ---------- */}
-      {visibleRest.length === 0 ? (
+      {/* ---------- UNIFORM WALL ---------- */}
+      {displayedRest.length === 0 ? (
         <p className="type-mono border border-dashed border-outline-variant py-20 text-center text-on-surface-variant">
           No projects match this filter.
         </p>
       ) : (
-        <ProjectsMasonry projects={visibleRest} />
+        <ProjectsWall projects={displayedRest} />
       )}
+
+      {hasMore || canCollapse ? (
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={() => {
+              if (hasMore) {
+                setExpanded(true);
+                return;
+              }
+              wasCollapsedRef.current = true;
+              setExpanded(false);
+            }}
+            aria-label={hasMore ? "Show more projects" : "Show fewer projects"}
+            className="type-mono group flex w-full items-center justify-center gap-3 py-6 text-on-surface-variant transition-colors hover:text-primary"
+          >
+            {hasMore ? "Show more" : "Show less"}
+            {hasMore ? (
+              <ChevronDown
+                className="size-4 transition-transform duration-300 group-hover:translate-y-0.5"
+                aria-hidden
+              />
+            ) : (
+              <ChevronUp
+                className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5"
+                aria-hidden
+              />
+            )}
+          </button>
+          <Rule />
+        </div>
+      ) : null}
     </>
   );
 }

@@ -1,9 +1,15 @@
 import { ImageResponse } from "next/og";
 
-/** Matches SiteNav brand: S (on-surface) + M (primary-container). */
-const BG = "#131314";
-const ON_SURFACE = "#e5e2e3";
-const PRIMARY_CONTAINER = "#4f46e5";
+/**
+ * Matches the SiteNav wordmark: a serif "S" in the site's off-white text
+ * color, plus the small lime accent square that sits after it in the nav
+ * (`bg-primary-container` there → `--accent` here). Colors are pulled
+ * straight from globals.css's dark theme, not the old indigo scheme this
+ * replaced.
+ */
+const BG = "#08090a"; // --bg
+const ON_SURFACE = "#f2f1ee"; // --fg
+const ACCENT = "#c8ff3d"; // --accent
 
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
@@ -20,14 +26,32 @@ export default function Icon() {
           justifyContent: "center",
           background: BG,
           borderRadius: 7,
-          letterSpacing: "-0.06em",
-          fontWeight: 700,
-          fontSize: 19,
-          fontFamily: 'ui-sans-serif, system-ui, "Segoe UI", sans-serif',
+          position: "relative",
         }}
       >
-        <span style={{ color: ON_SURFACE }}>S</span>
-        <span style={{ color: PRIMARY_CONTAINER }}>M</span>
+        <span
+          style={{
+            color: ON_SURFACE,
+            fontFamily: 'ui-serif, Georgia, "Times New Roman", serif',
+            fontStyle: "italic",
+            fontSize: 22,
+            lineHeight: 1,
+            transform: "translateY(-1px)",
+          }}
+        >
+          S
+        </span>
+        <span
+          style={{
+            position: "absolute",
+            right: 7,
+            bottom: 7,
+            width: 4,
+            height: 4,
+            background: ACCENT,
+            display: "flex",
+          }}
+        />
       </div>
     ),
     { ...size },

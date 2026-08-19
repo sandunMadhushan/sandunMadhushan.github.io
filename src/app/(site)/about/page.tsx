@@ -125,11 +125,6 @@ export default async function AboutPage() {
                       priority
                     />
                   </div>
-                  <div className="mt-3 flex items-baseline justify-between">
-                    <span className="type-mono-sm text-on-surface-variant">
-                      Fig. 01 — Portrait
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>

@@ -177,16 +177,13 @@ export default async function HomePage() {
 
               <div className="mt-12 md:mt-16">
                 <Rule />
-                <div className="flex items-center justify-between pt-4">
+                <div className="flex items-center pt-4">
                   <span className="type-mono-sm flex items-center gap-2 text-on-surface-variant">
                     <ArrowDown
                       className="size-3.5 animate-bounce"
                       aria-hidden
                     />
                     Scroll
-                  </span>
-                  <span className="type-mono-sm text-on-surface-variant">
-                    Fig. 01 — Portrait
                   </span>
                 </div>
               </div>
