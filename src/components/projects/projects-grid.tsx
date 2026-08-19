@@ -76,7 +76,6 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
 
           <Link
             href={`/projects/${featured.slug}`}
-            data-cursor-text="View case"
             className="group mt-8 block md:mt-12"
           >
             <div className="relative aspect-[16/10] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low transition-colors duration-500 group-hover:border-primary-container md:aspect-[21/9]">
@@ -184,12 +183,7 @@ export function ProjectsGrid({ projects }: { projects: Project[] }) {
             const categories = parseProjectCategories(p.category);
 
             return (
-              <Link
-                key={p.id}
-                href={`/projects/${p.slug}`}
-                data-cursor-text="View"
-                className="group block"
-              >
+              <Link key={p.id} href={`/projects/${p.slug}`} className="group block">
                 <Card className="h-full transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5 group-hover:border-primary-container group-hover:shadow-[0_28px_70px_-20px_rgba(0,0,0,0.55)]">
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     <NextImage

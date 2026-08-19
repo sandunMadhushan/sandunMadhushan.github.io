@@ -35,10 +35,16 @@ Nav / custom cursor
   viewport-fixed. Moved <SiteNav /> outside <PageFade> on all six pages
   (home, about, contact, projects, project detail, skills) so it is a
   sibling of the transformed wrapper, not a descendant.
-- Rebuilt the custom cursor as a "Viewfinder": idle crosshair inside four
-  corner brackets that snap onto whatever is hovered. The native cursor is
-  only hidden after the reticle is confirmed drawn on first pointermove, so
-  a failure path can never leave zero visible cursor.
+- Replaced the original "Viewfinder" cursor (corner brackets that locked
+  onto the full bounding box of whatever was hovered) with a "Signal"
+  cursor: a small dot glued exactly to the pointer plus a trailing ring
+  that only grows in place on hover, so it never jumps away from the
+  pointer over large elements like the nav bar or a full project card.
+- Cursor contrast no longer relies on mix-blend-mode: difference, which
+  has a real failure mode near ~50% gray backgrounds (and inconsistent
+  GPU/browser compositing on fast-moving fixed + will-change elements).
+  The dot and ring are now a solid accent-color fill with a dark
+  box-shadow halo, so they stay visible against any background or theme.
 
 Text reveal
 - Removed the skewY(6deg) added to the reveal-mask / RevealText transform --
@@ -62,11 +68,18 @@ Projects page
   standard Card/CardHeader/CardTitle/CardContent/CardFooter shape, restyled
   onto this site's own surface/on-surface tokens instead of shadcn's
   generic --card variables).
-- Rebuilt the project listing as a bento-style card grid on top of it:
-  every fourth card spans two columns as a wide short tile to break the
-  rhythm, image sits inside a rounded Card with a bottom gradient scrim
-  for the number badge, cards lift with a soft shadow on hover (no
-  grayscale/color-filter hover, which was disliked twice over).
+- Rebuilt the project listing on top of it as a uniform grid (every card
+  the same aspect ratio, no bento asymmetry, no uneven gaps): image inside
+  a rounded Card with a bottom gradient scrim for the number badge, cards
+  lift with a soft shadow on hover -- no grayscale/color-filter hover and
+  no "View" hover label, both disliked. Removed the duotone hover from the
+  featured spread too, replaced with a clean scale + accent underline.
+- Initial listing now shows 6 projects with a Load more / Show less
+  button instead of dumping the full list at once.
+- Project detail page: the sticky quick-actions bar (title + Live/GitHub/
+  Blog links) is now inset to the same gutter and max-width as the rest of
+  the page's content container, instead of spanning full-bleed edge to
+  edge while scrolled.
 
 Perf
 - VelocityMarquee no longer allocates a new gsap.to tween on every

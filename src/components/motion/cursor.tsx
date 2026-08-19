@@ -16,18 +16,16 @@ const INTERACTIVE = 'a, button, [role="button"], summary, [data-cursor-lock]';
  * Signal cursor.
  *
  * A small dot glued exactly to the pointer, with a ring trailing a step
- * behind it — both painted with mix-blend-mode: difference, so they read as
- * a bright mark against dark content and a dark mark against light content
- * automatically, with zero contrast tuning needed against the nav's glass
- * capsule, project imagery, or either theme.
+ * behind it — both a solid accent-color fill with a dark box-shadow halo,
+ * so they stay visible against any background (dark, light, a photo, the
+ * nav's blurred glass) without depending on mix-blend-mode compositing.
  *
  * Earlier this locked the ring onto the full bounding box of whatever was
  * hovered — nice on a small button, useless on a wide nav bar or a
  * full-height project card: the brackets ended up far from the actual
  * pointer, which read as "the cursor vanished" over exactly those elements.
  * This version never leaves the pointer position — hovering an interactive
- * element only grows the ring and, if the element sets data-cursor-text,
- * reveals a small label next to it.
+ * element only grows the ring in place.
  *
  * Only mounts for fine pointers, and never under reduced-motion. The native
  * cursor is hidden ONLY after the mark has actually been drawn once, so a
@@ -36,7 +34,6 @@ const INTERACTIVE = 'a, button, [role="button"], summary, [data-cursor-lock]';
 export function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const labelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
@@ -44,22 +41,19 @@ export function Cursor() {
 
     const dot = dotRef.current;
     const ring = ringRef.current;
-    const label = labelRef.current;
-    if (!dot || !ring || !label) return;
+    if (!dot || !ring) return;
 
     let armed = false;
+    let visible = false;
     let hovering = false;
 
     gsap.set(dot, { opacity: 0 });
     gsap.set(ring, { opacity: 0, width: RING_SIZE, height: RING_SIZE });
-    gsap.set(label, { opacity: 0 });
 
     const dotX = gsap.quickTo(dot, "x", { duration: 0.06, ease: "power2.out" });
     const dotY = gsap.quickTo(dot, "y", { duration: 0.06, ease: "power2.out" });
     const ringX = gsap.quickTo(ring, "x", { duration: 0.28, ease: "power3.out" });
     const ringY = gsap.quickTo(ring, "y", { duration: 0.28, ease: "power3.out" });
-    const labelX = gsap.quickTo(label, "x", { duration: 0.28, ease: "power3.out" });
-    const labelY = gsap.quickTo(label, "y", { duration: 0.28, ease: "power3.out" });
 
     const onMove = (e: PointerEvent) => {
       const px = e.clientX;
@@ -69,7 +63,21 @@ export function Cursor() {
         armed = true;
         // Only now is it safe to take away the native cursor.
         document.documentElement.classList.add("has-custom-cursor");
-        gsap.to([dot, ring], { opacity: 1, duration: 0.25 });
+      }
+
+      // Re-arming only hid the native cursor once; it never re-showed the
+      // mark itself after a fade-out (window blur, tab switch, pointer
+      // leaving the viewport). That left the page with NO visible cursor
+      // at all until reload. Every move must be able to bring it back.
+      if (!visible) {
+        visible = true;
+        // Plain gsap.to here, deliberately NOT gsap.killTweensOf: killing
+        // tweens on dot/ring would also kill the persistent internal
+        // tweens that the quickTo x/y setters below depend on, freezing
+        // the mark at whatever position it last had (opacity would come
+        // back, but it would stop following the pointer forever). A
+        // same-property opacity tween auto-overwrites the previous one.
+        gsap.to([dot, ring], { opacity: 1, duration: 0.25, overwrite: "auto" });
       }
 
       dotX(px - DOT_SIZE / 2);
@@ -77,8 +85,6 @@ export function Cursor() {
       const ringSize = hovering ? RING_SIZE_HOVER : RING_SIZE;
       ringX(px - ringSize / 2);
       ringY(py - ringSize / 2);
-      labelX(px + ringSize / 2 + 10);
-      labelY(py - 7);
     };
 
     const onOver = (e: PointerEvent) => {
@@ -91,11 +97,6 @@ export function Cursor() {
         duration: 0.35,
         ease: "expo.out",
       });
-      const text = el.getAttribute("data-cursor-text");
-      if (text) {
-        label.textContent = text;
-        gsap.to(label, { opacity: 1, duration: 0.25 });
-      }
     };
 
     const onOut = (e: PointerEvent) => {
@@ -111,11 +112,11 @@ export function Cursor() {
         duration: 0.35,
         ease: "expo.out",
       });
-      gsap.to(label, { opacity: 0, duration: 0.2 });
     };
 
     const onLeaveWindow = () => {
-      gsap.to([dot, ring, label], { opacity: 0, duration: 0.2 });
+      visible = false;
+      gsap.to([dot, ring], { opacity: 0, duration: 0.2, overwrite: "auto" });
     };
 
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -136,7 +137,6 @@ export function Cursor() {
     <>
       <div ref={ringRef} className="cursor-ring" aria-hidden />
       <div ref={dotRef} className="cursor-dot" aria-hidden />
-      <div ref={labelRef} className="cursor-label" aria-hidden />
     </>
   );
 }

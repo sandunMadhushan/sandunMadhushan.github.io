@@ -49,56 +49,61 @@ export function ProjectDetailLayout({ title, githubLink, liveLink, blogLink, hea
         role="navigation"
         aria-label="Project quick actions"
         className={cn(
-          "fixed left-0 right-0 z-40 border-b border-outline-variant bg-background/90 backdrop-blur-xl transition-[transform,opacity] duration-300 ease-out",
+          "fixed left-0 right-0 z-40 transition-[transform,opacity] duration-300 ease-out",
           showSticky
             ? "top-16 translate-y-0 opacity-100"
             : "top-16 pointer-events-none -translate-y-full opacity-0",
         )}
       >
-        <div className="mx-auto flex max-w-[1512px] items-center gap-3 px-5 py-3 sm:px-8 md:gap-4 lg:px-12">
-          <h2 className="type-mono min-w-0 flex-1 truncate text-on-surface">
-            {title}
-          </h2>
-          {hasActions ? (
-            <div className="flex shrink-0 items-center gap-2">
-              {liveLink ? (
-                <a
-                  href={liveLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  tabIndex={showSticky ? undefined : -1}
-                  className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm bg-primary-container px-3 py-2 text-on-primary-container transition-opacity hover:opacity-90 md:px-3.5"
-                >
-                  <MIcon name="launch" className="text-sm" />
-                  <span className="hidden sm:inline">Live</span>
-                </a>
-              ) : null}
-              {githubLink ? (
-                <a
-                  href={githubLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  tabIndex={showSticky ? undefined : -1}
-                  className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm border border-outline-variant px-3 py-2 text-on-surface transition-colors hover:border-primary hover:text-primary md:px-3.5"
-                >
-                  <SiGithub className="size-3.5 shrink-0" aria-hidden />
-                  <span className="hidden sm:inline">GitHub</span>
-                </a>
-              ) : null}
-              {blogLink ? (
-                <a
-                  href={blogLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  tabIndex={showSticky ? undefined : -1}
-                  className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm border border-outline-variant px-3 py-2 text-on-surface transition-colors hover:border-primary hover:text-primary md:px-3.5"
-                >
-                  <Newspaper className="size-3.5 shrink-0" aria-hidden />
-                  <span className="hidden sm:inline">Blog</span>
-                </a>
-              ) : null}
-            </div>
-          ) : null}
+        {/* Inset to the same gutter + max-width as the rest of the page
+            (Container), so this bar reads as part of the document instead
+            of a full-bleed strip that ignores its margins. */}
+        <div className="mx-auto max-w-[1512px] px-5 sm:px-8 lg:px-12">
+          <div className="flex items-center gap-3 rounded-lg border border-outline-variant bg-background/90 px-4 py-3 backdrop-blur-xl md:gap-4 md:px-5">
+            <h2 className="type-mono min-w-0 flex-1 truncate text-on-surface">
+              {title}
+            </h2>
+            {hasActions ? (
+              <div className="flex shrink-0 items-center gap-2">
+                {liveLink ? (
+                  <a
+                    href={liveLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    tabIndex={showSticky ? undefined : -1}
+                    className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm bg-primary-container px-3 py-2 text-on-primary-container transition-opacity hover:opacity-90 md:px-3.5"
+                  >
+                    <MIcon name="launch" className="text-sm" />
+                    <span className="hidden sm:inline">Live</span>
+                  </a>
+                ) : null}
+                {githubLink ? (
+                  <a
+                    href={githubLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    tabIndex={showSticky ? undefined : -1}
+                    className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm border border-outline-variant px-3 py-2 text-on-surface transition-colors hover:border-primary hover:text-primary md:px-3.5"
+                  >
+                    <SiGithub className="size-3.5 shrink-0" aria-hidden />
+                    <span className="hidden sm:inline">GitHub</span>
+                  </a>
+                ) : null}
+                {blogLink ? (
+                  <a
+                    href={blogLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    tabIndex={showSticky ? undefined : -1}
+                    className="type-mono-sm inline-flex items-center gap-1.5 rounded-sm border border-outline-variant px-3 py-2 text-on-surface transition-colors hover:border-primary hover:text-primary md:px-3.5"
+                  >
+                    <Newspaper className="size-3.5 shrink-0" aria-hidden />
+                    <span className="hidden sm:inline">Blog</span>
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
         </div>
       </div>
 

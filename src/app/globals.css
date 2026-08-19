@@ -257,18 +257,20 @@
 
 /* ============================================================
    SIGNAL CURSOR
-   A dot glued to the pointer with a trailing ring, both painted with
-   mix-blend-mode: difference so they stay visible against literally any
-   background -- dark, light, an image, the nav's blurred glass -- with no
-   contrast tuning. Never leaves the pointer position (no bounding-box
-   lock), so it can't "disappear" over a large hovered element the way a
-   lock-on reticle can. `has-custom-cursor` is added by JS only once the
+   A dot glued to the pointer with a trailing ring. Both are drawn in solid
+   accent lime with a dark halo (box-shadow, not mix-blend-mode) so they
+   stay visible against any background -- dark, light, a photo, the nav's
+   blurred glass -- without depending on blend-mode compositing, which some
+   browser/GPU combinations skip repainting on a fast-moving fixed element
+   and which goes visually dead on a mid-grey background by definition
+   (difference against ~50% grey is invisible). Never leaves the pointer
+   position (no bounding-box lock), so it can't "disappear" over a large
+   hovered element either. `has-custom-cursor` is added by JS only once the
    mark is confirmed drawn.
    ============================================================ */
 
 .cursor-dot,
-.cursor-ring,
-.cursor-label {
+.cursor-ring {
   position: fixed;
   top: 0;
   left: 0;
@@ -276,29 +278,24 @@
   pointer-events: none;
   opacity: 0;
   will-change: transform;
-  mix-blend-mode: difference;
 }
 
 .cursor-dot {
   width: 7px;
   height: 7px;
   border-radius: 999px;
-  background: #fff;
+  background: var(--accent);
+  box-shadow:
+    0 0 0 1.5px rgba(0, 0, 0, 0.7),
+    0 0 0 2.5px rgba(255, 255, 255, 0.35);
 }
 
 .cursor-ring {
   border-radius: 999px;
-  border: 1px solid #fff;
-}
-
-.cursor-label {
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #fff;
-  white-space: nowrap;
+  border: 1.5px solid var(--accent);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.55);
 }
 
 /* Hide the native cursor only while ours is confirmed drawn. */
@@ -575,8 +572,7 @@
     transform: none !important;
   }
   .cursor-dot,
-  .cursor-ring,
-  .cursor-label {
+  .cursor-ring {
     display: none !important;
   }
   .marquee-track {
