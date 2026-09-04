@@ -86,8 +86,7 @@ export default async function HomePage() {
           {/* The portrait is absolutely positioned on desktop so it can sit
             behind the headline without ever adding to the section's height —
             the previous in-flow version stacked and made the hero two
-            viewports tall. Its left edge is masked to a soft fade so the
-            type crosses it cleanly instead of colliding with a hard border. */}
+            viewports tall. */}
           <section className="relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden pt-28 pb-12 md:pt-32">
             <div
               aria-hidden
@@ -117,7 +116,7 @@ export default async function HomePage() {
                 {/* Portrait — out of flow from md up, centred against the name */}
                 <div className="pointer-events-none relative z-0 mx-auto w-[62%] max-w-[260px] md:absolute md:right-0 md:top-1/2 md:mx-0 md:w-[27%] md:max-w-none md:-translate-y-1/2">
                   <Parallax speed={-0.14}>
-                    <div className="duotone-wrap duotone-onload relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low md:border-0 md:[mask-image:linear-gradient(to_right,transparent,black_30%)]">
+                    <div className="duotone-wrap duotone-onload relative aspect-[4/5] w-full overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low">
                       <NextImage
                         src={profileImage}
                         alt="Sandun Madhushan"
