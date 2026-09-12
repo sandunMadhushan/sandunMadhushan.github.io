@@ -85,6 +85,7 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [syncingGithub, setSyncingGithub] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -193,6 +194,42 @@ export function ProjectForm({ project }: { project?: Project }) {
     router.push("/admin/projects");
   }
 
+  async function syncFromGithub() {
+    const link = githubLink.trim();
+    if (!link) {
+      toast.error("Add a GitHub Repository link first.");
+      return;
+    }
+    setSyncingGithub(true);
+    const res = await fetch("/api/admin/github/refresh", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ githubLink: link }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setSyncingGithub(false);
+    if (!res.ok) {
+      toast.error(typeof data.error === "string" ? data.error : "Could not fetch repository details");
+      return;
+    }
+    const meta = data.meta as {
+      description: string;
+      homepage: string | null;
+      technologies: string[];
+      features: string[];
+      content: string;
+      thumb: string;
+    };
+    setDescription(meta.description);
+    setTechnologies(meta.technologies.join(", "));
+    if (meta.homepage) setLiveLink(meta.homepage);
+    if (!content.trim()) setContent(meta.content);
+    if (!coverImage.trim()) setCoverImage(meta.thumb);
+    if (!heroImage.trim()) setHeroImage(meta.thumb);
+    if (features.trim().length === 0) setFeatures(meta.features.join("\n"));
+    toast.success("Pulled the latest details from GitHub — review and save.");
+  }
+
   async function executeDelete() {
     if (!project) return;
     setDeleteLoading(true);
@@ -221,6 +258,18 @@ export function ProjectForm({ project }: { project?: Project }) {
             <Button type="button" variant="destructive" className="w-full gap-2 sm:w-auto" onClick={() => setDeleteOpen(true)}>
               <MIcon name="delete" className="text-[20px]" />
               Delete
+            </Button>
+          )}
+          {githubLink.trim() && (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full gap-2 sm:w-auto"
+              onClick={syncFromGithub}
+              disabled={syncingGithub}
+            >
+              <MIcon name="sync" className="text-[20px]" />
+              {syncingGithub ? "Syncing…" : "Update from GitHub"}
             </Button>
           )}
           <Button type="button" variant="secondary" className="w-full sm:w-auto" onClick={() => router.push("/admin/projects")}>

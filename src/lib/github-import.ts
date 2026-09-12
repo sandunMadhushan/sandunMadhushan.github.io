@@ -164,11 +164,29 @@ async function fetchReadmeText(owner: string, repo: string): Promise<string | nu
   return res.text();
 }
 
-export async function importGithubRepoAsProject(
+export function parseGithubRepoUrl(url: string): { owner: string; repo: string } | null {
+  const trimmed = url.trim();
+  const m = trimmed.match(/^https?:\/\/(?:www\.)?github\.com\/([^/\s]+)\/([^/\s#?]+)/i);
+  if (!m) return null;
+  return { owner: m[1], repo: m[2].replace(/\.git$/i, "") };
+}
+
+export type GithubRepoMetadata = {
+  htmlUrl: string;
+  title: string;
+  description: string;
+  homepage: string | null;
+  technologies: string[];
+  features: string[];
+  content: string;
+  thumb: string;
+};
+
+async function fetchGithubRepoMeta(
   owner: string,
   repoName: string,
 ): Promise<
-  | { ok: true; projectId: string; slug: string }
+  | { ok: true; meta: GithubRepoMetadata }
   | { ok: false; status: number; message: string }
 > {
   const cfg = getGithubListConfig();
@@ -194,23 +212,11 @@ export async function importGithubRepoAsProject(
   };
 
   const htmlUrl = meta.html_url;
-
-  const existing = await prisma.project.findFirst({ where: { githubLink: htmlUrl } });
-  if (existing) {
-    return {
-      ok: false,
-      status: 409,
-      message: `This repository is already linked to project “${existing.title}”.`,
-    };
-  }
-
   const readme = await fetchReadmeText(owner, repoName);
   const title = meta.name.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const description =
     (meta.description && meta.description.trim()) ||
     `Open-source work on GitHub — ${meta.name}.`;
-  const baseSlug = slugFromRepoName(meta.name);
-  const slug = await ensureUniqueSlug(baseSlug);
 
   const technologies = [
     ...(meta.language ? [meta.language] : []),
@@ -235,23 +241,78 @@ export async function importGithubRepoAsProject(
       ? meta.topics.slice(0, 6)
       : ["Public repository on GitHub"]) ?? [];
 
+  return {
+    ok: true,
+    meta: {
+      htmlUrl,
+      title,
+      description,
+      homepage: meta.homepage?.trim() || null,
+      technologies: techUnique,
+      features,
+      content,
+      thumb,
+    },
+  };
+}
+
+export async function fetchGithubRepoMetadataForRefresh(
+  githubLink: string,
+): Promise<
+  | { ok: true; meta: GithubRepoMetadata }
+  | { ok: false; status: number; message: string }
+> {
+  const parsed = parseGithubRepoUrl(githubLink);
+  if (!parsed) {
+    return { ok: false, status: 400, message: "That doesn't look like a GitHub repository URL." };
+  }
+  return fetchGithubRepoMeta(parsed.owner, parsed.repo);
+}
+
+export async function importGithubRepoAsProject(
+  owner: string,
+  repoName: string,
+): Promise<
+  | { ok: true; projectId: string; slug: string }
+  | { ok: false; status: number; message: string }
+> {
+  const cfg = getGithubListConfig();
+  if (!cfg.ok) return { ok: false, status: 503, message: cfg.message };
+
+  const fetched = await fetchGithubRepoMeta(owner, repoName);
+  if (!fetched.ok) return fetched;
+  const meta = fetched.meta;
+  const htmlUrl = meta.htmlUrl;
+
+  const existing = await prisma.project.findFirst({ where: { githubLink: htmlUrl } });
+  if (existing) {
+    return {
+      ok: false,
+      status: 409,
+      message: `This repository is already linked to project “${existing.title}”.`,
+    };
+  }
+
+  const baseSlug = slugFromRepoName(repoName);
+  const slug = await ensureUniqueSlug(baseSlug);
+
   const payload = {
-    title,
+    title: meta.title,
     slug,
-    description,
-    content,
-    technologies: techUnique,
-    coverImage: thumb,
-    heroImage: thumb,
+    description: meta.description,
+    content: meta.content,
+    technologies: meta.technologies,
+    coverImage: meta.thumb,
+    heroImage: meta.thumb,
     galleryImages: [] as string[],
     githubLink: htmlUrl,
-    liveLink: meta.homepage?.trim() || null,
+    liveLink: meta.homepage,
     blogLink: null,
     featured: false,
     published: false,
     categories: ["Web"],
     cardIcon: "code",
-    features,
+    features: meta.features,
   };
 
   const v = validateProjectBody(payload);
