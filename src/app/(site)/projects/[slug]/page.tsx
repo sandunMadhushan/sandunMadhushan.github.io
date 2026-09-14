@@ -1,4 +1,3 @@
-import type React from "react";
 import NextImage from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -9,6 +8,7 @@ import { PageFade } from "@/components/motion/page-fade";
 import { StaggerIn } from "@/components/motion/stagger-in";
 import { RevealText } from "@/components/motion/reveal-text";
 import { ProjectDetailLayout } from "@/components/projects/project-detail-layout";
+import { MarkdownContent } from "@/components/markdown-content";
 import { Container, Eyebrow, Rule } from "@/components/ui/primitives";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
 import { isRemoteImageSrc } from "@/lib/image-url";
@@ -24,61 +24,6 @@ export const revalidate = 30;
 type Challenge = { title: string; description: string };
 type Resolution = { title: string; description: string };
 type Result = { label: string; value: string };
-
-const INLINE_MARKUP_RE = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s)]+)/g;
-
-function renderInlineMarkup(text: string): React.ReactNode[] {
-  const nodes: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-  let key = 0;
-
-  INLINE_MARKUP_RE.lastIndex = 0;
-  while ((match = INLINE_MARKUP_RE.exec(text))) {
-    if (match.index > lastIndex) {
-      nodes.push(text.slice(lastIndex, match.index));
-    }
-    const [, linkText, linkHref, bareUrl] = match;
-    const href = linkHref ?? bareUrl;
-    nodes.push(
-      <a
-        key={key++}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-primary underline underline-offset-2 hover:text-primary/80"
-      >
-        {linkText ?? bareUrl}
-      </a>,
-    );
-    lastIndex = match.index + match[0].length;
-  }
-  if (lastIndex < text.length) {
-    nodes.push(text.slice(lastIndex));
-  }
-  return nodes;
-}
-
-function isDividerParagraph(text: string): boolean {
-  const t = text.trim();
-  if (!t) return false;
-  // Treat repeated separator glyphs as a visual divider, not content text.
-  return /^[─━\-_*=~·•]{6,}$/.test(t);
-}
-
-function paragraphToBullets(text: string): string[] | null {
-  const lines = text
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-  if (lines.length === 0) return null;
-  const bulletLines = lines.filter((line) => /^[-*]\s+/.test(line));
-  if (bulletLines.length < 2 || bulletLines.length !== lines.length)
-    return null;
-  return bulletLines
-    .map((line) => line.replace(/^[-*]\s+/, "").trim())
-    .filter(Boolean);
-}
 
 export default async function ProjectDetailPage({
   params,
@@ -278,28 +223,8 @@ export default async function ProjectDetailPage({
                   <div className="pt-5">
                     <Eyebrow index="01">Overview</Eyebrow>
                   </div>
-                  <div className="type-body mt-10 space-y-6 text-on-surface-variant">
-                    {project.content.split("\n\n").map((para, i) =>
-                      isDividerParagraph(para) ? (
-                        <Rule key={i} className="my-10" />
-                      ) : paragraphToBullets(para) ? (
-                        <ul key={i} className="space-y-3">
-                          {paragraphToBullets(para)!.map((item, idx) => (
-                            <li key={`${i}-${idx}`} className="flex gap-3">
-                              <span
-                                aria-hidden
-                                className="mt-2.5 size-1 shrink-0 bg-primary-container"
-                              />
-                              <span>{renderInlineMarkup(item)}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p key={i} className="whitespace-pre-line">
-                          {renderInlineMarkup(para)}
-                        </p>
-                      ),
-                    )}
+                  <div className="mt-10">
+                    <MarkdownContent content={project.content} />
                   </div>
                 </div>
               </div>

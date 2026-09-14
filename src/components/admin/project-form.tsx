@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { Project } from "@prisma/client";
 import { MIcon } from "@/components/m-icon";
+import { MarkdownContent } from "@/components/markdown-content";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -63,6 +64,7 @@ export function ProjectForm({ project }: { project?: Project }) {
   const [slug, setSlug] = useState(project?.slug ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [content, setContent] = useState(project?.content ?? "");
+  const [contentPreview, setContentPreview] = useState(false);
   const [githubLink, setGithubLink] = useState(project?.githubLink ?? "");
   const [liveLink, setLiveLink] = useState(project?.liveLink ?? "");
   const [blogLink, setBlogLink] = useState(project?.blogLink ?? "");
@@ -411,21 +413,47 @@ export function ProjectForm({ project }: { project?: Project }) {
           </section>
 
           <section className="rounded-xl bg-surface-container-low p-5 sm:p-8">
-            <AdminFieldLabel
-              htmlFor="project-content"
-              required
-              className="mb-6 block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
-            >
-              Full Case Study Content
-            </AdminFieldLabel>
-            <Textarea
-              id="project-content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={14}
-              className="min-h-[320px]"
-              aria-required
-            />
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <div>
+                <AdminFieldLabel
+                  htmlFor="project-content"
+                  required
+                  className="block text-[12px] font-bold uppercase tracking-widest text-on-surface-variant"
+                >
+                  Full Case Study Content
+                </AdminFieldLabel>
+                <p className="mt-1.5 text-xs text-on-surface-variant/80">
+                  Markdown — headings, bold/italic, lists, code blocks, tables, and links all render like on GitHub.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setContentPreview((v) => !v)}
+              >
+                <MIcon name={contentPreview ? "edit" : "visibility"} className="mr-1.5" />
+                {contentPreview ? "Edit" : "Preview"}
+              </Button>
+            </div>
+            {contentPreview ? (
+              <div className="min-h-[320px] rounded-md border border-outline-variant/30 bg-surface-container-lowest px-4 py-4">
+                {content.trim() ? (
+                  <MarkdownContent content={content} />
+                ) : (
+                  <p className="text-sm text-on-surface-variant/70">Nothing to preview yet.</p>
+                )}
+              </div>
+            ) : (
+              <Textarea
+                id="project-content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={14}
+                className="min-h-[320px] font-mono text-sm"
+                aria-required
+              />
+            )}
           </section>
 
           <section className="space-y-6 rounded-xl bg-surface-container-low p-5 sm:p-8">

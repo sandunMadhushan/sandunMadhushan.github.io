@@ -112,23 +112,52 @@ function slugFromRepoName(name: string): string {
     .slice(0, 80) || "project";
 }
 
-function readmeToPortfolioContent(raw: string, repoUrl: string): string {
-  const stripped = raw
+const MAX_README_LENGTH = 20000;
+
+/** Resolves a README-relative link/image path against the repo's blob/raw URLs, like GitHub does. */
+function resolveRepoRelativeUrl(url: string, owner: string, repo: string, branch: string, raw: boolean): string {
+  if (/^(?:[a-z][a-z0-9+.-]*:|#|\/\/)/i.test(url)) return url; // already absolute, protocol-relative, or an anchor
+  const cleanPath = url.replace(/^\.\//, "").replace(/^\/+/, "");
+  const base = raw
+    ? `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/`
+    : `https://github.com/${owner}/${repo}/blob/${branch}/`;
+  return new URL(cleanPath, base).toString();
+}
+
+/**
+ * Cleans a raw README for use as case study markdown: drops frontmatter, resolves
+ * repo-relative links/images to absolute GitHub URLs (so they still work off-repo),
+ * and caps length — but otherwise keeps the markdown intact so it renders like GitHub's
+ * README view instead of being flattened to plain text.
+ */
+function readmeToPortfolioContent(
+  raw: string,
+  repoUrl: string,
+  owner: string,
+  repo: string,
+  branch: string,
+): string {
+  const withoutFrontmatter = raw
     .replace(/\r\n/g, "\n")
-    .replace(/^---[\s\S]*?^---\s*/m, "")
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^---\s*\n[\s\S]*?\n---\s*\n/, "")
     .trim();
 
-  const paragraphs = stripped
-    .split(/\n\s*\n/)
-    .map((p) => p.replace(/\n/g, " ").replace(/\s+/g, " ").trim())
-    .filter(Boolean);
+  const resolved = withoutFrontmatter
+    .replace(/(!\[[^\]]*\]\()([^)\s]+)(\s*(?:"[^"]*")?\))/g, (_m, pre, url, post) =>
+      `${pre}${resolveRepoRelativeUrl(url, owner, repo, branch, true)}${post}`,
+    )
+    .replace(/(?<!!)(\[[^\]]*\]\()([^)\s]+)(\s*(?:"[^"]*")?\))/g, (_m, pre, url, post) =>
+      `${pre}${resolveRepoRelativeUrl(url, owner, repo, branch, false)}${post}`,
+    )
+    .replace(/(<img[^>]+src=["'])([^"']+)(["'])/gi, (_m, pre, url, post) =>
+      `${pre}${resolveRepoRelativeUrl(url, owner, repo, branch, true)}${post}`,
+    );
 
-  const body = paragraphs.slice(0, 24).join("\n\n").slice(0, 12000);
+  const body =
+    resolved.length > MAX_README_LENGTH
+      ? `${resolved.slice(0, MAX_README_LENGTH).trimEnd()}\n\n…`
+      : resolved;
+
   if (body.length >= 50) return body;
 
   return [
@@ -209,9 +238,11 @@ async function fetchGithubRepoMeta(
     owner: { login: string; avatar_url: string };
     name: string;
     fork: boolean;
+    default_branch: string;
   };
 
   const htmlUrl = meta.html_url;
+  const branch = meta.default_branch || "main";
   const readme = await fetchReadmeText(owner, repoName);
   const title = meta.name.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const description =
@@ -228,7 +259,7 @@ async function fetchGithubRepoMeta(
   if (techUnique.length === 0) techUnique.push("GitHub");
 
   const content = readme
-    ? readmeToPortfolioContent(readme, htmlUrl)
+    ? readmeToPortfolioContent(readme, htmlUrl, meta.owner.login, meta.name, branch)
     : [
         "This project was imported from GitHub. Add a full write-up in the admin, or paste your README there.",
         "",
