@@ -8,6 +8,7 @@ import { PageFade } from "@/components/motion/page-fade";
 import { StaggerIn } from "@/components/motion/stagger-in";
 import { RevealText } from "@/components/motion/reveal-text";
 import { ProjectDetailLayout } from "@/components/projects/project-detail-layout";
+import { ArtifactGallery } from "@/components/projects/artifact-gallery";
 import { MarkdownContent } from "@/components/markdown-content";
 import { Container, Eyebrow, Rule } from "@/components/ui/primitives";
 import { DEFAULT_PORTRAIT_SRC } from "@/lib/site-constants";
@@ -240,29 +241,7 @@ export default async function ProjectDetailPage({
                     {String(artifacts.length).padStart(2, "0")}
                   </span>
                 </div>
-                <StaggerIn
-                  selector="figure"
-                  className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                >
-                  {artifacts.map((src, i) => (
-                    <figure
-                      key={src + i}
-                      className="group relative aspect-[4/3] overflow-hidden rounded-sm border border-outline-variant bg-surface-container-low"
-                    >
-                      <NextImage
-                        src={src}
-                        alt=""
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-105"
-                        unoptimized={isRemoteImageSrc(src)}
-                      />
-                      <figcaption className="type-mono-sm absolute bottom-0 left-0 bg-background/85 px-3 py-1.5 text-on-surface-variant backdrop-blur-sm">
-                        Fig. {String(i + 1).padStart(2, "0")}
-                      </figcaption>
-                    </figure>
-                  ))}
-                </StaggerIn>
+                <ArtifactGallery srcs={artifacts} title={project.title} />
               </Container>
             )}
 
