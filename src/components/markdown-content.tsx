@@ -5,10 +5,17 @@ import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 
 const sanitizeSchema = {
   ...defaultSchema,
+  // Allow <video> so a case study can embed a short film (http/https sources only).
+  tagNames: [...(defaultSchema.tagNames ?? []), "video"],
   attributes: {
     ...defaultSchema.attributes,
     "*": [...(defaultSchema.attributes?.["*"] ?? []), "className", "align", "style"],
     img: [...(defaultSchema.attributes?.img ?? []), "align", "width", "height"],
+    video: ["src", "poster", "controls", "muted", "playsInline", "preload", "width", "height", "loop"],
+  },
+  protocols: {
+    ...defaultSchema.protocols,
+    src: [...(defaultSchema.protocols?.src ?? []), "https"],
   },
 };
 
@@ -80,6 +87,12 @@ export function MarkdownContent({ content }: { content: string }) {
           thead: (p) => <thead className="border-b border-outline-variant/40 bg-surface-container-lowest" {...strip(p)} />,
           th: (p) => <th className="px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-on-surface" {...strip(p)} />,
           td: (p) => <td className="border-t border-outline-variant/20 px-4 py-2.5" {...strip(p)} />,
+          video: (p) => (
+            <video
+              className="my-2 block h-auto max-w-full rounded-sm border border-outline-variant"
+              {...strip(p)}
+            />
+          ),
           img: ({ alt, ...rest }) => (
             // eslint-disable-next-line @next/next/no-img-element -- README images come from arbitrary, unconfigured hosts
             <img alt={alt ?? ""} loading="lazy" className="my-2 inline-block max-w-full rounded-sm" {...strip(rest)} />
